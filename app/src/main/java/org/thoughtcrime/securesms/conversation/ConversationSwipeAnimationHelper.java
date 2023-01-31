@@ -35,14 +35,13 @@ final class ConversationSwipeAnimationHelper {
 
     updateBodyBubbleTransition(conversationItem.bodyBubble, dx, sign);
     updateReactionsTransition(conversationItem.reactionsView, dx, sign);
-    updateQuotedIndicatorTransition(conversationItem.quotedIndicator, dx, progress, sign);
-    updateReplyIconTransition(conversationItem.reply, dx, progress, sign);
+    updateReplyIconTransition(conversationItem.replyIcon, dx, progress, sign);
     updateContactPhotoHolderTransition(conversationItem.contactPhotoHolder, progress, sign);
     updateContactPhotoHolderTransition(conversationItem.badgeImageView, progress, sign);
   }
 
   public static void trigger(@NonNull ConversationItem conversationItem) {
-    triggerReplyIcon(conversationItem.reply);
+    triggerReplyIcon(conversationItem.replyIcon);
   }
 
   private static void updateBodyBubbleTransition(@NonNull View bodyBubble, float dx, float sign) {
@@ -51,13 +50,6 @@ final class ConversationSwipeAnimationHelper {
 
   private static void updateReactionsTransition(@NonNull View reactionsContainer, float dx, float sign) {
     reactionsContainer.setTranslationX(BUBBLE_INTERPOLATOR.getInterpolation(dx) * sign);
-  }
-
-  private static void updateQuotedIndicatorTransition(@Nullable View quotedIndicator, float dx, float progress, float sign) {
-    if (quotedIndicator != null) {
-      quotedIndicator.setTranslationX(BUBBLE_INTERPOLATOR.getInterpolation(dx) * sign);
-      quotedIndicator.setAlpha(QUOTED_ALPHA_INTERPOLATOR.getInterpolation(progress));
-    }
   }
 
   private static void updateReplyIconTransition(@NonNull View replyIcon, float dx, float progress, float sign) {

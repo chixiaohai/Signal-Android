@@ -399,10 +399,10 @@ public final class ConversationReactionOverlay extends FrameLayout {
 
   private void updateToolbarShade(@NonNull Activity activity) {
     View toolbar         = activity.findViewById(R.id.toolbar);
-    View bannerContainer = activity.findViewById(R.id.conversation_banner_container);
+//    View bannerContainer = activity.findViewById(R.id.conversation_banner_container);
 
     LayoutParams layoutParams = (LayoutParams) toolbarShade.getLayoutParams();
-    layoutParams.height = toolbar.getHeight() + bannerContainer.getHeight();
+//    layoutParams.height = toolbar.getHeight() + bannerContainer.getHeight();
     toolbarShade.setLayoutParams(layoutParams);
   }
 

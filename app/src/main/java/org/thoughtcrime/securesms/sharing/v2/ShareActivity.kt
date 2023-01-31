@@ -5,15 +5,22 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableStringBuilder
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.WorkerThread
 import androidx.core.content.ContextCompat
 import androidx.core.content.pm.ShortcutManagerCompat
+import com.annimon.stream.Collectors
+import com.annimon.stream.Stream
+import com.annimon.stream.function.Function
+import com.annimon.stream.function.IntFunction
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import org.signal.core.util.Result
+import org.signal.core.util.concurrent.SimpleTask
 import org.signal.core.util.logging.Log
 import org.thoughtcrime.securesms.PassphraseRequiredActivity
 import org.thoughtcrime.securesms.R
@@ -22,16 +29,20 @@ import org.thoughtcrime.securesms.conversation.ConversationIntents
 import org.thoughtcrime.securesms.conversation.mutiselect.forward.MultiselectForwardFragment
 import org.thoughtcrime.securesms.conversation.mutiselect.forward.MultiselectForwardFragmentArgs
 import org.thoughtcrime.securesms.conversation.mutiselect.forward.MultiselectForwardFullScreenDialogFragment
+import org.thoughtcrime.securesms.database.SignalDatabase
 import org.thoughtcrime.securesms.mediasend.Media
 import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionActivity.Companion.share
+import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.sharing.MultiShareDialogs
 import org.thoughtcrime.securesms.sharing.MultiShareSender
 import org.thoughtcrime.securesms.sharing.MultiShareSender.MultiShareSendResultCollection
+import org.thoughtcrime.securesms.sharing.ShareContact
 import org.thoughtcrime.securesms.sharing.interstitial.ShareInterstitialActivity
 import org.thoughtcrime.securesms.util.ConversationUtil
 import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme
 import org.thoughtcrime.securesms.util.LifecycleDisposable
+import org.thoughtcrime.securesms.util.Util
 import java.util.Optional
 
 class ShareActivity : PassphraseRequiredActivity(), MultiselectForwardFragment.Callback {
@@ -52,6 +63,9 @@ class ShareActivity : PassphraseRequiredActivity(), MultiselectForwardFragment.C
 
   private val directShareTarget: RecipientId?
     get() = intent.getStringExtra(ShortcutManagerCompat.EXTRA_SHORTCUT_ID).let { ConversationUtil.getRecipientId(it) }
+
+  private val shareConfirm: View? = null
+  private var shareConfirmClickListener: View.OnClickListener? = null
 
   override fun onPreCreate() {
     super.onPreCreate()
@@ -302,5 +316,9 @@ class ShareActivity : PassphraseRequiredActivity(), MultiselectForwardFragment.C
     SEND_TEXT,
     SEND_STREAM,
     UNKNOWN
+  }
+
+  fun getShareConfirmClickListener(): View.OnClickListener? {
+    return shareConfirmClickListener
   }
 }

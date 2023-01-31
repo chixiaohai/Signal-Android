@@ -103,6 +103,7 @@ public class InputPanel extends LinearLayout
   private boolean hideForSelection;
 
   private ConversationStickerSuggestionAdapter stickerSuggestionAdapter;
+  private TextView mytexview;
 
   public InputPanel(Context context) {
     super(context);
@@ -165,6 +166,18 @@ public class InputPanel extends LinearLayout
 
     stickerSuggestion.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
     stickerSuggestion.setAdapter(stickerSuggestionAdapter);
+  }
+
+  public void mydisMiss(){
+    mytexview.setVisibility(View.GONE);
+  }
+
+  public void setThis(TextView mytexview_out){
+    this.mytexview=mytexview_out;
+    this.recordTime = new RecordTime(this.mytexview,
+                                     findViewById(R.id.microphone),
+                                     TimeUnit.HOURS.toSeconds(1),
+                                     () -> microphoneRecorderView.cancelAction());
   }
 
   public void setListener(final @NonNull Listener listener) {

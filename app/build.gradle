@@ -449,6 +449,7 @@ dependencies {
     implementation libs.androidx.autofill
     implementation libs.androidx.biometric
     implementation libs.androidx.sharetarget
+    implementation 'androidx.lifecycle:lifecycle-viewmodel:2.1.0'
 
     implementation (libs.firebase.messaging) {
         exclude group: 'com.google.firebase', module: 'firebase-core'

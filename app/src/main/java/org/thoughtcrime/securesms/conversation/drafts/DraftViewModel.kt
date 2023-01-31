@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms.conversation.drafts
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Flowable
 import io.reactivex.rxjava3.core.Single
@@ -113,6 +114,13 @@ class DraftViewModel @JvmOverloads constructor(
         store.update { saveDrafts(it.copyAndSetDrafts(threadId, drafts.drafts)) }
       }
       .observeOn(AndroidSchedulers.mainThread())
+  }
+
+  class Factory(private val repository: DraftRepository) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+      return requireNotNull(modelClass.cast(DraftViewModel(repository)))
+    }
   }
 }
 

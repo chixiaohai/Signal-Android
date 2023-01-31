@@ -18,19 +18,22 @@ package org.thoughtcrime.securesms;
 
 
 import android.Manifest;
+import android.animation.LayoutTransition;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
-import android.graphics.Rect;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
+import android.widget.HorizontalScrollView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +43,8 @@ import androidx.annotation.Px;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.view.ViewCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -53,40 +56,41 @@ import androidx.transition.TransitionManager;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
 import org.signal.core.util.concurrent.SimpleTask;
 import org.signal.core.util.logging.Log;
+import org.thoughtcrime.securesms.components.MyEditText;
 import org.thoughtcrime.securesms.components.RecyclerViewFastScroller;
+import org.thoughtcrime.securesms.components.mp02anim.ItemAnimViewController;
+import org.thoughtcrime.securesms.components.recyclerview.ToolbarShadowAnimationHelper;
 import org.thoughtcrime.securesms.contacts.AbstractContactsCursorLoader;
-import org.thoughtcrime.securesms.contacts.ContactChipViewModel;
+import org.thoughtcrime.securesms.contacts.ContactChip;
 import org.thoughtcrime.securesms.contacts.ContactSelectionListAdapter;
 import org.thoughtcrime.securesms.contacts.ContactSelectionListItem;
 import org.thoughtcrime.securesms.contacts.ContactsCursorLoader;
 import org.thoughtcrime.securesms.contacts.ContactsCursorLoader.DisplayMode;
 import org.thoughtcrime.securesms.contacts.HeaderAction;
-import org.thoughtcrime.securesms.contacts.LetterHeaderDecoration;
 import org.thoughtcrime.securesms.contacts.SelectedContact;
-import org.thoughtcrime.securesms.contacts.SelectedContacts;
-import org.thoughtcrime.securesms.contacts.selection.ContactSelectionArguments;
 import org.thoughtcrime.securesms.contacts.sync.ContactDiscovery;
 import org.thoughtcrime.securesms.groups.SelectionLimits;
 import org.thoughtcrime.securesms.groups.ui.GroupLimitDialog;
+import org.thoughtcrime.securesms.groups.ui.creategroup.CreateGroupActivity;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.permissions.Permissions;
+import org.thoughtcrime.securesms.recipients.LiveRecipient;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.sharing.ShareContact;
-import org.thoughtcrime.securesms.util.LifecycleDisposable;
+import org.thoughtcrime.securesms.sharing.v2.ShareActivity;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.UsernameUtil;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.adapter.FixedViewsAdapter;
 import org.thoughtcrime.securesms.util.adapter.RecyclerViewConcatenateAdapterStickyHeader;
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter;
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingModelList;
 import org.thoughtcrime.securesms.util.views.SimpleProgressDialog;
 
 import java.io.IOException;
@@ -95,9 +99,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
-
-import io.reactivex.rxjava3.disposables.Disposable;
-import kotlin.Unit;
 
 /**
  * Fragment for selecting a one or more contacts from a list.
@@ -110,7 +111,7 @@ public final class ContactSelectionListFragment extends LoggingFragment
   @SuppressWarnings("unused")
   private static final String TAG = Log.tag(ContactSelectionListFragment.class);
 
-  private static final int CHIP_GROUP_EMPTY_CHILD_COUNT  = 0;
+  private static final int CHIP_GROUP_EMPTY_CHILD_COUNT  = 1;
   private static final int CHIP_GROUP_REVEAL_DURATION_MS = 150;
 
   public static final int NO_LIMIT = Integer.MAX_VALUE;
@@ -131,33 +132,77 @@ public final class ContactSelectionListFragment extends LoggingFragment
   private OnContactSelectedListener                   onContactSelectedListener;
   private SwipeRefreshLayout                          swipeRefresh;
   private View                                        showContactsLayout;
-  private Button                                      showContactsButton;
+  private TextView                                    showContactsTextview;
   private TextView                                    showContactsDescription;
+  private RelativeLayout                              rlContainer;
   private ProgressWheel                               showContactsProgress;
   private String                                      cursorFilter;
   private RecyclerView                                recyclerView;
   private RecyclerViewFastScroller                    fastScroller;
   private ContactSelectionListAdapter                 cursorRecyclerViewAdapter;
-  private RecyclerView                                chipRecycler;
+  private ChipGroup                                   chipGroup;
+  private HorizontalScrollView                        chipGroupScrollContainer;
   private OnSelectionLimitReachedListener             onSelectionLimitReachedListener;
   private AbstractContactsCursorLoaderFactoryProvider cursorFactoryProvider;
-  private MappingAdapter                              contactChipAdapter;
-  private ContactChipViewModel                        contactChipViewModel;
-  private LifecycleDisposable                         lifecycleDisposable;
+  private View.OnClickListener                        shareConfirmClickListener;
+  private boolean                                     isSharing = false;
+  private View                                        shadowView;
+  private ToolbarShadowAnimationHelper                toolbarShadowAnimationHelper;
   private HeaderActionProvider                        headerActionProvider;
-  private TextView                                    headerActionView;
 
-  @Nullable private FixedViewsAdapter       headerAdapter;
-  @Nullable private FixedViewsAdapter       footerAdapter;
-  @Nullable private ListCallback            listCallback;
-  @Nullable private ScrollCallback          scrollCallback;
-  @Nullable private OnItemLongClickListener onItemLongClickListener;
-  private           GlideRequests           glideRequests;
-  private           SelectionLimits         selectionLimit = SelectionLimits.NO_LIMITS;
-  private           Set<RecipientId>        currentSelection;
-  private           boolean                 isMulti;
-  private           boolean                 hideCount;
-  private           boolean                 canSelectSelf;
+  @Nullable private FixedViewsAdapter                 headerAdapter;
+  @Nullable private FixedViewsAdapter                 footerAdapter;
+  @Nullable private ListCallback                      listCallback;
+  @Nullable private ScrollCallback                    scrollCallback;
+  @Nullable private OnItemLongClickListener           onItemLongClickListener;
+  private GlideRequests                     glideRequests;
+  private SelectionLimits                   selectionLimit   = SelectionLimits.NO_LIMITS;
+  private Set<RecipientId>                  currentSelection;
+  private boolean                           isMulti;
+  private boolean                           hideCount;
+  private boolean                           canSelectSelf;
+
+  public int mFocusHeight;
+  public int mNormalHeight;
+  public int mNormalPaddingX;
+  public int mFocusPaddingX;
+  public int mFocusTextSize;
+  public int mNormalTextSize;
+  private int marginTop = 76;
+  private boolean isScrollUp = false;
+
+  @Nullable
+  private FixedViewsAdapter footer1Adapter, footer2Adapter,searchAdapter, applyAdapter;
+  @Nullable
+  private RefreshCallback refreshCallback;
+  @Nullable
+  private ApplyCallBack applyCallBack;
+  @Nullable
+  private SearchCallBack searchCallBack;
+
+  private static final float WELCOME_OPTIOON_SCALE_FOCUS = 1.3f;
+  private static final float WELCOME_OPTIOON_SCALE_NON_FOCUS = 1.0f;
+  private static final float WELCOME_OPTIOON_TRANSLATION_X_FOCUS = 12.0f;
+  private static final float WELCOME_OPTIOON_TRANSLATION_X_NON_FOCUS = 1.0f;
+  private ItemAnimViewController itemAnimViewController;
+
+  private void MP02_Animate(View view, boolean b)
+  {
+    float scale = b ? WELCOME_OPTIOON_SCALE_FOCUS : WELCOME_OPTIOON_SCALE_NON_FOCUS;
+    float transx = b ? WELCOME_OPTIOON_TRANSLATION_X_FOCUS : WELCOME_OPTIOON_TRANSLATION_X_NON_FOCUS;
+    ViewCompat.animate(view)
+              .scaleX(scale)
+              .scaleY(scale)
+              .translationX(transx)
+              .start();
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    recyclerView.setFocusableInTouchMode(true);
+    recyclerView.requestFocus();
+  }
 
   @Override
   public void onAttach(@NonNull Context context) {
@@ -177,6 +222,18 @@ public final class ContactSelectionListFragment extends LoggingFragment
 
     if (getParentFragment() instanceof OnContactSelectedListener) {
       onContactSelectedListener = (OnContactSelectedListener) getParentFragment();
+    }
+
+    if (context instanceof SearchCallBack){
+      searchCallBack = (SearchCallBack) context;
+    }
+
+    if (context instanceof RefreshCallback){
+      refreshCallback = (RefreshCallback) context;
+    }
+
+    if (context instanceof ApplyCallBack){
+      applyCallBack = (ApplyCallBack) context;
     }
 
     if (context instanceof OnContactSelectedListener) {
@@ -223,6 +280,10 @@ public final class ContactSelectionListFragment extends LoggingFragment
     initializeCursor();
   }
 
+  public void setOnKey(){
+    searchAdapter.setScorllUp(false);
+  }
+
   @Override
   public void onStart() {
     super.onStart();
@@ -258,36 +319,36 @@ public final class ContactSelectionListFragment extends LoggingFragment
     emptyText                = view.findViewById(android.R.id.empty);
     recyclerView             = view.findViewById(R.id.recycler_view);
     swipeRefresh             = view.findViewById(R.id.swipe_refresh);
-    fastScroller             = view.findViewById(R.id.fast_scroller);
+    rlContainer              = view.findViewById(R.id.rl_container);
+//    fastScroller             = view.findViewById(R.id.fast_scroller);
     showContactsLayout       = view.findViewById(R.id.show_contacts_container);
-    showContactsButton       = view.findViewById(R.id.show_contacts_button);
+    showContactsTextview = view.findViewById(R.id.show_contacts_textview);
     showContactsDescription  = view.findViewById(R.id.show_contacts_description);
-    showContactsProgress     = view.findViewById(R.id.progress);
-    chipRecycler             = view.findViewById(R.id.chipRecycler);
+//    showContactsProgress     = view.findViewById(R.id.progress);
+    chipGroup                = view.findViewById(R.id.chipGroup);
+    chipGroupScrollContainer = view.findViewById(R.id.chipGroupScrollContainer);
     constraintLayout         = view.findViewById(R.id.container);
-    headerActionView         = view.findViewById(R.id.header_action);
+    shadowView               = view.findViewById(R.id.toolbar_shadow);
+    toolbarShadowAnimationHelper = new ToolbarShadowAnimationHelper(shadowView);
 
-    final LinearLayoutManager layoutManager = new LinearLayoutManager(requireContext());
+    recyclerView.addOnScrollListener(toolbarShadowAnimationHelper);
 
-    recyclerView.setLayoutManager(layoutManager);
+    Resources res = getActivity().getResources();
+    mFocusHeight = res.getDimensionPixelSize(R.dimen.focus_small_height);
+    mNormalHeight = res.getDimensionPixelSize(R.dimen.small_height);
+
+    mFocusTextSize = res.getDimensionPixelSize(R.dimen.focus_small_textsize);
+    mNormalTextSize = res.getDimensionPixelSize(R.dimen.small_textsize);
+
+    mFocusPaddingX = res.getDimensionPixelSize(R.dimen.focus_item_padding_x);
+    mNormalPaddingX = res.getDimensionPixelSize(R.dimen.item_padding_x);
+    recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     recyclerView.setItemAnimator(new DefaultItemAnimator() {
       @Override
       public boolean canReuseUpdatedViewHolder(@NonNull RecyclerView.ViewHolder viewHolder) {
         return true;
       }
     });
-
-    contactChipViewModel = new ViewModelProvider(this).get(ContactChipViewModel.class);
-    contactChipAdapter   = new MappingAdapter();
-    lifecycleDisposable  = new LifecycleDisposable();
-
-    lifecycleDisposable.bindTo(getViewLifecycleOwner());
-    SelectedContacts.register(contactChipAdapter, this::onChipCloseIconClicked);
-    chipRecycler.setAdapter(contactChipAdapter);
-
-    Disposable disposable = contactChipViewModel.getState().subscribe(this::handleSelectedContactsChanged);
-
-    lifecycleDisposable.add(disposable);
 
     Intent intent    = requireActivity().getIntent();
     Bundle arguments = safeArguments();
@@ -304,6 +365,8 @@ public final class ContactSelectionListFragment extends LoggingFragment
     boolean isRefreshable = arguments.getBoolean(REFRESHABLE, intent.getBooleanExtra(REFRESHABLE, true));
     swipeRefresh.setNestedScrollingEnabled(isRefreshable);
     swipeRefresh.setEnabled(isRefreshable);
+    itemAnimViewController = new ItemAnimViewController(rlContainer,mFocusTextSize,mFocusHeight,marginTop);
+    itemAnimViewController.setItemVisibility(true);
 
     hideCount      = arguments.getBoolean(HIDE_COUNT, intent.getBooleanExtra(HIDE_COUNT, false));
     selectionLimit = arguments.getParcelable(SELECTION_LIMITS);
@@ -318,48 +381,7 @@ public final class ContactSelectionListFragment extends LoggingFragment
     }
 
     currentSelection = getCurrentSelection();
-
-    final HeaderAction headerAction;
-    if (headerActionProvider != null) {
-      headerAction = headerActionProvider.getHeaderAction();
-
-      headerActionView.setEnabled(true);
-      headerActionView.setText(headerAction.getLabel());
-      headerActionView.setCompoundDrawablesRelativeWithIntrinsicBounds(headerAction.getIcon(), 0, 0, 0);
-      headerActionView.setOnClickListener(v -> headerAction.getAction().run());
-      recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-
-        private final Rect bounds = new Rect();
-
-        @Override
-        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-        }
-
-        @Override
-        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-          if (hideLetterHeaders()) {
-            return;
-          }
-
-          int firstPosition = layoutManager.findFirstVisibleItemPosition();
-          if (firstPosition == 0) {
-            View firstChild = recyclerView.getChildAt(0);
-            recyclerView.getDecoratedBoundsWithMargins(firstChild, bounds);
-            headerActionView.setTranslationY(bounds.top);
-          }
-        }
-      });
-    } else {
-      headerActionView.setEnabled(false);
-    }
-
     return view;
-  }
-
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    constraintLayout = null;
   }
 
   private @NonNull Bundle safeArguments() {
@@ -412,32 +434,61 @@ public final class ContactSelectionListFragment extends LoggingFragment
   private void initializeCursor() {
     glideRequests = GlideApp.with(this);
 
+    if (getActivity() instanceof ShareActivity){
+      ShareActivity activity = (ShareActivity) getActivity();
+      shareConfirmClickListener = activity.getShareConfirmClickListener();
+      isSharing = true;
+    }else{
+      shareConfirmClickListener = null;
+    }
     cursorRecyclerViewAdapter = new ContactSelectionListAdapter(requireContext(),
                                                                 glideRequests,
                                                                 null,
                                                                 new ListClickListener(),
                                                                 isMulti,
                                                                 currentSelection,
-                                                                safeArguments().getInt(ContactSelectionArguments.CHECKBOX_RESOURCE, R.drawable.contact_selection_checkbox));
+                                                                rlContainer,
+                                                                72,onFocusChangeListener,
+                                                                shareConfirmClickListener,
+                                                                isSharing);
 
+    cursorRecyclerViewAdapter.setIsCreatingGroup((getActivity() instanceof CreateGroupActivity));
     RecyclerViewConcatenateAdapterStickyHeader concatenateAdapter = new RecyclerViewConcatenateAdapterStickyHeader();
 
+    if (searchCallBack != null) {
+      searchAdapter = new FixedViewsAdapter(requireContext(), 72, rlContainer,createSearchActionView(searchCallBack));
+      concatenateAdapter.addAdapter(searchAdapter);
+    }
+
     if (listCallback != null) {
-      headerAdapter = new FixedViewsAdapter(createNewGroupItem(listCallback));
+      headerAdapter = new FixedViewsAdapter(requireContext(),72,rlContainer,createNewGroupItem(listCallback));
       headerAdapter.hide();
       concatenateAdapter.addAdapter(headerAdapter);
     }
 
-    concatenateAdapter.addAdapter(cursorRecyclerViewAdapter);
+    if (applyCallBack != null) {
+      applyAdapter = new FixedViewsAdapter(requireContext(), 72, rlContainer,createApplyActionView(applyCallBack));
+      concatenateAdapter.addAdapter(applyAdapter);
+    }
 
     if (listCallback != null) {
-      footerAdapter = new FixedViewsAdapter(createInviteActionView(listCallback));
+      footerAdapter = new FixedViewsAdapter(requireContext(),72,rlContainer,createInviteActionView(listCallback));
       footerAdapter.hide();
       concatenateAdapter.addAdapter(footerAdapter);
     }
 
-    recyclerView.addItemDecoration(new LetterHeaderDecoration(requireContext(), this::hideLetterHeaders));
+    if (refreshCallback!=null){
+      footer1Adapter = new FixedViewsAdapter(requireContext(),72,rlContainer,createRefreshActionView(refreshCallback));
+      concatenateAdapter.addAdapter(footer1Adapter);
+    }
+
+    concatenateAdapter.addAdapter(cursorRecyclerViewAdapter);
+
+//    recyclerView.addItemDecoration(new LetterHeaderDecoration(requireContext(), this::hideLetterHeaders));
     recyclerView.setAdapter(concatenateAdapter);
+    recyclerView.setClipToPadding(false);
+    recyclerView.setClipChildren(false);
+    recyclerView.setPadding(0, 76, 0, 200);
     recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
       @Override
       public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
@@ -459,16 +510,59 @@ public final class ContactSelectionListFragment extends LoggingFragment
   }
 
   private View createInviteActionView(@NonNull ListCallback listCallback) {
-    View view = LayoutInflater.from(requireContext())
-                              .inflate(R.layout.contact_selection_invite_action_item, (ViewGroup) requireView(), false);
+    TextView view = (TextView) LayoutInflater.from(requireContext())
+                                            .inflate(R.layout.contact_selection_invite_action_item, (ViewGroup) requireView(), false);
     view.setOnClickListener(v -> listCallback.onInvite());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setDefaultFocusHighlightEnabled(false);
+    }
+//    view.setOnFocusChangeListener(this::MP02_Animate);
+    return view;
+  }
+
+  private View createSearchActionView(@NonNull SearchCallBack searchCallBack) {
+    MyEditText view =
+        (MyEditText) LayoutInflater.from(requireContext())
+                                   .inflate(R.layout.contact_selection_search_action_item, (ViewGroup) requireView(), false);
+    MyEditText mEdit = view.findViewById(R.id.name);
+    mEdit.setOnFilterChangedListener((filter, nochange) -> {
+      setQueryFilter(filter);
+      searchAdapter.setScorllUp(nochange);
+    });
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setDefaultFocusHighlightEnabled(false);
+    }
+    return view;
+  }
+
+  private View createApplyActionView(@NonNull ApplyCallBack applyCallBack) {
+    TextView view = (TextView) LayoutInflater.from(requireContext())
+                                             .inflate(R.layout.contact_selection_apply_action_item, (ViewGroup) requireView(), false);
+    view.setOnClickListener(v -> applyCallBack.onApply());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setDefaultFocusHighlightEnabled(false);
+    }
+    return view;
+  }
+
+  private View createRefreshActionView(@NonNull RefreshCallback refreshCallback) {
+    TextView view = (TextView) LayoutInflater.from(requireContext())
+                              .inflate(R.layout.contact_selection_refresh_action_item, (ViewGroup) requireView(), false);
+    view.setOnClickListener(v -> refreshCallback.onReFresh());
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setDefaultFocusHighlightEnabled(false);
+    }
+//    view.setOnFocusChangeListener(this::MP02_Animate);
     return view;
   }
 
   private View createNewGroupItem(@NonNull ListCallback listCallback) {
-    View view = LayoutInflater.from(requireContext())
+    TextView view = (TextView) LayoutInflater.from(requireContext())
                               .inflate(R.layout.contact_selection_new_group_item, (ViewGroup) requireView(), false);
     view.setOnClickListener(v -> listCallback.onNewGroup(false));
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setDefaultFocusHighlightEnabled(false);
+    }
     return view;
   }
 
@@ -476,11 +570,10 @@ public final class ContactSelectionListFragment extends LoggingFragment
     swipeRefresh.setVisibility(View.GONE);
 
     showContactsLayout.setVisibility(View.VISIBLE);
-    showContactsProgress.setVisibility(View.INVISIBLE);
+//    showContactsProgress.setVisibility(View.INVISIBLE);
     showContactsDescription.setText(R.string.contact_selection_list_fragment__signal_needs_access_to_your_contacts_in_order_to_display_them);
-    showContactsButton.setVisibility(View.VISIBLE);
-
-    showContactsButton.setOnClickListener(v -> {
+    showContactsTextview.setVisibility(View.VISIBLE);
+    showContactsTextview.setOnClickListener(v -> {
       Permissions.with(this)
                  .request(Manifest.permission.WRITE_CONTACTS, Manifest.permission.READ_CONTACTS)
                  .ifNecessary()
@@ -492,6 +585,7 @@ public final class ContactSelectionListFragment extends LoggingFragment
                  })
                  .execute();
     });
+    showContactsTextview.setOnFocusChangeListener(this::MP02_Animate);
   }
 
   public void setQueryFilter(String filter) {
@@ -527,9 +621,9 @@ public final class ContactSelectionListFragment extends LoggingFragment
   @Override
   public @NonNull Loader<Cursor> onCreateLoader(int id, Bundle args) {
     FragmentActivity activity       = requireActivity();
+    Log.v(TAG, "onCreateLoader MODE :  " +  activity.getIntent().getIntExtra(DISPLAY_MODE, DisplayMode.FLAG_ALL));
     int              displayMode    = safeArguments().getInt(DISPLAY_MODE, activity.getIntent().getIntExtra(DISPLAY_MODE, DisplayMode.FLAG_ALL));
     boolean          displayRecents = shouldDisplayRecents();
-
     if (cursorFactoryProvider != null) {
       return cursorFactoryProvider.get().create();
     } else {
@@ -547,6 +641,9 @@ public final class ContactSelectionListFragment extends LoggingFragment
     if (footerAdapter != null) {
       footerAdapter.show();
     }
+    if (applyAdapter != null) {
+      applyAdapter.show();
+    }
 
     if (headerAdapter != null) {
       if (TextUtils.isEmpty(cursorFilter)) {
@@ -559,30 +656,23 @@ public final class ContactSelectionListFragment extends LoggingFragment
     emptyText.setText(R.string.contact_selection_group_activity__no_contacts);
     boolean useFastScroller = data != null && data.getCount() > 20;
     recyclerView.setVerticalScrollBarEnabled(!useFastScroller);
-    if (useFastScroller) {
-      fastScroller.setVisibility(View.VISIBLE);
-      fastScroller.setRecyclerView(recyclerView);
-    } else {
-      fastScroller.setRecyclerView(null);
-      fastScroller.setVisibility(View.GONE);
-    }
+//    if (useFastScroller) {
+//      fastScroller.setVisibility(View.VISIBLE);
+//      fastScroller.setRecyclerView(recyclerView);
+//    } else {
+//      fastScroller.setRecyclerView(null);
+//      fastScroller.setVisibility(View.GONE);
+//    }
+  }
 
-    if (headerActionView.isEnabled() && !hasQueryFilter()) {
-      headerActionView.setVisibility(View.VISIBLE);
-    } else {
-      headerActionView.setVisibility(View.GONE);
-    }
+  private boolean shouldDisplayRecents() {
+    return safeArguments().getBoolean(RECENTS, requireActivity().getIntent().getBooleanExtra(RECENTS, false));
   }
 
   @Override
   public void onLoaderReset(@NonNull Loader<Cursor> loader) {
     cursorRecyclerViewAdapter.changeCursor(null);
-    fastScroller.setVisibility(View.GONE);
-    headerActionView.setVisibility(View.GONE);
-  }
-
-  private boolean shouldDisplayRecents() {
-    return safeArguments().getBoolean(RECENTS, requireActivity().getIntent().getBooleanExtra(RECENTS, false));
+//    fastScroller.setVisibility(View.GONE);
   }
 
   @SuppressLint("StaticFieldLeak")
@@ -594,10 +684,10 @@ public final class ContactSelectionListFragment extends LoggingFragment
       protected void onPreExecute() {
         swipeRefresh.setVisibility(View.GONE);
         showContactsLayout.setVisibility(View.VISIBLE);
-        showContactsButton.setVisibility(View.INVISIBLE);
+        showContactsTextview.setVisibility(View.INVISIBLE);
         showContactsDescription.setText(R.string.ConversationListFragment_loading);
-        showContactsProgress.setVisibility(View.VISIBLE);
-        showContactsProgress.spin();
+//        showContactsProgress.setVisibility(View.VISIBLE);
+//        showContactsProgress.spin();
       }
 
       @Override
@@ -734,15 +824,6 @@ public final class ContactSelectionListFragment extends LoggingFragment
         }
       }
     }
-
-    @Override
-    public boolean onItemLongClick(ContactSelectionListItem item) {
-      if (onItemLongClickListener != null) {
-        return onItemLongClickListener.onLongClick(item, recyclerView);
-      } else {
-        return false;
-      }
-    }
   }
 
   private boolean selectionHardLimitReached() {
@@ -765,27 +846,80 @@ public final class ContactSelectionListFragment extends LoggingFragment
     if (onContactSelectedListener != null) {
       onContactSelectedListener.onSelectionChanged();
     }
+    cursorRecyclerViewAdapter.notifyItemRangeChanged(0, cursorRecyclerViewAdapter.getItemCount(), ContactSelectionListAdapter.PAYLOAD_SELECTION_CHANGE);
   }
 
   private void markContactUnselected(@NonNull SelectedContact selectedContact) {
     cursorRecyclerViewAdapter.removeFromSelectedContacts(selectedContact);
     cursorRecyclerViewAdapter.notifyItemRangeChanged(0, cursorRecyclerViewAdapter.getItemCount(), ContactSelectionListAdapter.PAYLOAD_SELECTION_CHANGE);
-    contactChipViewModel.remove(selectedContact);
-
+    removeChipForContact(selectedContact);
     if (onContactSelectedListener != null) {
       onContactSelectedListener.onSelectionChanged();
     }
   }
 
-  private void handleSelectedContactsChanged(@NonNull List<SelectedContacts.Model> selectedContacts) {
-    contactChipAdapter.submitList(new MappingModelList(selectedContacts), this::smoothScrollChipsToEnd);
-
-    if (selectedContacts.isEmpty()) {
-      setChipGroupVisibility(ConstraintSet.GONE);
-    } else {
-      setChipGroupVisibility(ConstraintSet.VISIBLE);
+  private void removeChipForContact(@NonNull SelectedContact contact) {
+    for (int i = chipGroup.getChildCount() - 1; i >= 0; i--) {
+      View v = chipGroup.getChildAt(i);
+      if (v instanceof ContactChip && contact.matches(((ContactChip) v).getContact())) {
+        chipGroup.removeView(v);
+      }
     }
 
+    if (getChipCount() == 0) {
+//      setChipGroupVisibility(ConstraintSet.GONE);
+    }
+  }
+
+  private void addChipForSelectedContact(@NonNull SelectedContact selectedContact) {
+    SimpleTask.run(getViewLifecycleOwner().getLifecycle(),
+                   ()       -> Recipient.resolved(selectedContact.getOrCreateRecipientId(requireContext())),
+                   resolved -> addChipForRecipient(resolved, selectedContact));
+  }
+
+  private void addChipForRecipient(@NonNull Recipient recipient, @NonNull SelectedContact selectedContact) {
+    final ContactChip chip = new ContactChip(requireContext());
+
+    if (getChipCount() == 0) {
+//      setChipGroupVisibility(ConstraintSet.VISIBLE);
+    }
+
+    chip.setText(recipient.getShortDisplayName(requireContext()));
+    chip.setContact(selectedContact);
+    chip.setCloseIconVisible(true);
+    chip.setOnCloseIconClickListener(view -> {
+      markContactUnselected(selectedContact);
+
+      if (onContactSelectedListener != null) {
+        onContactSelectedListener.onContactDeselected(Optional.of(recipient.getId()), recipient.getE164().orElse(null));
+      }
+    });
+
+    chipGroup.getLayoutTransition().addTransitionListener(new LayoutTransition.TransitionListener() {
+      @Override
+      public void startTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+      }
+
+      @Override
+      public void endTransition(LayoutTransition transition, ViewGroup container, View view, int transitionType) {
+        if (getView() == null || !requireView().isAttachedToWindow()) {
+          Log.w(TAG, "Fragment's view was detached before the animation completed.");
+          return;
+        }
+
+        if (view == chip && transitionType == LayoutTransition.APPEARING) {
+          chipGroup.getLayoutTransition().removeTransitionListener(this);
+          registerChipRecipientObserver(chip, recipient.live());
+          chipGroup.post(ContactSelectionListFragment.this::smoothScrollChipsToEnd);
+        }
+      }
+    });
+
+    chip.setAvatar(glideRequests, recipient, () -> addChip(chip));
+  }
+
+  private void addChip(@NonNull ContactChip chip) {
+    chipGroup.addView(chip);
     if (selectionWarningLimitReachedExactly()) {
       if (onSelectionLimitReachedListener != null) {
         onSelectionLimitReachedListener.onSuggestedLimitReached(selectionLimit.getRecommendedLimit());
@@ -795,41 +929,32 @@ public final class ContactSelectionListFragment extends LoggingFragment
     }
   }
 
-  private void addChipForSelectedContact(@NonNull SelectedContact selectedContact) {
-    SimpleTask.run(getViewLifecycleOwner().getLifecycle(),
-                   () -> Recipient.resolved(selectedContact.getOrCreateRecipientId(requireContext())),
-                   resolved -> contactChipViewModel.add(selectedContact));
-  }
-
-  private Unit onChipCloseIconClicked(SelectedContacts.Model model) {
-    markContactUnselected(model.getSelectedContact());
-    if (onContactSelectedListener != null) {
-      onContactSelectedListener.onContactDeselected(Optional.of(model.getRecipient().getId()), model.getRecipient().getE164().orElse(null));
-    }
-
-    return Unit.INSTANCE;
-  }
-
   private int getChipCount() {
-    int count = contactChipViewModel.getCount() - CHIP_GROUP_EMPTY_CHILD_COUNT;
+    int count = chipGroup.getChildCount() - CHIP_GROUP_EMPTY_CHILD_COUNT;
     if (count < 0) throw new AssertionError();
     return count;
+  }
+
+  private void registerChipRecipientObserver(@NonNull ContactChip chip, @Nullable LiveRecipient recipient) {
+    if (recipient != null) {
+      recipient.observe(getViewLifecycleOwner(), resolved -> {
+        if (chip.isAttachedToWindow()) {
+          chip.setAvatar(glideRequests, resolved, null);
+          chip.setText(resolved.getShortDisplayName(chip.getContext()));
+        }
+      });
+    }
   }
 
   private void setChipGroupVisibility(int visibility) {
     if (!safeArguments().getBoolean(DISPLAY_CHIPS, requireActivity().getIntent().getBooleanExtra(DISPLAY_CHIPS, true))) {
       return;
     }
-
-    AutoTransition transition = new AutoTransition();
-    transition.setDuration(CHIP_GROUP_REVEAL_DURATION_MS);
-    transition.excludeChildren(recyclerView, true);
-    transition.excludeTarget(recyclerView, true);
-    TransitionManager.beginDelayedTransition(constraintLayout, transition);
+    TransitionManager.beginDelayedTransition(constraintLayout, new AutoTransition().setDuration(CHIP_GROUP_REVEAL_DURATION_MS));
 
     ConstraintSet constraintSet = new ConstraintSet();
     constraintSet.clone(constraintLayout);
-    constraintSet.setVisibility(R.id.chipRecycler, visibility);
+    constraintSet.setVisibility(R.id.chipGroupScrollContainer, visibility);
     constraintSet.applyTo(constraintLayout);
   }
 
@@ -838,30 +963,131 @@ public final class ContactSelectionListFragment extends LoggingFragment
   }
 
   private void smoothScrollChipsToEnd() {
-    int x = ViewUtil.isLtr(chipRecycler) ? chipRecycler.getWidth() : 0;
-    chipRecycler.smoothScrollBy(x, 0);
+    int x = ViewUtil.isLtr(chipGroupScrollContainer) ? chipGroup.getWidth() : 0;
+    chipGroupScrollContainer.smoothScrollTo(x, 0);
   }
 
   public interface OnContactSelectedListener {
-    /**
-     * Provides an opportunity to disallow selecting an item. Call the callback with false to disallow, or true to allow it.
-     */
-    void onBeforeContactSelected(@NonNull Optional<RecipientId> recipientId, @Nullable String number, @NonNull Consumer<Boolean> callback);
-
-    void onContactDeselected(@NonNull Optional<RecipientId> recipientId, @Nullable String number);
-
+    /** Provides an opportunity to disallow selecting an item. Call the callback with false to disallow, or true to allow it. */
+    void onBeforeContactSelected(Optional<RecipientId> recipientId, String number, Consumer<Boolean> callback);
+    void onContactDeselected(Optional<RecipientId> recipientId, String number);
     void onSelectionChanged();
   }
 
+  private View.OnFocusChangeListener onFocusChangeListener2 = new View.OnFocusChangeListener() {
+    @Override
+    public void onFocusChange(View view, boolean focused) {
+      int position = recyclerView.getChildAdapterPosition(view);
+//      recyclerView.getChildCount();
+      if (focused){
+        if (position == 0){
+          itemAnimViewController.setItemVisibility(true);
+        }else itemAnimViewController.setItemVisibility(false);
+        TextView textView = (TextView) recyclerView.getLayoutManager().findViewByPosition(position);
+        if (isScrollUp){
+          TextView textViewLast = (TextView) recyclerView.getLayoutManager().findViewByPosition(position-1);
+          itemAnimViewController.actionUpIn(textViewLast.getText().toString(),textView.getText().toString());
+        }else {
+          if (position == 1){
+            ContactSelectionListItem clItem = (ContactSelectionListItem) recyclerView.getLayoutManager().findViewByPosition(position+1);
+            TextView text = (TextView)(clItem.nameView);
+            itemAnimViewController.actionDownIn(text.getText().toString(),textView.getText().toString());
+          }else {
+            TextView textViewLast = (TextView) recyclerView.getLayoutManager().findViewByPosition(position+1);
+            itemAnimViewController.actionDownIn(textViewLast.getText().toString(),textView.getText().toString());
+          }
+        }
+
+      }
+
+      TextView item = (TextView) view;
+      float height = ((float) (mFocusHeight - mNormalHeight)) * (focused ? 1 : 0) + (float) mNormalHeight;
+      float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (focused ? 1 : 0) + mNormalTextSize;
+      float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (focused ? 1 : 0);
+      int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (focused ? 1 : 0));
+      int color = alpha * 0x1000000 + 0xffffff;
+      item.setPadding((int) padding,item.getPaddingTop(),item.getPaddingRight(),item.getPaddingBottom());
+      item.setTextSize((int) textsize);
+      item.setTextColor(color);
+      item.getLayoutParams().height = (int) height;
+    }
+  };
+
+
+  public View.OnFocusChangeListener onFocusChangeListener = new View.OnFocusChangeListener() {
+    @Override
+    public void onFocusChange(View view, boolean focused) {
+//      ValueAnimator va ;
+      ContactSelectionListItem CSLitem;
+      CSLitem=(ContactSelectionListItem)(view);
+      TextView text1 = (TextView)(CSLitem.nameView);
+      TextView text2 = (TextView)(CSLitem.numberView);
+      TextView text3 = (TextView)(CSLitem.labelView);
+      //Log.d(TAG,"focused is:"+focused+" text1 is:"+text1.getText().toString()+" text23 is:"+text2.getText().toString()+" "+text3.getText().toString());
+      if(focused){
+        int position = recyclerView.getChildAdapterPosition(view);
+        ContactSelectionListItem clItem = (ContactSelectionListItem) recyclerView.getLayoutManager().findViewByPosition(position);
+        TextView textView = clItem.nameView;
+        if (isScrollUp){
+          if (position == 2){
+            TextView lastview = (TextView) recyclerView.getLayoutManager().findViewByPosition(position-1);
+            itemAnimViewController.actionUpIn(lastview.getText().toString(),textView.getText().toString());
+          }else {
+            ContactSelectionListItem lastClItem = (ContactSelectionListItem) recyclerView.getLayoutManager().findViewByPosition(position-1);
+            TextView lastview = lastClItem.nameView;
+            itemAnimViewController.actionUpIn(lastview.getText().toString(),textView.getText().toString());
+          }
+        }else {
+          ContactSelectionListItem lastClItem = (ContactSelectionListItem) recyclerView.getLayoutManager().findViewByPosition(position+1);
+          TextView lastview = lastClItem.nameView;
+          itemAnimViewController.actionUpIn(lastview.getText().toString(),textView.getText().toString());
+        }
+      }
+      float height = focused?mFocusHeight:mNormalHeight;
+      float textsize = (float) mNormalTextSize;
+      float padding = focused?(float)mNormalPaddingX -1:(float)mNormalPaddingX;
+      int alpha = 0x81 ;
+      int color =  alpha*0x1000000 + 0xffffff;
+
+//          if(focused){
+//            CSLitem.getLayoutParams().height = (int)height + mNormalHeight;
+//            text1.getLayoutParams().height=mNormalHeight + 5;
+//
+//          } else {
+//            CSLitem.getLayoutParams().height = (int)height;
+//          }
+
+      text1.setTextSize((int)textsize);
+      text1.setTextColor(color);
+      view.setPadding((int) padding,view.getPaddingTop(),view.getPaddingRight(),view.getPaddingBottom());
+      text1.getLayoutParams().height = (int)height;
+      view.getLayoutParams().height = (int) height;
+
+//        }
+//      });
+//
+//      FastOutLinearInInterpolator FastOutLinearInInterpolator = new FastOutLinearInInterpolator();
+//      va.setInterpolator(FastOutLinearInInterpolator);
+//      if (focused) {
+//        va.setDuration(270);
+//        va.start();
+//      } else {
+//        va.setDuration(270);
+//        va.start();
+//      }
+//      oldtext1 = text1.getText().toString();
+//      oldtext2 = text2.getText().toString() + " " +text3.getText().toString();
+
+    }
+  };
+
   public interface OnSelectionLimitReachedListener {
     void onSuggestedLimitReached(int limit);
-
     void onHardLimitReached(int limit);
   }
 
   public interface ListCallback {
     void onInvite();
-
     void onNewGroup(boolean forceV1);
   }
 
@@ -879,5 +1105,17 @@ public final class ContactSelectionListFragment extends LoggingFragment
 
   public interface AbstractContactsCursorLoaderFactoryProvider {
     @NonNull AbstractContactsCursorLoader.Factory get();
+  }
+
+  public interface RefreshCallback{
+    void onReFresh();
+  }
+
+  public interface SearchCallBack {
+    void onSearch(View view);
+  }
+
+  public interface ApplyCallBack {
+    void onApply();
   }
 }

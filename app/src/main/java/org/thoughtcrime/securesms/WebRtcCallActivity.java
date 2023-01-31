@@ -332,8 +332,7 @@ public class WebRtcCallActivity extends BaseActivity implements SafetyNumberChan
 
     LiveDataUtil.combineLatest(viewModel.getCallParticipantsState(),
                                viewModel.getOrientationAndLandscapeEnabled(),
-                               viewModel.getEphemeralState(),
-                               (s, o, e) -> new CallParticipantsViewState(s, e, o.first == PORTRAIT_BOTTOM_EDGE, o.second))
+                               (s, o) -> new CallParticipantsViewState(s, o.first == PORTRAIT_BOTTOM_EDGE, o.second))
                 .observe(this, p -> callScreen.updateCallParticipants(p));
     viewModel.getCallParticipantListUpdate().observe(this, participantUpdateWindow::addCallParticipantListUpdate);
     viewModel.getSafetyNumberChangeEvent().observe(this, this::handleSafetyNumberChangeEvent);

@@ -21,6 +21,7 @@ import android.animation.Animator;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -223,6 +225,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   private final LifecycleDisposable lastSeenDisposable     = new LifecycleDisposable();
 
   private ConversationFragmentListener listener;
+  private int mPos = -1;
 
   private LiveRecipient               recipient;
   private long                        threadId;
@@ -333,7 +336,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     list.addItemDecoration(multiselectItemDecoration);
     list.setItemAnimator(conversationItemAnimator);
 
-    ((Material3OnScrollHelperBinder) requireParentFragment()).bindScrollHelper(list);
+//    ((Material3OnScrollHelperBinder) requireActivity()).bindScrollHelper(list);
 
     getViewLifecycleOwner().getLifecycle().addObserver(multiselectItemDecoration);
 
@@ -359,9 +362,9 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
     giphyMp4ProjectionRecycler = initializeGiphyMp4();
 
-    this.groupViewModel         = new ViewModelProvider(getParentFragment(), (ViewModelProvider.Factory) new ConversationGroupViewModel.Factory()).get(ConversationGroupViewModel.class);
-    this.messageCountsViewModel = new ViewModelProvider(getParentFragment()).get(MessageCountsViewModel.class);
-    this.conversationViewModel  = new ViewModelProvider(getParentFragment(), (ViewModelProvider.Factory) new ConversationViewModel.Factory()).get(ConversationViewModel.class);
+    this.groupViewModel         = new ViewModelProvider(requireActivity(), new ConversationGroupViewModel.Factory()).get(ConversationGroupViewModel.class);
+    this.messageCountsViewModel = new ViewModelProvider(requireActivity()).get(MessageCountsViewModel.class);
+    this.conversationViewModel  = new ViewModelProvider(requireActivity(), new ConversationViewModel.Factory()).get(ConversationViewModel.class);
 
     disposables.add(conversationViewModel.getChatColors().subscribe(chatColors -> {
       recyclerViewColorizer.setChatColors(chatColors);
@@ -425,7 +428,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     conversationUpdateTick = new ConversationUpdateTick(this::updateConversationItemTimestamps);
     getViewLifecycleOwner().getLifecycle().addObserver(conversationUpdateTick);
 
-    listener.getVoiceNoteMediaController().getVoiceNotePlayerViewState().observe(getViewLifecycleOwner(), state -> conversationViewModel.setInlinePlayerVisible(state.isPresent()));
+//    listener.getVoiceNoteMediaController().getVoiceNotePlayerViewState().observe(getViewLifecycleOwner(), state -> conversationViewModel.setInlinePlayerVisible(state.isPresent()));
     conversationViewModel.getConversationTopMargin().observe(getViewLifecycleOwner(), topMargin -> {
       lastSeenScrollOffset = topMargin;
       ViewUtil.setTopMargin(scrollDateHeader, topMargin + ViewUtil.dpToPx(8));
@@ -486,9 +489,9 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   }
 
   @Override
-  public void onAttach(Context context) {
-    super.onAttach(context);
-    this.listener = (ConversationFragmentListener) getParentFragment();
+  public void onAttach(Activity activity) {
+    super.onAttach(activity);
+    this.listener = (ConversationFragmentListener) activity;
   }
 
   @Override
@@ -527,6 +530,54 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   public void onConfigurationChanged(@NonNull Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
     updateToolbarDependentMargins();
+  }
+
+  public RecyclerView getList() {
+    return list;
+  }
+
+  public int getCurrentPosition() {
+    return mPos;
+  }
+
+  public boolean isLongerMsgItem(int keyCode) {
+    final ConversationAdapter adapter = (ConversationAdapter) list.getAdapter();
+
+    Rect rect = new Rect();
+    boolean visibility = list.getGlobalVisibleRect(rect);
+    if (null == adapter || adapter.getItemCount() == 0 || !visibility) {
+      return false;
+    }
+    final View lastVisibleChild = getListLayoutManager().getFocusedChild();
+    if (lastVisibleChild == null) {
+      getListLayoutManager().smoothScrollToPosition(getActivity(), 0, 100);
+      getListLayoutManager().getChildAt(0).requestFocus();
+      return false;
+    }
+
+    final int lastVisiblePosition = getListLayoutManager().findLastVisibleItemPosition();
+    final int childIndex = lastVisiblePosition - getListLayoutManager().findFirstVisibleItemPosition();
+    final int childCount = list.getChildCount();
+    final int index = Math.min(childIndex, childCount - 1);
+//    final View lastVisibleChild = list.getChildAt(index);
+    switch (keyCode) {
+      case KeyEvent.KEYCODE_DPAD_DOWN: {
+        if (lastVisibleChild != null) {
+          return lastVisibleChild.getTop() <= list.getBottom() && lastVisibleChild.getBottom() > list.getBottom();
+        }
+      }
+      case KeyEvent.KEYCODE_DPAD_UP: {
+        if (lastVisibleChild != null) {
+          if (lastVisibleChild.getTop()>20){
+            list.scrollBy(0,-80);
+          }
+          //TODO When conversation item close to list top, then press up key, will not move up, temp fix, need further check.
+          return lastVisibleChild.getTop() <= list.getTop() + 8;
+        }
+      }
+    }
+
+    return false;
   }
 
   public void onNewIntent() {
@@ -593,7 +644,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   private void initializeMessageRequestViewModel() {
     MessageRequestViewModel.Factory factory = new MessageRequestViewModel.Factory(requireContext());
 
-    messageRequestViewModel = new ViewModelProvider(requireParentFragment(), factory).get(MessageRequestViewModel.class);
+    messageRequestViewModel = new ViewModelProvider(requireActivity(), factory).get(MessageRequestViewModel.class);
     messageRequestViewModel.setConversationInfo(recipient.getId(), threadId);
 
     listener.onMessageRequest(messageRequestViewModel);
@@ -927,7 +978,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     return (ConversationAdapter) list.getAdapter();
   }
 
-  private SmoothScrollingLinearLayoutManager getListLayoutManager() {
+  public SmoothScrollingLinearLayoutManager getListLayoutManager() {
     return (SmoothScrollingLinearLayoutManager) list.getLayoutManager();
   }
 
@@ -1299,7 +1350,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     }
   }
 
-  private boolean isAtBottom() {
+  public boolean isAtBottom() {
     if (list.getChildCount() == 0) return true;
 
     int firstVisiblePosition = getListLayoutManager().findFirstVisibleItemPosition();
@@ -1316,7 +1367,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     return getListAdapter().isTypingViewEnabled();
   }
 
-  private void onSearchQueryUpdated(@Nullable String query) {
+  public void onSearchQueryUpdated(@Nullable String query) {
     if (getListAdapter() != null) {
       getListAdapter().onSearchQueryUpdated(query);
     }
@@ -1656,11 +1707,6 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
           bodyBubble.setVisibility(View.INVISIBLE);
           conversationItem.reactionsView.setVisibility(View.INVISIBLE);
 
-          boolean quotedIndicatorVisible = conversationItem.quotedIndicator != null && conversationItem.quotedIndicator.getVisibility() == View.VISIBLE;
-          if (quotedIndicatorVisible && conversationItem.quotedIndicator != null) {
-            ViewUtil.fadeOut(conversationItem.quotedIndicator, 150, View.INVISIBLE);
-          }
-
           ViewUtil.hideKeyboard(requireContext(), conversationItem);
 
           boolean showScrollButtons = conversationViewModel.getShowScrollButtons();
@@ -1697,9 +1743,6 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
                                       bodyBubble.setVisibility(View.VISIBLE);
                                       conversationItem.reactionsView.setVisibility(View.VISIBLE);
-                                      if (quotedIndicatorVisible && conversationItem.quotedIndicator != null) {
-                                        ViewUtil.fadeIn(conversationItem.quotedIndicator, 150);
-                                      }
 
                                       if (showScrollButtons) {
                                         conversationViewModel.setShowScrollButtons(true);

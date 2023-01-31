@@ -377,4 +377,23 @@
         <item>@string/PlaybackSpeedToggleTextView__p5x</item>
     </string-array>
 
+    <string-array name="conversation_list_item_menu">
+        <item>@string/conversation_list_fragment__fab_content_description</item>
+        <item>@string/text_secure_normal__menu_new_group</item>
+        <item>@string/text_secure_normal__mark_all_as_read</item>
+        <item>@string/text_secure_normal__menu_settings</item>
+        <item>@string/SearchToolbar_search</item>
+        <item>divider</item>
+    </string-array>
+
+    <string-array name="conversation_list_item_archive_options_menu">
+        <item>@string/conversation_list_batch_unarchive__menu_unarchive_selected</item>
+        <item>@string/conversation_list_batch__menu_delete_selected</item>
+    </string-array>
+
+    <string-array name="conversation_list_item_options_menu">
+        <item>@string/conversation_list_batch_archive__menu_archive_selected</item>
+        <item>@string/conversation_list_batch__menu_delete_selected</item>
+    </string-array>
+
 </resources>

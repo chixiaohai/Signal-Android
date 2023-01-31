@@ -35,7 +35,7 @@ public abstract class BaseAccountLockedFragment extends LoggingFragment {
 
     BaseRegistrationViewModel viewModel = getViewModel();
     viewModel.getLockedTimeRemaining().observe(getViewLifecycleOwner(),
-      t -> description.setText(getString(R.string.AccountLockedFragment__your_account_has_been_locked_to_protect_your_privacy, durationToDays(t)))
+                                               t -> description.setText(getString(R.string.AccountLockedFragment__your_account_has_been_locked_to_protect_your_privacy, durationToDays(t)))
     );
 
     view.findViewById(R.id.account_locked_next).setOnClickListener(v -> onNext());

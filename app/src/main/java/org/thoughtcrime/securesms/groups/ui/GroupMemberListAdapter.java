@@ -1,6 +1,8 @@
 package org.thoughtcrime.securesms.groups.ui;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,24 +12,31 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.badges.BadgeImageView;
-import org.thoughtcrime.securesms.components.AvatarImageView;
-import org.thoughtcrime.securesms.components.emoji.EmojiTextView;
 import org.thoughtcrime.securesms.recipients.Recipient;
-import org.thoughtcrime.securesms.util.Util;
+import org.thoughtcrime.securesms.util.LifecycleRecyclerAdapter;
+import org.thoughtcrime.securesms.util.LifecycleViewHolder;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListAdapter.ViewHolder> {
+final class GroupMemberListAdapter extends LifecycleRecyclerAdapter<GroupMemberListAdapter.ViewHolder> {
+
+  private static final String TAG = Log.tag(GroupMemberListAdapter.class);
+
+  private int mNormalPadding = 30;
+  private int mFocusedPadding = 5;
+  private int mNormalTextSize = 24;
+  private int mFocusedTextSize = 40;
+  private int mNormalHeight = 32;
+  private int mFocusedHeight = 56;
 
   private static final int FULL_MEMBER                = 0;
   private static final int OWN_INVITE_PENDING         = 1;
@@ -40,16 +49,16 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
   private final SelectionChangeListener selectionChangeListener = new SelectionChangeListener();
 
   private final boolean                 selectable;
-  private final LifecycleOwner          lifecycleOwner;
 
   @Nullable private AdminActionsListener             adminActionsListener;
   @Nullable private RecipientClickListener           recipientClickListener;
   @Nullable private RecipientLongClickListener       recipientLongClickListener;
   @Nullable private RecipientSelectionChangeListener recipientSelectionChangeListener;
+  @Nullable private View.OnFocusChangeListener       focusChangeListener;
 
-  GroupMemberListAdapter(boolean selectable, @NonNull LifecycleOwner lifecycleOwner) {
-    this.selectable     = selectable;
-    this.lifecycleOwner = lifecycleOwner;
+
+  GroupMemberListAdapter(boolean selectable) {
+    this.selectable = selectable;
   }
 
   void updateData(@NonNull List<? extends GroupMemberEntry> recipients) {
@@ -80,13 +89,8 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
   }
 
   @Override
-  public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
-    super.onViewDetachedFromWindow(holder);
-    holder.unbind();
-  }
-
-  @Override
   public @NonNull ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    Log.d(TAG, "onCreateViewHolder viewType : " + viewType);
     switch (viewType) {
       case FULL_MEMBER:
         return new FullMemberViewHolder(LayoutInflater.from(parent.getContext())
@@ -95,41 +99,33 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                                         recipientLongClickListener,
                                         adminActionsListener,
                                         selectionChangeListener,
-                                        selectable,
-                                        lifecycleOwner);
+                                        focusChangeListener);
       case OWN_INVITE_PENDING:
         return new OwnInvitePendingMemberViewHolder(LayoutInflater.from(parent.getContext())
                                                                   .inflate(R.layout.group_recipient_list_item, parent, false),
                                                     recipientClickListener,
                                                     recipientLongClickListener,
                                                     adminActionsListener,
-                                                    selectionChangeListener,
-                                                    selectable,
-                                                    lifecycleOwner);
+                                                    selectionChangeListener);
       case OTHER_INVITE_PENDING_COUNT:
         return new UnknownPendingMemberCountViewHolder(LayoutInflater.from(parent.getContext())
                                                                      .inflate(R.layout.group_recipient_list_item, parent, false),
                                                        adminActionsListener,
-                                                       selectionChangeListener,
-                                                       selectable,
-                                                       lifecycleOwner);
+                                                       selectionChangeListener);
       case NEW_GROUP_CANDIDATE:
         return new NewGroupInviteeViewHolder(LayoutInflater.from(parent.getContext())
                                                            .inflate(R.layout.group_new_candidate_recipient_list_item, parent, false),
                                              recipientClickListener,
                                              recipientLongClickListener,
                                              selectionChangeListener,
-                                             selectable,
-                                             lifecycleOwner);
+                                             focusChangeListener);
       case REQUESTING_MEMBER:
         return new RequestingMemberViewHolder(LayoutInflater.from(parent.getContext())
-                                                           .inflate(R.layout.group_recipient_requesting_list_item, parent, false),
+                                                            .inflate(R.layout.group_recipient_requesting_list_item, parent, false),
                                               recipientClickListener,
                                               recipientLongClickListener,
                                               adminActionsListener,
-                                              selectionChangeListener,
-                                              selectable,
-                                              lifecycleOwner);
+                                              selectionChangeListener);
 
       default:
         throw new AssertionError();
@@ -152,10 +148,60 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
     this.recipientSelectionChangeListener = recipientSelectionChangeListener;
   }
 
+  void setRecipientFocusChangeListener(@Nullable View.OnFocusChangeListener focusChangeListener) {
+    this.focusChangeListener = focusChangeListener;
+  }
+
   @Override
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     GroupMemberEntry entry = data.get(position);
     holder.bind(entry, selection.contains(entry));
+    if (focusChangeListener == null) {
+      holder.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+          startFocusAnimation(v.findViewById(R.id.recipient_name), hasFocus);
+          startFocusAnimation(v.findViewById(R.id.admin), hasFocus);
+        }
+      });
+    }
+  }
+
+  private void startFocusAnimation(TextView tv, boolean focused) {
+
+    ValueAnimator va;
+    if (focused) {
+      va = ValueAnimator.ofFloat(0, 1);
+    } else {
+      va = ValueAnimator.ofFloat(1, 0);
+    }
+
+    va.addUpdateListener(valueAnimator -> {
+      float scale = (float) valueAnimator.getAnimatedValue();
+      float height = ((float) (mFocusedHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
+      float textsize = ((float) (mFocusedTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
+      float padding = (float) mNormalPadding - ((float) (mNormalPadding - mFocusedPadding)) * (scale);
+      int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
+      int color = alpha * 0x1000000 + 0xffffff;
+
+      tv.setTextColor(color);
+      tv.setPadding((int) padding, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
+      tv.setTextSize((int) textsize);
+      tv.getLayoutParams().height = (int) height;
+    });
+
+    FastOutLinearInInterpolator mInterpolator = new FastOutLinearInInterpolator();
+    va.setInterpolator(mInterpolator);
+    tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+    if (focused) {
+      tv.setSelected(true);
+      va.setDuration(300);
+      va.start();
+    } else {
+      tv.setSelected(false);
+      va.setDuration(300);
+      va.start();
+    }
   }
 
   @Override
@@ -182,43 +228,32 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
     return data.size();
   }
 
-  static abstract class ViewHolder extends RecyclerView.ViewHolder {
+  static abstract class ViewHolder extends LifecycleViewHolder {
 
-              final Context                    context;
-              final AvatarImageView            avatar;
-              final BadgeImageView             badge;
-              final TextView                   recipient;
-              final EmojiTextView              about;
-              final CheckBox                   selected;
-              final PopupMenuView              popupMenu;
-              final View                       popupMenuContainer;
-              final ProgressBar                busyProgress;
-    @Nullable final View                       admin;
-              final SelectionChangeListener    selectionChangeListener;
+    final Context                    context;
+    final TextView                   recipient;
+    final CheckBox                   selected;
+    final PopupMenuView              popupMenu;
+    final View                       popupMenuContainer;
+    final ProgressBar                busyProgress;
+    @Nullable final TextView                   admin;
+    final SelectionChangeListener    selectionChangeListener;
     @Nullable final RecipientClickListener     recipientClickListener;
     @Nullable final AdminActionsListener       adminActionsListener;
     @Nullable final RecipientLongClickListener recipientLongClickListener;
-              final boolean                    selectable;
-              final LifecycleOwner             lifecycleOwner;
-              final Observer<Boolean>          busyObserver;
-
-    Runnable stopListeningToBusyChanges;
+    @Nullable final View.OnFocusChangeListener focusChangeListener;
 
     ViewHolder(@NonNull View itemView,
                @Nullable RecipientClickListener recipientClickListener,
                @Nullable RecipientLongClickListener recipientLongClickListener,
                @Nullable AdminActionsListener adminActionsListener,
                @NonNull SelectionChangeListener selectionChangeListener,
-               boolean selectable,
-               @NonNull LifecycleOwner lifecycleOwner)
+               @Nullable View.OnFocusChangeListener focusChangeListener)
     {
       super(itemView);
 
       this.context                    = itemView.getContext();
-      this.avatar                     = itemView.findViewById(R.id.recipient_avatar);
-      this.badge                      = itemView.findViewById(R.id.recipient_badge);
       this.recipient                  = itemView.findViewById(R.id.recipient_name);
-      this.about                      = itemView.findViewById(R.id.recipient_about);
       this.selected                   = itemView.findViewById(R.id.recipient_selected);
       this.popupMenu                  = itemView.findViewById(R.id.popupMenu);
       this.popupMenuContainer         = itemView.findViewById(R.id.popupMenuProgressContainer);
@@ -228,41 +263,17 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
       this.recipientLongClickListener = recipientLongClickListener;
       this.adminActionsListener       = adminActionsListener;
       this.selectionChangeListener    = selectionChangeListener;
-      this.selectable                 = selectable;
-      this.lifecycleOwner             = lifecycleOwner;
-      this.busyObserver               = this::onBusyChanged;
-    }
-
-    private void onBusyChanged(boolean busy) {
-      busyProgress.setVisibility(busy ? View.VISIBLE : View.GONE);
-      popupMenu.setVisibility(busy ? View.GONE : View.VISIBLE);
-    }
-
-    void unbind() {
-      if (stopListeningToBusyChanges != null) {
-        stopListeningToBusyChanges.run();
-      }
+      this.focusChangeListener        = focusChangeListener;
     }
 
     void bindRecipient(@NonNull Recipient recipient) {
       String displayName = recipient.isSelf() ? context.getString(R.string.GroupMembersDialog_you)
                                               : recipient.getDisplayName(itemView.getContext());
-      bindImageAndText(recipient, displayName, recipient.getCombinedAboutAndEmoji());
+      bindImageAndText(recipient, displayName);
     }
 
-    void bindImageAndText(@NonNull Recipient recipient, @NonNull String displayText, @Nullable String about) {
+    void bindImageAndText(@NonNull Recipient recipient, @NonNull String displayText) {
       this.recipient.setText(displayText);
-      this.avatar.setRecipient(recipient);
-
-      if (this.badge != null) {
-        this.badge.setBadgeFromRecipient(recipient);
-        this.badge.setClickable(false);
-      }
-
-      if (this.about != null) {
-        this.about.setText(about);
-        this.about.setVisibility(Util.isEmpty(about) ? View.GONE : View.VISIBLE);
-      }
     }
 
     void bindRecipientClick(@NonNull Recipient recipient) {
@@ -288,6 +299,18 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
         }
         return false;
       });
+
+      this.itemView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        @Override
+        public void onFocusChange(View view, boolean b) {
+          if (focusChangeListener != null && ViewHolder.this.getAdapterPosition() != RecyclerView.NO_POSITION) {
+            focusChangeListener.onFocusChange(ViewHolder.this.getRecipientView(), b);
+            if (getAdminView() != null && getAdminView().getVisibility() == View.VISIBLE) {
+              focusChangeListener.onFocusChange(ViewHolder.this.getAdminView(), b);
+            }
+          }
+        }
+      });
     }
 
     void bind(@NonNull GroupMemberEntry memberEntry, boolean isSelected) {
@@ -299,15 +322,12 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
 
       itemView.setOnClickListener(null);
 
-      memberEntry.getBusy().observe(lifecycleOwner, busyObserver);
-      stopListeningToBusyChanges = () -> memberEntry.getBusy().removeObserver(busyObserver);
+      memberEntry.getBusy().observe(this, busy -> {
+        busyProgress.setVisibility(busy ? View.VISIBLE : View.GONE);
+        popupMenu.setVisibility(busy ? View.GONE : View.VISIBLE);
+      });
 
       selected.setChecked(isSelected);
-      if (!selectable && !isSelected) {
-        selected.setVisibility(View.GONE);
-      } else {
-        selected.setVisibility(View.VISIBLE);
-      }
     }
 
     void hideMenu() {
@@ -319,6 +339,11 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
       popupMenuContainer.setVisibility(View.VISIBLE);
       popupMenu.setVisibility(View.VISIBLE);
     }
+
+    TextView getRecipientView() {
+      return this.recipient;
+    }
+    TextView getAdminView() {return this.admin;}
   }
 
   final static class FullMemberViewHolder extends ViewHolder {
@@ -328,10 +353,9 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                          @Nullable RecipientLongClickListener recipientLongClickListener,
                          @Nullable AdminActionsListener adminActionsListener,
                          @NonNull SelectionChangeListener selectionChangeListener,
-                         boolean selectable,
-                         @NonNull LifecycleOwner lifecycleOwner)
+                         @Nullable View.OnFocusChangeListener focusChangeListener)
     {
-      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, selectable, lifecycleOwner);
+      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, focusChangeListener);
     }
 
     @Override
@@ -343,7 +367,7 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
       bindRecipient(fullMember.getMember());
       bindRecipientClick(fullMember.getMember());
       if (admin != null) {
-        admin.setVisibility(fullMember.isAdmin() ? View.VISIBLE : View.INVISIBLE);
+        admin.setVisibility(fullMember.isAdmin() ? View.VISIBLE : View.GONE);
       }
     }
   }
@@ -356,10 +380,9 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                               @Nullable RecipientClickListener recipientClickListener,
                               @Nullable RecipientLongClickListener recipientLongClickListener,
                               @NonNull SelectionChangeListener selectionChangeListener,
-                              boolean selectable,
-                              @NonNull LifecycleOwner lifecycleOwner)
+                              @Nullable View.OnFocusChangeListener focusChangeListener)
     {
-      super(itemView, recipientClickListener, recipientLongClickListener, null, selectionChangeListener, selectable, lifecycleOwner);
+      super(itemView, recipientClickListener, recipientLongClickListener, null, selectionChangeListener, focusChangeListener);
 
       smsContact = itemView.findViewById(R.id.sms_contact);
       smsWarning = itemView.findViewById(R.id.sms_warning);
@@ -385,11 +408,9 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                                      @Nullable RecipientClickListener recipientClickListener,
                                      @Nullable RecipientLongClickListener recipientLongClickListener,
                                      @Nullable AdminActionsListener adminActionsListener,
-                                     @NonNull SelectionChangeListener selectionChangeListener,
-                                     boolean selectable,
-                                     @NonNull LifecycleOwner lifecycleOwner)
+                                     @NonNull SelectionChangeListener selectionChangeListener)
     {
-      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, selectable, lifecycleOwner);
+      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, null);
     }
 
     @Override
@@ -398,7 +419,7 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
 
       GroupMemberEntry.PendingMember pendingMember = (GroupMemberEntry.PendingMember) memberEntry;
 
-      bindImageAndText(pendingMember.getInvitee(), pendingMember.getInvitee().getDisplayNameOrUsername(context), pendingMember.getInvitee().getCombinedAboutAndEmoji());
+      bindImageAndText(pendingMember.getInvitee(), pendingMember.getInvitee().getDisplayNameOrUsername(context));
       bindRecipientClick(pendingMember.getInvitee());
 
       if (pendingMember.isCancellable() && adminActionsListener != null) {
@@ -419,11 +440,9 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
 
     UnknownPendingMemberCountViewHolder(@NonNull View itemView,
                                         @Nullable AdminActionsListener adminActionsListener,
-                                        @NonNull SelectionChangeListener selectionChangeListener,
-                                        boolean selectable,
-                                        @NonNull LifecycleOwner lifecycleOwner)
+                                        @NonNull SelectionChangeListener selectionChangeListener)
     {
-      super(itemView, null, null, adminActionsListener, selectionChangeListener, selectable, lifecycleOwner);
+      super(itemView, null, null, adminActionsListener, selectionChangeListener, null);
     }
 
     @Override
@@ -437,7 +456,7 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                                                                        pendingMembers.getInviteCount(),
                                                                        displayName, pendingMembers.getInviteCount());
 
-      bindImageAndText(inviter, displayText, inviter.getAbout());
+      bindImageAndText(inviter, displayText);
 
       if (pendingMembers.isCancellable() && adminActionsListener != null) {
         popupMenu.setMenu(R.menu.others_invite_pending_menu,
@@ -470,11 +489,9 @@ final class GroupMemberListAdapter extends RecyclerView.Adapter<GroupMemberListA
                                @Nullable RecipientClickListener recipientClickListener,
                                @Nullable RecipientLongClickListener recipientLongClickListener,
                                @Nullable AdminActionsListener adminActionsListener,
-                               @NonNull SelectionChangeListener selectionChangeListener,
-                               boolean selectable,
-                               @NonNull LifecycleOwner lifecycleOwner)
+                               @NonNull SelectionChangeListener selectionChangeListener)
     {
-      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, selectable, lifecycleOwner);
+      super(itemView, recipientClickListener, recipientLongClickListener, adminActionsListener, selectionChangeListener, null);
 
       approveRequest = itemView.findViewById(R.id.request_approve);
       denyRequest    = itemView.findViewById(R.id.request_deny);

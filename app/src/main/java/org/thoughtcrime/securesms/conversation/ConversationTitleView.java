@@ -28,7 +28,11 @@ import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.ContextUtil;
 import org.thoughtcrime.securesms.util.DrawableUtil;
 import org.thoughtcrime.securesms.util.ExpirationUtil;
+import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
+import org.whispersystems.signalservice.api.push.ServiceId;
+
+import java.util.UUID;
 
 public class ConversationTitleView extends RelativeLayout {
 
@@ -45,6 +49,7 @@ public class ConversationTitleView extends RelativeLayout {
   private View            expirationBadgeContainer;
   private TextView        expirationBadgeTime;
   private boolean         isSelf;
+  private String titlename="";
 
   public ConversationTitleView(Context context) {
     this(context, null);
@@ -107,6 +112,10 @@ public class ConversationTitleView extends RelativeLayout {
   public void clearExpiring() {
     expirationBadgeContainer.setVisibility(View.GONE);
     updateSubtitleVisibility();
+  }
+
+  public String getTitleName(){
+    return titlename;
   }
 
   public void setTitle(@NonNull GlideRequests glideRequests, @Nullable Recipient recipient) {
@@ -185,6 +194,7 @@ public class ConversationTitleView extends RelativeLayout {
   }
 
   private void setRecipientTitle(@NonNull Recipient recipient) {
+    titlename = "";
     if      (recipient.isGroup()) setGroupRecipientTitle(recipient);
     else if (recipient.isSelf())  setSelfTitle();
     else                          setIndividualRecipientTitle(recipient);
@@ -192,6 +202,8 @@ public class ConversationTitleView extends RelativeLayout {
 
   private void setGroupRecipientTitle(@NonNull Recipient recipient) {
     this.title.setText(recipient.getDisplayName(getContext()));
+    titlename = recipient.getGroupName(getContext());
+    titlename = Util.getFirstNonEmpty(recipient.getE164().orElse(null), recipient.getServiceId().map(ServiceId::toString).orElse(null));
     this.subtitle.setText(Stream.of(recipient.getParticipantIds())
                                 .limit(10)
                                 .map(Recipient::resolved)
@@ -204,15 +216,18 @@ public class ConversationTitleView extends RelativeLayout {
   }
 
   private void setSelfTitle() {
+    titlename = getContext().getString(R.string.note_to_self);
     this.title.setText(R.string.note_to_self);
     updateSubtitleVisibility();
   }
 
   private void setIndividualRecipientTitle(@NonNull Recipient recipient) {
     final String displayName = recipient.getDisplayNameOrUsername(getContext());
+    titlename = displayName;
     this.title.setText(displayName);
     this.subtitle.setText(null);
     updateSubtitleVisibility();
+    updateVerifiedSubtitleVisibility();
   }
 
   private void updateVerifiedSubtitleVisibility() {

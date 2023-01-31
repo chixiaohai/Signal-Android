@@ -19,6 +19,10 @@ public class DynamicTheme {
 
   private static final String TAG = Log.tag(DynamicTheme.class);
 
+  public static final String DARK   = "dark";
+  public static final String LIGHT  = "light";
+  public static final String SYSTEM = "system";
+
   private static int globalNightModeConfiguration;
 
   private int onCreateNightModeConfiguration;

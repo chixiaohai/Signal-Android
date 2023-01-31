@@ -1,11 +1,11 @@
 package org.thoughtcrime.securesms;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,6 +53,8 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
     super.onCreate(savedInstanceState, ready);
 
     setContentView(R.layout.main_activity);
+
+    navigator.onCreate(savedInstanceState);
 
     mediaController = new VoiceNoteMediaController(this);
 
@@ -119,15 +121,17 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == MainNavigator.REQUEST_CONFIG_CHANGES && resultCode == RESULT_CONFIG_CHANGED) {
       recreate();
+    } else if (resultCode == MainNavigator.PROFILE_EMPTY) {
+      finish();
     }
   }
 
   private void updateTabVisibility() {
     if (Stories.isFeatureEnabled()) {
-      findViewById(R.id.conversation_list_tabs).setVisibility(View.VISIBLE);
+//      findViewById(R.id.conversation_list_tabs).setVisibility(View.VISIBLE);
       WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorSurface2));
     } else {
-      findViewById(R.id.conversation_list_tabs).setVisibility(View.GONE);
+//      findViewById(R.id.conversation_list_tabs).setVisibility(View.GONE);
       WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorBackground));
       conversationListTabsViewModel.onChatsSelected();
     }

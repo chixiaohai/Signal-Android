@@ -394,9 +394,9 @@ public class ConversationParentFragment extends Fragment
 
   private   GlideRequests                glideRequests;
   protected ComposeText                  composeText;
-  private   AnimatingToggle              buttonToggle;
-  private   SendButton                   sendButton;
-  private   ImageButton                  attachButton;
+  private AnimatingToggle buttonToggle;
+  private SendButton      sendButton;
+  private ImageButton     attachButton;
   protected ConversationTitleView        titleView;
   private   TextView                     charactersLeft;
   private   ConversationFragment         fragment;
@@ -1475,9 +1475,9 @@ public class ConversationParentFragment extends Fragment
 
     if (recipient.isPushV2Group() && groupCallViewModel.hasActiveGroupCall().getValue() == Boolean.FALSE && groupViewModel.isNonAdminInAnnouncementGroup()) {
       new MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.ConversationActivity_cant_start_group_call)
-                                          .setMessage(R.string.ConversationActivity_only_admins_of_this_group_can_start_a_call)
-                                          .setPositiveButton(android.R.string.ok, (d, w) -> d.dismiss())
-                                          .show();
+                                                      .setMessage(R.string.ConversationActivity_only_admins_of_this_group_can_start_a_call)
+                                                      .setPositiveButton(android.R.string.ok, (d, w) -> d.dismiss())
+                                                      .show();
     } else {
       CommunicationActions.startVideoCall(this, recipient);
     }
@@ -2014,7 +2014,7 @@ public class ConversationParentFragment extends Fragment
     emojiDrawerStub          = ViewUtil.findStubById(view, R.id.emoji_drawer_stub);
     attachmentKeyboardStub   = ViewUtil.findStubById(view, R.id.attachment_keyboard_stub);
     unblockButton            = view.findViewById(R.id.unblock_button);
-    smsExportStub            = ViewUtil.findStubById(view, R.id.sms_export_stub);
+//    smsExportStub            = ViewUtil.findStubById(view, R.id.sms_export_stub);
     registerButton           = view.findViewById(R.id.register_button);
     container                = view.findViewById(R.id.layout_container);
     reminderView             = ViewUtil.findStubById(view, R.id.reminder_stub);
@@ -2024,12 +2024,12 @@ public class ConversationParentFragment extends Fragment
     inlineAttachmentToggle   = view.findViewById(R.id.inline_attachment_container);
     inputPanel               = view.findViewById(R.id.bottom_panel);
     searchNav                = view.findViewById(R.id.conversation_search_nav);
-    messageRequestBottomView = view.findViewById(R.id.conversation_activity_message_request_bottom_bar);
+//    messageRequestBottomView = view.findViewById(R.id.conversation_activity_message_request_bottom_bar);
     mentionsSuggestions      = ViewUtil.findStubById(view, R.id.conversation_mention_suggestions_stub);
-    wallpaper                = view.findViewById(R.id.conversation_wallpaper);
-    wallpaperDim             = view.findViewById(R.id.conversation_wallpaper_dim);
-    voiceNotePlayerViewStub  = ViewUtil.findStubById(view, R.id.voice_note_player_stub);
-    navigationBarBackground  = view.findViewById(R.id.navbar_background);
+//    wallpaper                = view.findViewById(R.id.conversation_wallpaper);
+//    wallpaperDim             = view.findViewById(R.id.conversation_wallpaper_dim);
+//    voiceNotePlayerViewStub  = ViewUtil.findStubById(view, R.id.voice_note_player_stub);
+//    navigationBarBackground  = view.findViewById(R.id.navbar_background);
 
     ImageButton quickCameraToggle      = view.findViewById(R.id.quick_camera_toggle);
     ImageButton inlineAttachmentButton = view.findViewById(R.id.inline_attachment_button);
@@ -2041,8 +2041,8 @@ public class ConversationParentFragment extends Fragment
     cannotSendInAnnouncementGroupBanner = ViewUtil.findStubById(view, R.id.conversation_cannot_send_announcement_stub);
     requestingMemberBanner              = view.findViewById(R.id.conversation_requesting_banner);
     cancelJoinRequest                   = view.findViewById(R.id.conversation_cancel_request);
-    releaseChannelUnmute                = ViewUtil.findStubById(view, R.id.conversation_release_notes_unmute_stub);
-    joinGroupCallButton                 = view.findViewById(R.id.conversation_group_call_join);
+//    releaseChannelUnmute                = ViewUtil.findStubById(view, R.id.conversation_release_notes_unmute_stub);
+//    joinGroupCallButton                 = view.findViewById(R.id.conversation_group_call_join);
 
     sendButton.setPopupContainer((ViewGroup) view);
     sendButton.setSnackbarContainer(view.findViewById(R.id.fragment_content));
@@ -2289,7 +2289,7 @@ public class ConversationParentFragment extends Fragment
     StickerSearchRepository repository = new StickerSearchRepository(requireContext());
 
     stickerViewModel = new ViewModelProvider(this, (ViewModelProvider.Factory) new ConversationStickerViewModel.Factory(requireActivity().getApplication(), repository))
-                                         .get(ConversationStickerViewModel.class);
+        .get(ConversationStickerViewModel.class);
 
     stickerViewModel.getStickerResults().observe(getViewLifecycleOwner(), stickers -> {
       if (stickers == null) return;
@@ -3128,10 +3128,10 @@ public class ConversationParentFragment extends Fragment
 
   private void showDefaultSmsPrompt() {
     new MaterialAlertDialogBuilder(requireContext())
-                   .setMessage(R.string.ConversationActivity_signal_cannot_sent_sms_mms_messages_because_it_is_not_your_default_sms_app)
-                   .setNegativeButton(R.string.ConversationActivity_no, (dialog, which) -> dialog.dismiss())
-                   .setPositiveButton(R.string.ConversationActivity_yes, (dialog, which) -> handleMakeDefaultSms())
-                   .show();
+        .setMessage(R.string.ConversationActivity_signal_cannot_sent_sms_mms_messages_because_it_is_not_your_default_sms_app)
+        .setNegativeButton(R.string.ConversationActivity_no, (dialog, which) -> dialog.dismiss())
+        .setPositiveButton(R.string.ConversationActivity_yes, (dialog, which) -> handleMakeDefaultSms())
+        .show();
   }
 
   private void updateToggleButtonState() {
@@ -3362,8 +3362,8 @@ public class ConversationParentFragment extends Fragment
     sendSticker(new StickerLocator(stickerRecord.getPackId(), stickerRecord.getPackKey(), stickerRecord.getStickerId(), stickerRecord.getEmoji()), stickerRecord.getContentType(), stickerRecord.getUri(), stickerRecord.getSize(), clearCompose);
 
     SignalExecutors.BOUNDED.execute(() ->
-     SignalDatabase.stickers()
-                    .updateStickerLastUsedTime(stickerRecord.getRowId(), System.currentTimeMillis())
+                                        SignalDatabase.stickers()
+                                                      .updateStickerLastUsedTime(stickerRecord.getRowId(), System.currentTimeMillis())
     );
   }
 
@@ -3854,13 +3854,13 @@ public class ConversationParentFragment extends Fragment
     }
 
     SimpleTask.run(() -> {
-          //noinspection CodeBlock2Expr
-          return SignalDatabase.mmsSms().checkMessageExists(reactionDelegate.getMessageRecord());
-        }, messageExists -> {
-          if (!messageExists) {
-            reactionDelegate.hide();
-          }
-        });
+      //noinspection CodeBlock2Expr
+      return SignalDatabase.mmsSms().checkMessageExists(reactionDelegate.getMessageRecord());
+    }, messageExists -> {
+      if (!messageExists) {
+        reactionDelegate.hide();
+      }
+    });
   }
 
   @Override
@@ -3997,7 +3997,7 @@ public class ConversationParentFragment extends Fragment
     }
 
     AlertDialog.Builder builder = new MaterialAlertDialogBuilder(requireContext())
-                                                 .setNeutralButton(R.string.ConversationActivity_cancel, (d, w) -> d.dismiss());
+        .setNeutralButton(R.string.ConversationActivity_cancel, (d, w) -> d.dismiss());
 
     if (recipient.isGroup() && recipient.isBlocked()) {
       builder.setTitle(R.string.ConversationActivity_delete_conversation);

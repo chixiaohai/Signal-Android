@@ -19,8 +19,10 @@ package org.thoughtcrime.securesms;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -28,7 +30,6 @@ import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.components.ContactFilterView;
 import org.thoughtcrime.securesms.contacts.ContactsCursorLoader.DisplayMode;
 import org.thoughtcrime.securesms.contacts.sync.ContactDiscovery;
-import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme;
 import org.thoughtcrime.securesms.util.DynamicTheme;
@@ -47,9 +48,10 @@ import java.util.function.Consumer;
  *
  */
 public abstract class ContactSelectionActivity extends PassphraseRequiredActivity
-                                               implements SwipeRefreshLayout.OnRefreshListener,
-                                                          ContactSelectionListFragment.OnContactSelectedListener,
-                                                          ContactSelectionListFragment.ScrollCallback
+    implements SwipeRefreshLayout.OnRefreshListener,
+               ContactSelectionListFragment.OnContactSelectedListener,
+               ContactSelectionListFragment.ScrollCallback,
+               ContactSelectionListFragment.SearchCallBack
 {
   private static final String TAG = Log.tag(ContactSelectionActivity.class);
 
@@ -62,6 +64,8 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
   private Toolbar           toolbar;
   private ContactFilterView contactFilterView;
 
+  private TextView confirm_tv;
+
   @Override
   protected void onPreCreate() {
     dynamicTheme.onCreate(this);
@@ -70,8 +74,8 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
   @Override
   protected void onCreate(Bundle icicle, boolean ready) {
     if (!getIntent().hasExtra(ContactSelectionListFragment.DISPLAY_MODE)) {
-      boolean includeSms  = Util.isDefaultSmsProvider(this) && SignalStore.misc().getSmsExportPhase().allowSmsFeatures();
-      int     displayMode = includeSms ? DisplayMode.FLAG_ALL : DisplayMode.FLAG_PUSH | DisplayMode.FLAG_ACTIVE_GROUPS | DisplayMode.FLAG_INACTIVE_GROUPS | DisplayMode.FLAG_SELF;
+      int displayMode = Util.isDefaultSmsProvider(this) ? DisplayMode.FLAG_ALL
+                                                        : DisplayMode.FLAG_PUSH | DisplayMode.FLAG_ACTIVE_GROUPS | DisplayMode.FLAG_INACTIVE_GROUPS | DisplayMode.FLAG_SELF;
       getIntent().putExtra(ContactSelectionListFragment.DISPLAY_MODE, displayMode);
     }
 
@@ -92,7 +96,6 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
   protected Toolbar getToolbar() {
     return toolbar;
   }
-
   protected ContactFilterView getContactFilterView() {
     return contactFilterView;
   }
@@ -125,12 +128,12 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
   }
 
   @Override
-  public void onBeforeContactSelected(@NonNull Optional<RecipientId> recipientId, String number, @NonNull Consumer<Boolean> callback) {
+  public void onBeforeContactSelected(Optional<RecipientId> recipientId, String number, Consumer<Boolean> callback) {
     callback.accept(true);
   }
 
   @Override
-  public void onContactDeselected(@NonNull Optional<RecipientId> recipientId, String number) {}
+  public void onContactDeselected(Optional<RecipientId> recipientId, String number) {}
 
   @Override
   public void onBeginScroll() {
@@ -141,6 +144,14 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
     ServiceUtil.getInputMethodManager(this)
                .hideSoftInputFromWindow(toolbar.getWindowToken(), 0);
     toolbar.clearFocus();
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (contactsFragment!=null)
+      contactsFragment.setOnKey();
+    return super.onKeyDown(keyCode, event);
+
   }
 
   private static class RefreshDirectoryTask extends AsyncTask<Context, Void, Void> {

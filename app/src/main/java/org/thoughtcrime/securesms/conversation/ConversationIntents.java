@@ -304,7 +304,7 @@ public class ConversationIntents {
       this.firstTimeInSelfCreatedGroup = true;
       return this;
     }
-    
+
     public Builder withGiftBadge(@NonNull Badge badge) {
       this.giftBadge = badge;
       return this;
@@ -314,7 +314,7 @@ public class ConversationIntents {
       this.shareDataTimestamp = timestamp;
       return this;
     }
-    
+
     public @NonNull Intent build() {
       if (stickerLocator != null && media != null) {
         throw new IllegalStateException("Cannot have both sticker and media array");

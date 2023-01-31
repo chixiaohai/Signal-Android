@@ -1,146 +1,113 @@
 package org.thoughtcrime.securesms.profiles.edit;
 
-import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.text.InputType;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.airbnb.lottie.SimpleColorFilter;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
-import org.signal.core.util.EditTextUtil;
-import org.signal.core.util.StreamUtil;
-import org.signal.core.util.concurrent.SimpleTask;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.Avatars;
-import org.thoughtcrime.securesms.avatar.picker.AvatarPickerFragment;
-import org.thoughtcrime.securesms.databinding.ProfileCreateFragmentBinding;
 import org.thoughtcrime.securesms.groups.GroupId;
-import org.thoughtcrime.securesms.groups.ParcelableGroupId;
-import org.thoughtcrime.securesms.keyvalue.PhoneNumberPrivacyValues;
-import org.thoughtcrime.securesms.keyvalue.SignalStore;
-import org.thoughtcrime.securesms.mediasend.Media;
-import org.thoughtcrime.securesms.mms.GlideApp;
-import org.thoughtcrime.securesms.profiles.edit.pnp.WhoCanSeeMyPhoneNumberFragment;
+import org.thoughtcrime.securesms.phonenumbers.PhoneNumberFormatter;
 import org.thoughtcrime.securesms.profiles.manage.EditProfileNameFragment;
-import org.thoughtcrime.securesms.providers.BlobProvider;
-import org.thoughtcrime.securesms.util.CommunicationActions;
-import org.thoughtcrime.securesms.util.FeatureFlags;
-import org.thoughtcrime.securesms.util.navigation.SafeNavigation;
+import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.text.AfterTextChanged;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import static org.thoughtcrime.securesms.profiles.edit.EditProfileActivity.EXCLUDE_SYSTEM;
 import static org.thoughtcrime.securesms.profiles.edit.EditProfileActivity.GROUP_ID;
-import static org.thoughtcrime.securesms.profiles.edit.EditProfileActivity.NEXT_BUTTON_TEXT;
 import static org.thoughtcrime.securesms.profiles.edit.EditProfileActivity.NEXT_INTENT;
-import static org.thoughtcrime.securesms.profiles.edit.EditProfileActivity.SHOW_TOOLBAR;
 
-/**
- * Used for profile creation during registration.
- */
-public class EditProfileFragment extends LoggingFragment {
+//import com.dd.CircularProgressButton;
 
-  private static final String TAG                    = Log.tag(EditProfileFragment.class);
-  private static final int    MAX_DESCRIPTION_GLYPHS = 480;
-  private static final int    MAX_DESCRIPTION_BYTES  = 8192;
+public class EditProfileFragment extends LoggingFragment implements View.OnFocusChangeListener {
 
-  private Intent nextIntent;
+  private static final String TAG = Log.tag(EditProfileFragment.class);
 
-  private EditProfileViewModel         viewModel;
-  private ProfileCreateFragmentBinding binding;
+  private static final int    MAX_DESCRIPTION_GLYPHS     = 480;
+  private static final int    MAX_DESCRIPTION_BYTES      = 8192;
 
-  private Controller controller;
+  private Intent mNextIntent;
+  private EditProfileViewModel viewModel;
+  private Controller mController;
+  private GroupId mGroupId;
+
+  private RecyclerView mProfileRecy;
+  private ProfileAdapter mProfileAdapter;
+  public static int mFocusHeight;
+  public static int mNormalHeight;
+  public static int mFocusTextSize;
+  public static int mNormalTextSize;
+  public static int mFocusPaddingX;
+  public static int mNormalPaddingX;
 
   @Override
   public void onAttach(@NonNull Context context) {
     super.onAttach(context);
 
     if (context instanceof Controller) {
-      controller = (Controller) context;
+      mController = (Controller) context;
     } else {
       throw new IllegalStateException("Context must subclass Controller");
     }
   }
 
+  @Nullable
   @Override
-  public @Nullable View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    binding = ProfileCreateFragmentBinding.inflate(inflater, container, false);
-    return binding.getRoot();
+  public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.profile_create_fragment, container, false);
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.M)
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    GroupId groupId = GroupId.parseNullableOrThrow(requireArguments().getString(GROUP_ID, null));
+    mGroupId = GroupId.parseNullableOrThrow(requireArguments().getString(GROUP_ID, null));
 
-    initializeViewModel(requireArguments().getBoolean(EXCLUDE_SYSTEM, false), groupId, savedInstanceState != null);
-    initializeResources(groupId);
-    initializeProfileAvatar();
-    initializeProfileName();
+    Bundle arguments = requireArguments();
+    mNextIntent = arguments.getParcelable(NEXT_INTENT);
+    mProfileRecy = view.findViewById(R.id.profile_recy);
+    LinearLayoutManager manager = new LinearLayoutManager(requireContext());
+    mProfileRecy.setLayoutManager(manager);
+    initializeViewModel(requireArguments().getBoolean(EXCLUDE_SYSTEM, false), mGroupId, savedInstanceState != null);
+    mProfileAdapter = new ProfileAdapter(this, requireContext(), viewModel);
+    mProfileRecy.setAdapter(mProfileAdapter);
 
-    getParentFragmentManager().setFragmentResultListener(AvatarPickerFragment.REQUEST_KEY_SELECT_AVATAR, getViewLifecycleOwner(), (key, bundle) -> {
-      if (bundle.getBoolean(AvatarPickerFragment.SELECT_AVATAR_CLEAR)) {
-        viewModel.setAvatarMedia(null);
-        viewModel.setAvatar(null);
-        binding.avatar.setImageDrawable(null);
-      } else {
-        Media media = bundle.getParcelable(AvatarPickerFragment.SELECT_AVATAR_MEDIA);
-        handleMediaFromResult(media);
-      }
-    });
+    mProfileRecy.setClipToPadding(false);
+    mProfileRecy.setClipChildren(false);
+    mProfileRecy.setPadding(0, 76, 0, 200);
+
+    Resources res = getActivity().getResources();
+    mFocusHeight = res.getDimensionPixelSize(R.dimen.focus_item_height);
+    mNormalHeight = res.getDimensionPixelSize(R.dimen.item_height);
+
+    mFocusTextSize = res.getDimensionPixelSize(R.dimen.focus_item_textsize);
+    mNormalTextSize = res.getDimensionPixelSize(R.dimen.item_textsize);
+
+    mFocusPaddingX = res.getDimensionPixelSize(R.dimen.focus_item_padding_x);
+    mNormalPaddingX = res.getDimensionPixelSize(R.dimen.item_padding_x);
   }
 
   @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
-  }
-
-  private void handleMediaFromResult(@NonNull Media media) {
-    SimpleTask.run(() -> {
-      try {
-        InputStream stream = BlobProvider.getInstance().getStream(requireContext(), media.getUri());
-
-        return StreamUtil.readFully(stream);
-      } catch (IOException ioException) {
-        Log.w(TAG, ioException);
-        return null;
-      }
-    },
-    (avatarBytes) -> {
-      if (avatarBytes != null) {
-        viewModel.setAvatarMedia(media);
-        viewModel.setAvatar(avatarBytes);
-        GlideApp.with(EditProfileFragment.this)
-                .load(avatarBytes)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .circleCrop()
-                .into(binding.avatar);
-      } else {
-        Toast.makeText(requireActivity(), R.string.CreateProfileActivity_error_setting_profile_photo, Toast.LENGTH_LONG).show();
-      }
-    });
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
   }
 
   private void initializeViewModel(boolean excludeSystem, @Nullable GroupId groupId, boolean hasSavedInstanceState) {
@@ -154,121 +121,8 @@ public class EditProfileFragment extends LoggingFragment {
 
     EditProfileViewModel.Factory factory = new EditProfileViewModel.Factory(repository, hasSavedInstanceState, groupId);
 
-    viewModel = new ViewModelProvider(requireActivity(), factory).get(EditProfileViewModel.class);
-  }
-
-  private void initializeResources(@Nullable GroupId groupId) {
-    Bundle  arguments      = requireArguments();
-    boolean isEditingGroup = groupId != null;
-
-    this.nextIntent = arguments.getParcelable(NEXT_INTENT);
-
-    binding.avatar.setOnClickListener(v -> startAvatarSelection());
-    binding.mmsGroupHint.setVisibility(isEditingGroup && groupId.isMms() ? View.VISIBLE : View.GONE);
-
-    if (isEditingGroup) {
-      EditTextUtil.addGraphemeClusterLimitFilter(binding.givenName, FeatureFlags.getMaxGroupNameGraphemeLength());
-      binding.profileDescriptionText.setVisibility(View.GONE);
-      binding.whoCanFindMeContainer.setVisibility(View.GONE);
-      binding.givenName.addTextChangedListener(new AfterTextChanged(s -> viewModel.setGivenName(s.toString())));
-      binding.givenNameWrapper.setHint(R.string.EditProfileFragment__group_name);
-      binding.givenName.requestFocus();
-      binding.toolbar.setTitle(R.string.EditProfileFragment__edit_group);
-      binding.namePreview.setVisibility(View.GONE);
-
-      if (groupId.isV2()) {
-        EditTextUtil.addGraphemeClusterLimitFilter(binding.familyName, MAX_DESCRIPTION_GLYPHS);
-        binding.familyName.addTextChangedListener(new AfterTextChanged(s -> {
-          EditProfileNameFragment.trimFieldToMaxByteLength(s, MAX_DESCRIPTION_BYTES);
-          viewModel.setFamilyName(s.toString());
-        }));
-        binding.familyNameWrapper.setHint(R.string.EditProfileFragment__group_description);
-        binding.familyName.setSingleLine(false);
-        binding.familyName.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_MULTI_LINE | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES);
-
-        binding.groupDescriptionText.setLearnMoreVisible(false);
-        binding.groupDescriptionText.setText(R.string.CreateProfileActivity_group_descriptions_will_be_visible_to_members_of_this_group_and_people_who_have_been_invited);
-      } else {
-        binding.familyNameWrapper.setVisibility(View.GONE);
-        binding.familyName.setEnabled(false);
-        binding.groupDescriptionText.setVisibility(View.GONE);
-      }
-      binding.avatarPlaceholder.setImageResource(R.drawable.ic_group_outline_40);
-    } else {
-      EditTextUtil.addGraphemeClusterLimitFilter(binding.givenName, EditProfileNameFragment.NAME_MAX_GLYPHS);
-      EditTextUtil.addGraphemeClusterLimitFilter(binding.familyName, EditProfileNameFragment.NAME_MAX_GLYPHS);
-      binding.givenName.addTextChangedListener(new AfterTextChanged(s -> {
-                                                                        EditProfileNameFragment.trimFieldToMaxByteLength(s);
-                                                                        viewModel.setGivenName(s.toString());
-                                                                      }));
-      binding.familyName.addTextChangedListener(new AfterTextChanged(s -> {
-                                                                         EditProfileNameFragment.trimFieldToMaxByteLength(s);
-                                                                         viewModel.setFamilyName(s.toString());
-                                                                       }));
-      binding.groupDescriptionText.setVisibility(View.GONE);
-      binding.profileDescriptionText.setLearnMoreVisible(true);
-      binding.profileDescriptionText.setLinkColor(ContextCompat.getColor(requireContext(), R.color.signal_colorPrimary));
-      binding.profileDescriptionText.setOnLinkClickListener(v -> CommunicationActions.openBrowserLink(requireContext(), getString(R.string.EditProfileFragment__support_link)));
-
-      if (FeatureFlags.phoneNumberPrivacy()) {
-        getParentFragmentManager().setFragmentResultListener(WhoCanSeeMyPhoneNumberFragment.REQUEST_KEY, getViewLifecycleOwner(), (requestKey, result) -> {
-          if (WhoCanSeeMyPhoneNumberFragment.REQUEST_KEY.equals(requestKey)) {
-            presentWhoCanFindMeDescription(SignalStore.phoneNumberPrivacy().getPhoneNumberListingMode());
-          }
-        });
-
-        binding.whoCanFindMeContainer.setVisibility(View.VISIBLE);
-        binding.whoCanFindMeContainer.setOnClickListener(v -> SafeNavigation.safeNavigate(Navigation.findNavController(v), EditProfileFragmentDirections.actionCreateProfileFragmentToPhoneNumberPrivacy()));
-        presentWhoCanFindMeDescription(SignalStore.phoneNumberPrivacy().getPhoneNumberListingMode());
-      }
-    }
-
-    binding.finishButton.setOnClickListener(v -> {
-      binding.finishButton.setSpinning();
-      handleUpload();
-    });
-
-    binding.finishButton.setText(arguments.getInt(NEXT_BUTTON_TEXT, R.string.CreateProfileActivity_next));
-
-    if (arguments.getBoolean(SHOW_TOOLBAR, true)) {
-      binding.toolbar.setVisibility(View.VISIBLE);
-      binding.toolbar.setNavigationOnClickListener(v -> requireActivity().finish());
-      binding.title.setVisibility(View.GONE);
-    }
-  }
-
-  private void initializeProfileName() {
-    viewModel.isFormValid().observe(getViewLifecycleOwner(), isValid -> {
-      binding.finishButton.setEnabled(isValid);
-      binding.finishButton.setAlpha(isValid ? 1f : 0.5f);
-    });
-
-    viewModel.givenName().observe(getViewLifecycleOwner(), givenName -> updateFieldIfNeeded(binding.givenName, givenName));
-
-    viewModel.familyName().observe(getViewLifecycleOwner(), familyName -> updateFieldIfNeeded(binding.familyName, familyName));
-
-    viewModel.profileName().observe(getViewLifecycleOwner(), profileName -> binding.namePreview.setText(profileName.toString()));
-  }
-
-  private void initializeProfileAvatar() {
-    viewModel.avatar().observe(getViewLifecycleOwner(), bytes -> {
-      if (bytes == null) {
-        GlideApp.with(this).clear(binding.avatar);
-        return;
-      }
-
-      GlideApp.with(this)
-              .load(bytes)
-              .circleCrop()
-              .into(binding.avatar);
-    });
-
-    viewModel.avatarColor().observe(getViewLifecycleOwner(), avatarColor -> {
-      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(avatarColor);
-
-      binding.avatarPlaceholder.getDrawable().setColorFilter(new SimpleColorFilter(foregroundColor.getColorInt()));
-      binding.avatarBackground.getDrawable().setColorFilter(new SimpleColorFilter(avatarColor.colorInt()));
-    });
+    viewModel = new ViewModelProvider(requireActivity(), factory)
+                                  .get(EditProfileViewModel.class);
   }
 
   private static void updateFieldIfNeeded(@NonNull EditText field, @NonNull String value) {
@@ -286,92 +140,221 @@ public class EditProfileFragment extends LoggingFragment {
     }
   }
 
-  private void presentWhoCanFindMeDescription(PhoneNumberPrivacyValues.PhoneNumberListingMode phoneNumberListingMode) {
-    switch (phoneNumberListingMode) {
-      case LISTED:
-        binding.whoCanFindMeDescription.setText(R.string.PhoneNumberPrivacy_everyone);
-        break;
-      case UNLISTED:
-        binding.whoCanFindMeDescription.setText(R.string.PhoneNumberPrivacy_nobody);
-        break;
-    }
-  }
-
-  private void startAvatarSelection() {
-    if (viewModel.isGroup()) {
-      Parcelable groupId = ParcelableGroupId.from(viewModel.getGroupId());
-      SafeNavigation.safeNavigate(Navigation.findNavController(requireView()), EditProfileFragmentDirections.actionCreateProfileFragmentToAvatarPicker((ParcelableGroupId) groupId, viewModel.getAvatarMedia()));
-    } else {
-      SafeNavigation.safeNavigate(Navigation.findNavController(requireView()), EditProfileFragmentDirections.actionCreateProfileFragmentToAvatarPicker(null, null));
-    }
-  }
-
   private void handleUpload() {
     viewModel.getUploadResult().observe(getViewLifecycleOwner(), uploadResult -> {
       if (uploadResult == EditProfileRepository.UploadResult.SUCCESS) {
-        if (Build.VERSION.SDK_INT >= 21 && !viewModel.isGroup()) {
-          handleFinishedLollipop();
-        }
-        else {
-          handleFinishedLegacy();
-        }
+        handleFinishedLegacy();
       } else {
         Toast.makeText(requireContext(), R.string.CreateProfileActivity_problem_setting_profile, Toast.LENGTH_LONG).show();
       }
     });
-
     viewModel.submitProfile();
   }
 
-  private void handleFinishedLegacy() {
-    binding.finishButton.cancelSpinning();
-    if (nextIntent != null) startActivity(nextIntent);
+  @Override
+  public void onFocusChange(View view, boolean b) {
 
-    controller.onProfileNameUploadCompleted();
   }
 
-  @RequiresApi(api = 21)
-  private void handleFinishedLollipop() {
-    int[] finishButtonLocation = new int[2];
-    int[] revealLocation       = new int[2];
+  private void handleFinishedLegacy() {
+    if (mNextIntent != null) startActivity(mNextIntent);
 
-    binding.finishButton.getLocationInWindow(finishButtonLocation);
-    binding.reveal.getLocationInWindow(revealLocation);
+    mController.onProfileNameUploadCompleted();
+  }
 
-    int finishX = finishButtonLocation[0] - revealLocation[0];
-    int finishY = finishButtonLocation[1] - revealLocation[1];
-
-    finishX += binding.finishButton.getWidth() / 2;
-    finishY += binding.finishButton.getHeight() / 2;
-
-    Animator animation = ViewAnimationUtils.createCircularReveal(binding.reveal, finishX, finishY, 0f, (float) Math.max(binding.reveal.getWidth(), binding.reveal.getHeight()));
-    animation.setDuration(500);
-    animation.addListener(new Animator.AnimatorListener() {
-      @Override
-      public void onAnimationStart(Animator animation) {}
-
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        binding.finishButton.cancelSpinning();
-        if (nextIntent != null && getActivity() != null) {
-          startActivity(nextIntent);
-        }
-
-        controller.onProfileNameUploadCompleted();
-      }
-
-      @Override
-      public void onAnimationCancel(Animator animation) {}
-
-      @Override
-      public void onAnimationRepeat(Animator animation) {}
-    });
-
-    binding.reveal.setVisibility(View.VISIBLE);
-    animation.start();
+  public GroupId getGroupId() {
+    return mGroupId;
   }
 
   public interface Controller {
     void onProfileNameUploadCompleted();
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.M)
+  private static class ProfileAdapter extends RecyclerView.Adapter<ProfileAdapter.ViewHolder> {
+    private static final int ITEM_TYPE_TWOLINE = 0x01;
+    private static final int ITEM_TYPE_SINGLELINE = 0x02;
+
+    private Context mContext;
+    private EditProfileFragment mFragment;
+    private EditProfileViewModel mViewModel;
+
+    private ProfileAdapter(EditProfileFragment fragment, Context context, EditProfileViewModel vm) {
+      mFragment = fragment;
+      mContext = context;
+      mViewModel = vm;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+      if (viewType == ITEM_TYPE_TWOLINE) {
+        View nameView = LayoutInflater.from(mContext).inflate(R.layout.mp02_twoline_item, parent, false);
+        TextView nameTitle = nameView.findViewById(R.id.item_twoline_title);
+        EditText nameEdit = nameView.findViewById(R.id.item_twoline_edit);
+        nameEdit.setVisibility(View.VISIBLE);
+        nameView.setOnFocusChangeListener((v, hasFocus) -> {
+          if (hasFocus) {
+            ((ViewGroup) v).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            nameEdit.setEnabled(true);
+            nameEdit.setFocusable(true);
+            nameEdit.requestFocus();
+          } else {
+            ((ViewGroup) v).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+          }
+
+//          updateFocusView(v, nameTitle, nameEdit, hasFocus);
+        });
+        nameEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View v, boolean hasFocus) {
+            updateFocusView((View) v.getParent(), nameTitle, nameEdit, hasFocus);
+          }
+        });
+        return new ViewHolder(nameView);
+      } else {
+        View optionView = LayoutInflater.from(mContext).inflate(R.layout.mp02_singleline_item, parent, false);
+        TextView optionTitle = optionView.findViewById(R.id.item_singleline_tv);
+        optionView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View view, boolean b) {
+            TextView tv = (TextView) view.findViewById(R.id.item_singleline_tv);
+            if (b) {
+              tv.setSelected(true);
+              tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+
+            } else {
+              tv.setEllipsize(TextUtils.TruncateAt.END);
+            }
+            updateFocusView(view, tv, null, b);
+          }
+
+        });
+        optionView.setOnClickListener(v -> mFragment.handleUpload());
+        return new ViewHolder(optionView);
+      }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+      if (position == 0) {
+        TextView firstNameTv = holder.itemView.findViewById(R.id.item_twoline_title);
+        EditText firstNameEdit = holder.itemView.findViewById(R.id.item_twoline_edit);
+        if (mFragment.getGroupId() != null) {
+          firstNameTv.setText(R.string.EditProfileFragment__group_name);
+        } else {
+          firstNameTv.setText(R.string.CreateProfileActivity_first_name_required);
+        }
+
+        firstNameEdit.setHint(R.string.CreateProfileActivity_required);
+        firstNameEdit.addTextChangedListener(new AfterTextChanged(s -> {
+          EditProfileNameFragment.trimFieldToMaxByteLength(s);
+          mViewModel.setGivenName(s.toString());
+        }));
+        mViewModel.givenName().observe(mFragment, givenName -> updateFieldIfNeeded(firstNameEdit, givenName));
+      } else if (position == 1 && mFragment.getGroupId() == null) {
+        TextView lastNameTv = holder.itemView.findViewById(R.id.item_twoline_title);
+        EditText lastNameEdit = holder.itemView.findViewById(R.id.item_twoline_edit);
+        lastNameTv.setText(R.string.CreateProfileActivity_last_name_optional);
+        lastNameEdit.setHint(R.string.CreateProfileActivity_optional);
+        lastNameEdit.addTextChangedListener(new AfterTextChanged(s -> {
+          EditProfileNameFragment.trimFieldToMaxByteLength(s);
+          mViewModel.setFamilyName(s.toString());
+        }));
+        mViewModel.familyName().observe(mFragment, familyName -> updateFieldIfNeeded(lastNameEdit, familyName));
+      } else if (position == 1 && mFragment.getGroupId() != null) {
+        TextView textTv = holder.itemView.findViewById(R.id.item_singleline_tv);
+        textTv.setText(R.string.save);
+      } else if (position == 2){
+        TextView phoneNumber = holder.itemView.findViewById(R.id.item_singleline_tv);
+        String number = PhoneNumberFormatter.prettyPrint(TextSecurePreferences.getLocalNumber(mContext));
+        phoneNumber.setText(number);
+      }/*else if (position == 2) {
+                TextView textTv = holder.itemView.findViewById(R.id.item_singleline_tv);
+                textTv.setText(R.string.CreateProfileActivity_signal_profiles_are_end_to_end_encrypted);
+                textTv.setEnabled(false);
+
+            }*/else if (position == 3) {
+        TextView nextTv = holder.itemView.findViewById(R.id.item_singleline_tv);
+        nextTv.setText(R.string.save);
+        nextTv.setWidth(100);
+        mViewModel.profileName().observe(mFragment, profileName -> {
+          holder.itemView.setEnabled(!profileName.isGivenNameEmpty());
+        });
+      }
+    }
+
+    private void updateFocusView(View parent, TextView tv, EditText et, boolean itemFocus) {
+      ValueAnimator va;
+      if (itemFocus) {
+        va = ValueAnimator.ofFloat(0, 1);
+      } else {
+        va = ValueAnimator.ofFloat(1, 0);
+      }
+
+      va.addUpdateListener(valueAnimator -> {
+        float scale = (float) valueAnimator.getAnimatedValue();
+        float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
+        float editHeight = (float) (mFocusHeight) * (scale);
+        float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+        float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
+        int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
+        int color = alpha * 0x1000000 + 0xffffff;
+
+        tv.setTextColor(color);
+        parent.setPadding((int) padding, parent.getPaddingTop(), parent.getPaddingRight(), parent.getPaddingBottom());
+        if (et == null) {
+          tv.setTextSize((int) textsize);
+          tv.getLayoutParams().height = (int) height;
+          parent.getLayoutParams().height = (int) (height);
+        } else {
+          tv.setTextSize(mNormalTextSize);
+          et.setTextSize((int) textsize);
+          et.setTextColor(color);
+          et.getLayoutParams().height = (int) editHeight;
+          parent.getLayoutParams().height = (int) (editHeight + mNormalHeight);
+        }
+      });
+
+      FastOutLinearInInterpolator FastOutLinearInInterpolator = new FastOutLinearInInterpolator();
+      va.setInterpolator(FastOutLinearInInterpolator);
+      if (itemFocus) {
+        va.setDuration(270);
+        va.start();
+      } else {
+        va.setDuration(270);
+        va.start();
+      }
+    }
+
+    @Override
+    public int getItemCount() {
+      return mFragment.getGroupId() != null ? 2 : 4;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+      if (mFragment.getGroupId() != null) {
+        return position == 0 ? ITEM_TYPE_TWOLINE : ITEM_TYPE_SINGLELINE;
+      } else {
+        if (position < 2) {
+          return ITEM_TYPE_TWOLINE;
+        }
+        return ITEM_TYPE_SINGLELINE;
+      }
+    }
+
+
+    static class ViewHolder extends RecyclerView.ViewHolder {
+      public ViewHolder(@NonNull View itemView) {
+        super(itemView);
+      }
+    }
+  }
+
+  public void onKeyDown(int code) {
+    if (code == KeyEvent.KEYCODE_CALL) {
+      handleUpload();
+    }
   }
 }

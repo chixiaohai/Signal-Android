@@ -83,4 +83,14 @@ public class FromTextView extends SimpleEmojiTextView {
 
     return mutedDrawable;
   }
+
+  private boolean mFocused;
+
+  public boolean isFocused() {
+    return mFocused;
+  }
+
+  public void setFocused(boolean mFocused) {
+    this.mFocused = mFocused;
+  }
 }
