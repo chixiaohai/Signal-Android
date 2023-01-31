@@ -39,6 +39,8 @@ public class GiphyActivity extends PassphraseRequiredActivity implements Keyboar
   public static final String EXTRA_RECIPIENT_ID = "extra_recipient_id";
   public static final String EXTRA_TRANSPORT    = "extra_transport";
   public static final String EXTRA_TEXT         = "extra_text";
+  public static final String EXTRA_WIDTH        = "extra_width";
+  public static final String EXTRA_HEIGHT       = "extra_height";
 
   private static final int MEDIA_SENDER = 12;
 

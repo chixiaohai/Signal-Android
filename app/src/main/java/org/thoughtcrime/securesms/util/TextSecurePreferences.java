@@ -81,6 +81,8 @@ public class TextSecurePreferences {
   private static final String UPDATE_APK_DOWNLOAD_ID           = "pref_update_apk_download_id";
   private static final String UPDATE_APK_DIGEST                = "pref_update_apk_digest";
   private static final String SIGNED_PREKEY_ROTATION_TIME_PREF = "pref_signed_pre_key_rotation_time";
+  public  static final String REGISTERED_GCM_PREF              = "pref_gcm_registered";
+  private static final String LOCAL_NUMBER_PREF                = "pref_local_number";
 
   private static final String IN_THREAD_NOTIFICATION_PREF      = "pref_key_inthread_notifications";
   private static final String SHOW_INVITE_REMINDER_PREF        = "pref_show_invite_reminder";
@@ -494,6 +496,29 @@ public class TextSecurePreferences {
     } catch (ClassCastException e) {
       return getIntegerPreference(context, NOTIFICATION_PRIORITY_PREF, NotificationCompat.PRIORITY_HIGH);
     }
+  }
+  public static boolean isPushRegistered(Context context) {
+    return getBooleanPreference(context, REGISTERED_GCM_PREF, false);
+  }
+
+  public static void setPushRegistered(Context context, boolean registered) {
+    Log.i(TAG, "Setting push registered: " + registered);
+    boolean previous = isPushRegistered(context);
+
+    setBooleanPreference(context, REGISTERED_GCM_PREF, registered);
+    ApplicationDependencies.getIncomingMessageObserver().notifyRegistrationChanged();
+
+    if (previous != registered) {
+      Recipient.self().live().refresh();
+    }
+
+    if (previous && !registered) {
+      clearLocalCredentials(context);
+    }
+  }
+
+  public static String getLocalNumber(Context context) {
+    return getStringPreference(context, LOCAL_NUMBER_PREF, null);
   }
 
   /**

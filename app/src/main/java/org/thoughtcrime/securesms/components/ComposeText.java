@@ -45,8 +45,6 @@ import org.thoughtcrime.securesms.util.TextSecurePreferences;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.thoughtcrime.securesms.database.MentionUtil.MENTION_STARTER;

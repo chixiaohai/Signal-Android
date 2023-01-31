@@ -58,7 +58,7 @@ public final class ThreadRecord {
   private final boolean   isPinned;
   private final int       unreadSelfMentionsCount;
 
-  private ThreadRecord(@NonNull Builder builder) {
+  public ThreadRecord(@NonNull Builder builder) {
     this.threadId                = builder.threadId;
     this.body                    = builder.body;
     this.recipient               = builder.recipient;

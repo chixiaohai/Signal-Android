@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.annotation.WorkerThread;
-import androidx.appcompat.view.ActionMode;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +42,7 @@ import org.thoughtcrime.securesms.util.views.Stub;
 import java.util.Set;
 
 
-public class ConversationListArchiveFragment extends ConversationListFragment implements ActionMode.Callback
+public class ConversationListArchiveFragment extends ConversationListFragment
 {
   private View                        coordinator;
   private RecyclerView                list;
@@ -71,7 +70,6 @@ public class ConversationListArchiveFragment extends ConversationListFragment im
     coordinator = view.findViewById(R.id.coordinator);
     list        = view.findViewById(R.id.list);
     emptyState  = new Stub<>(view.findViewById(R.id.empty_state));
-    fab         = view.findViewById(R.id.fab);
     cameraFab   = view.findViewById(R.id.camera_fab);
 
     toolbar.get().setNavigationOnClickListener(v -> NavHostFragment.findNavController(this).popBackStack());
@@ -148,11 +146,6 @@ public class ConversationListArchiveFragment extends ConversationListFragment im
         ConversationUtil.refreshRecipientShortcuts();
       }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threadId);
-  }
-
-  @Override
-  void updateEmptyState(boolean isConversationEmpty) {
-    // Do nothing
   }
 }
 

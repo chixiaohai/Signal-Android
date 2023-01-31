@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <style name="Signal.Text.Headline.Registration">
         <item name="android:textSize">@dimen/registration_headline_text</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -8,6 +7,10 @@
 
     <style name="Signal.Text.Body.Registration">
         <item name="android:textSize">@dimen/registration_body_text</item>
+    </style>
+
+    <style name="Button.Borderless.Registration">
+        <item name="android:textColor">@color/core_grey_60</item>
     </style>
 
 </resources>

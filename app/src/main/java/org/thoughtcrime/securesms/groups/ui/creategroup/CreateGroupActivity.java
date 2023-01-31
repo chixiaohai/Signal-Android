@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.groups.ui.creategroup;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.signal.core.util.concurrent.SimpleTask;
@@ -26,6 +28,7 @@ import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.util.FeatureFlags;
 import org.signal.core.util.Stopwatch;
+import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.views.SimpleProgressDialog;
 
 import java.io.IOException;
@@ -35,14 +38,21 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class CreateGroupActivity extends ContactSelectionActivity {
+public class CreateGroupActivity extends ContactSelectionActivity implements ContactSelectionListFragment.ApplyCallBack{
 
   private static final String TAG = Log.tag(CreateGroupActivity.class);
 
   private static final short REQUEST_CODE_ADD_DETAILS = 17275;
+//
+//  private MaterialButton       skip;
+//  private FloatingActionButton next;
 
-  private MaterialButton       skip;
-  private FloatingActionButton next;
+  public static final String GROUP_ID_EXTRA      = "group_id";
+  public static final String GROUP_THREAD_EXTRA  = "group_thread";
+
+  private ExtendedFloatingActionButton next;
+  private ValueAnimator                padStart;
+  private ValueAnimator                padEnd;
 
   public static Intent newIntent(@NonNull Context context) {
     Intent intent = new Intent(context, CreateGroupActivity.class);
@@ -66,12 +76,13 @@ public class CreateGroupActivity extends ContactSelectionActivity {
     assert getSupportActionBar() != null;
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-    skip = findViewById(R.id.skip);
     next = findViewById(R.id.next);
     extendSkip();
 
-    skip.setOnClickListener(v -> handleNextPressed());
-    next.setOnClickListener(v -> handleNextPressed());
+    next.setOnClickListener(v -> {
+      System.out.println("lyh   next.click");
+      handleNextPressed();
+    });
   }
 
   @Override
@@ -87,6 +98,7 @@ public class CreateGroupActivity extends ContactSelectionActivity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == REQUEST_CODE_ADD_DETAILS && resultCode == RESULT_OK) {
+      System.out.println("lyh   onActivityResult    requestCode = " + requestCode + "resultCode = " + resultCode);
       finish();
     } else {
       super.onActivityResult(requestCode, resultCode, data);
@@ -126,13 +138,33 @@ public class CreateGroupActivity extends ContactSelectionActivity {
   }
 
   private void extendSkip() {
-    skip.setVisibility(View.VISIBLE);
-    next.setVisibility(View.GONE);
+    next.setIconGravity(MaterialButton.ICON_GRAVITY_END);
+    next.extend();
+    animatePadding(24, 18);
   }
 
   private void shrinkSkip() {
-    skip.setVisibility(View.GONE);
-    next.setVisibility(View.VISIBLE);
+    next.setIconGravity(MaterialButton.ICON_GRAVITY_START);
+    next.shrink();
+    animatePadding(16, 16);
+  }
+
+  private void animatePadding(int startDp, int endDp) {
+    if (padStart != null) padStart.cancel();
+
+    padStart = ValueAnimator.ofInt(next.getPaddingStart(), ViewUtil.dpToPx(startDp)).setDuration(200);
+    padStart.addUpdateListener(animation -> {
+      ViewUtil.setPaddingStart(next, (Integer) animation.getAnimatedValue());
+    });
+    padStart.start();
+
+    if (padEnd != null) padEnd.cancel();
+
+    padEnd = ValueAnimator.ofInt(next.getPaddingEnd(), ViewUtil.dpToPx(endDp)).setDuration(200);
+    padEnd.addUpdateListener(animation -> {
+      ViewUtil.setPaddingEnd(next, (Integer) animation.getAnimatedValue());
+    });
+    padEnd.start();
   }
 
   private void handleNextPressed() {
@@ -171,5 +203,14 @@ public class CreateGroupActivity extends ContactSelectionActivity {
       stopwatch.stop(TAG);
       startActivityForResult(AddGroupDetailsActivity.newIntent(this, recipientIds), REQUEST_CODE_ADD_DETAILS);
     });
+  }
+
+  @Override public void onSearch(View view) {
+
+  }
+
+  @Override public void onApply() {
+    System.out.println("lyh   onApply()");
+    handleNextPressed();
   }
 }

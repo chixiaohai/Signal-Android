@@ -18,6 +18,7 @@ package org.thoughtcrime.securesms;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.annimon.stream.Stream;
 
@@ -68,5 +69,9 @@ public class PushContactSelectionActivity extends ContactSelectionActivity {
 
   @Override
   public void onSelectionChanged() {
+  }
+
+  @Override public void onSearch(View view) {
+
   }
 }

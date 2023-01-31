@@ -1,5 +1,29 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <resources>
+
+    <color name="story_gradient_start">#99000000</color>
+    <color name="story_caption_gradient_start">#CC000000</color>
+
+    <color name="transparent_black_50">#80000000</color>
+    <color name="transparent_black_70">#b3000000</color>
+
+    <color name="transparent_white_25">#40ffffff</color>
+
+    <color name="transparent_white_70">#b2ffffff</color>
+
+    <color name="transparent_white_87">#dfffffff</color>
+
+
+    <color name="paypal_outline">#80838089</color>
+
+
+    <color name="conversation_item_selected_system_ui">#4d4d4d</color>
+
+    <color name="touch_highlight_material3">#14E2E1E5</color>
+
+    <color name="ConversationListTabs__unread">#FFCE4A40</color>
+
+
     <color name="white">@color/core_white</color>
     <color name="black">@color/core_black</color>
 
@@ -7,42 +31,28 @@
     <color name="white_not_focus">#80FFFFFF</color>
     <color name="white_focus">#FFFFFFFF</color>
 
-    <color name="story_gradient_start">#99000000</color>
-    <color name="story_caption_gradient_start">#CC000000</color>
-
     <color name="transparent_black_05">#0D000000</color>
     <color name="transparent_black_08">#14000000</color>
     <color name="transparent_black_10">#18000000</color>
     <color name="transparent_black_15">#26000000</color>
+    <color name="transparent_white_08">#14ffffff</color>
     <color name="transparent_black_20">#33000000</color>
     <color name="transparent_black_25">#40000000</color>
     <color name="transparent_black_40">#66000000</color>
-    <color name="transparent_black_50">#80000000</color>
     <color name="transparent_black_60">#99000000</color>
-    <color name="transparent_black_70">#b3000000</color>
     <color name="transparent_black_80">#CC000000</color>
 
     <color name="transparent_white_05">#0Dffffff</color>
     <color name="transparent_white_10">#18ffffff</color>
     <color name="transparent_white_15">#26ffffff</color>
     <color name="transparent_white_20">#33ffffff</color>
-    <color name="transparent_white_25">#40ffffff</color>
     <color name="transparent_white_30">#4Dffffff</color>
     <color name="transparent_white_40">#66ffffff</color>
     <color name="transparent_white_60">#99ffffff</color>
-    <color name="transparent_white_70">#b2ffffff</color>
     <color name="transparent_white_80">#ccffffff</color>
-    <color name="transparent_white_87">#dfffffff</color>
     <color name="transparent_white_90">#e6ffffff</color>
 
-    <color name="paypal_outline">#80838089</color>
-
     <color name="conversation_compose_divider">#32000000</color>
-
-    <color name="conversation_item_selected_system_ui">#4d4d4d</color>
-    <color name="touch_highlight_material3">#14E2E1E5</color>
-
-    <color name="ConversationListTabs__unread">#FFCE4A40</color>
 
     <color name="transparent">#00FFFFFF</color>
     <color name="transparent_black">#00000000</color>
@@ -57,6 +67,8 @@
     <color name="StickerPreviewActivity_install_button_color">@color/core_ultramarine</color>
 
     <color name="sticker_selected_color">#99ffffff</color>
+
+
 
     <color name="MediaOverview_Media_selected_overlay">#99000000</color>
 
@@ -80,4 +92,6 @@
     <color name="message_focused_text_color">#1E1E1E</color>
     <color name="message_normal_text_color">#80000000</color>
     <color name="text_primary">#81FFFFFF</color>
+    <color name="blue_A800_focus">#68A9EA</color>
+    <color name="blue_A800_normal">#8068A9EA</color>
 </resources>

@@ -44,8 +44,8 @@ public class AddGroupDetailsActivity extends PassphraseRequiredActivity implemen
 
     if (bundle == null) {
       ArrayList<RecipientId>      recipientIds = getIntent().getParcelableArrayListExtra(EXTRA_RECIPIENTS);
-      AddGroupDetailsFragmentArgs arguments    = new AddGroupDetailsFragmentArgs.Builder(recipientIds.toArray(new RecipientId[0])).build();
-      NavHostFragment             fragment     = NavHostFragment.create(R.navigation.create_group, arguments.toBundle());
+      AddGroupDetailsFragmentArgs arguments = new AddGroupDetailsFragmentArgs.Builder(recipientIds.toArray(new RecipientId[0])).build();
+      NavHostFragment             fragment  = NavHostFragment.create(R.navigation.create_group, arguments.toBundle());
 
       getSupportFragmentManager().beginTransaction()
                                  .replace(R.id.nav_host_fragment, fragment)

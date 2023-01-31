@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms.permissions;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,14 +16,12 @@ import android.view.WindowManager;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.annimon.stream.Stream;
 import com.annimon.stream.function.Consumer;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
@@ -105,11 +104,7 @@ public class Permissions {
     }
 
     public PermissionsBuilder withPermanentDenialDialog(@NonNull String message) {
-      return withPermanentDenialDialog(message, null);
-    }
-
-    public PermissionsBuilder withPermanentDenialDialog(@NonNull String message, @Nullable Runnable onDialogDismissed) {
-      return onAnyPermanentlyDenied(new SettingsDialogListener(permissionObject.getContext(), message, onDialogDismissed));
+      return onAnyPermanentlyDenied(new SettingsDialogListener(permissionObject.getContext(), message));
     }
 
     public PermissionsBuilder onAllGranted(Runnable allGrantedListener) {
@@ -168,15 +163,16 @@ public class Permissions {
       request.onResult(requestedPermissions, grantResults, new boolean[requestedPermissions.length]);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private void executePermissionsRequestWithRationale(PermissionsRequest request) {
-      RationaleDialog.createFor(permissionObject.getContext(), rationaleDialogMessage, rationalDialogHeader)
-                     .setPositiveButton(R.string.Permissions_continue, (dialog, which) -> executePermissionsRequest(request))
-                     .setNegativeButton(R.string.Permissions_not_now, (dialog, which) -> executeNoPermissionsRequest(request))
-                     .setCancelable(rationaleDialogCancelable)
-                     .show()
-                     .getWindow()
-                     .setLayout((int)(permissionObject.getWindowWidth() * .75), ViewGroup.LayoutParams.WRAP_CONTENT);
+      AlertDialog dialog = RationaleDialog.createNonMsgDialog(permissionObject.getContext(),
+                                                              rationaleDialogMessage,
+                                                              R.string.Permissions_continue,
+                                                              R.string.Permissions_not_now,
+                                                              () -> executePermissionsRequest(request),
+                                                              () -> executeNoPermissionsRequest(request),
+                                                              null);
+      dialog.setCancelable(rationaleDialogCancelable);
+      dialog.show();
     }
 
     private void executePermissionsRequest(PermissionsRequest request) {
@@ -240,13 +236,13 @@ public class Permissions {
 
   public static boolean hasAny(@NonNull Context context, String... permissions) {
     return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-        Stream.of(permissions).anyMatch(permission -> ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
+           Stream.of(permissions).anyMatch(permission -> ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
 
   }
 
   public static boolean hasAll(@NonNull Context context, String... permissions) {
     return Build.VERSION.SDK_INT < Build.VERSION_CODES.M ||
-        Stream.of(permissions).allMatch(permission -> ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
+           Stream.of(permissions).allMatch(permission -> ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED);
 
   }
 
@@ -365,13 +361,11 @@ public class Permissions {
   private static class SettingsDialogListener implements Runnable {
 
     private final WeakReference<Context> context;
-    private final Runnable onDialogDismissed;
     private final String                 message;
 
-    SettingsDialogListener(Context context, String message, @Nullable Runnable onDialogDismissed) {
-      this.message           = message;
-      this.context           = new WeakReference<>(context);
-      this.onDialogDismissed = onDialogDismissed;
+    SettingsDialogListener(Context context, String message) {
+      this.message = message;
+      this.context = new WeakReference<>(context);
     }
 
     @Override
@@ -379,17 +373,11 @@ public class Permissions {
       Context context = this.context.get();
 
       if (context != null) {
-        new MaterialAlertDialogBuilder(context)
+        new AlertDialog.Builder(context)
             .setTitle(R.string.Permissions_permission_required)
             .setMessage(message)
-            .setCancelable(false)
             .setPositiveButton(R.string.Permissions_continue, (dialog, which) -> context.startActivity(getApplicationSettingsIntent(context)))
             .setNegativeButton(android.R.string.cancel, null)
-            .setOnDismissListener(d -> {
-              if (onDialogDismissed != null) {
-                onDialogDismissed.run();
-              }
-            })
             .show();
       }
     }

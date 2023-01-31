@@ -3,9 +3,11 @@ package org.thoughtcrime.securesms.groups.ui;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -52,10 +54,13 @@ public final class GroupMemberListView extends RecyclerView {
         typedArray.recycle();
       }
     }
+    membersAdapter = new GroupMemberListAdapter(selectable);
+    setLayoutManager(new LinearLayoutManager(getContext()));
+    setAdapter(membersAdapter);
   }
 
   public void initializeAdapter(@NonNull LifecycleOwner lifecycleOwner) {
-    membersAdapter = new GroupMemberListAdapter(selectable, lifecycleOwner);
+    membersAdapter = new GroupMemberListAdapter(selectable);
     setLayoutManager(new LinearLayoutManager(getContext()));
     setAdapter(membersAdapter);
   }
@@ -76,12 +81,20 @@ public final class GroupMemberListView extends RecyclerView {
     membersAdapter.setRecipientSelectionChangeListener(listener);
   }
 
+  public void setRecipientFocusChangeListener(View.OnFocusChangeListener focusChangeListener) {
+    membersAdapter.setRecipientFocusChangeListener(focusChangeListener);
+  }
+
   public void setMembers(@NonNull List<? extends GroupMemberEntry> recipients) {
     membersAdapter.updateData(recipients);
   }
 
   public void setDisplayOnlyMembers(@NonNull List<Recipient> recipients) {
     membersAdapter.updateData(Stream.of(recipients).map(r -> new GroupMemberEntry.FullMember(r, false)).toList());
+  }
+
+  public GroupMemberListAdapter getMemberListAdapter() {
+    return membersAdapter;
   }
 
   @Override
