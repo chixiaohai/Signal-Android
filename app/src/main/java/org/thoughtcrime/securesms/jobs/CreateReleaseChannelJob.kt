@@ -3,9 +3,9 @@ package org.thoughtcrime.securesms.jobs
 import androidx.core.content.ContextCompat
 import org.signal.core.util.logging.Log
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.avatar.Avatar
-import org.thoughtcrime.securesms.avatar.AvatarRenderer
-import org.thoughtcrime.securesms.avatar.Avatars
+//import org.thoughtcrime.securesms.avatar.Avatar
+//import org.thoughtcrime.securesms.avatar.AvatarRenderer
+//import org.thoughtcrime.securesms.avatar.Avatars
 import org.thoughtcrime.securesms.database.SignalDatabase
 import org.thoughtcrime.securesms.jobmanager.Data
 import org.thoughtcrime.securesms.jobmanager.Job
@@ -72,22 +72,22 @@ class CreateReleaseChannelJob private constructor(parameters: Parameters) : Base
 
   private fun setAvatar(id: RecipientId) {
     val latch = CountDownLatch(1)
-    AvatarRenderer.renderAvatar(
-      context,
-      Avatar.Resource(
-        R.drawable.ic_signal_logo_large,
-        Avatars.ColorPair(ContextCompat.getColor(context, R.color.core_ultramarine), ContextCompat.getColor(context, R.color.core_white), "")
-      ),
-      onAvatarRendered = { media ->
-        AvatarHelper.setAvatar(context, id, BlobProvider.getInstance().getStream(context, media.uri))
-        SignalDatabase.recipients.setProfileAvatar(id, "local")
-        latch.countDown()
-      },
-      onRenderFailed = { t ->
-        Log.w(TAG, t)
-        latch.countDown()
-      }
-    )
+//    AvatarRenderer.renderAvatar(
+//      context,
+//      Avatar.Resource(
+//        R.drawable.ic_signal_logo_large,
+//        Avatars.ColorPair(ContextCompat.getColor(context, R.color.core_ultramarine), ContextCompat.getColor(context, R.color.core_white), "")
+//      ),
+//      onAvatarRendered = { media ->
+//        AvatarHelper.setAvatar(context, id, BlobProvider.getInstance().getStream(context, media.uri))
+//        SignalDatabase.recipients.setProfileAvatar(id, "local")
+//        latch.countDown()
+//      },
+//      onRenderFailed = { t ->
+//        Log.w(TAG, t)
+//        latch.countDown()
+//      }
+//    )
 
     try {
       val completed: Boolean = latch.await(30, TimeUnit.SECONDS)

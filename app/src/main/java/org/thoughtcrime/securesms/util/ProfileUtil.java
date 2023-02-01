@@ -14,7 +14,7 @@ import org.signal.libsignal.protocol.util.Pair;
 import org.signal.libsignal.zkgroup.InvalidInputException;
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential;
 import org.signal.libsignal.zkgroup.profiles.ProfileKey;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.crypto.ProfileKeyUtil;
 import org.thoughtcrime.securesms.crypto.UnidentifiedAccessUtil;
 import org.thoughtcrime.securesms.database.RecipientTable;
@@ -214,15 +214,15 @@ public final class ProfileUtil {
    * list of badges instead. This is useful when you want to ensure that the profile has been uploaded
    * successfully before persisting the change to disk.
    */
-  public static void uploadProfileWithBadges(@NonNull Context context, @NonNull List<Badge> badges) throws IOException {
-    Log.d(TAG, "uploadProfileWithBadges()");
-    uploadProfile(Recipient.self().getProfileName(),
-                  Optional.ofNullable(Recipient.self().getAbout()).orElse(""),
-                  Optional.ofNullable(Recipient.self().getAboutEmoji()).orElse(""),
-                  getSelfPaymentsAddressProtobuf(),
-                  AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())),
-                  badges);
-  }
+//  public static void uploadProfileWithBadges(@NonNull Context context, @NonNull List<Badge> badges) throws IOException {
+//    Log.d(TAG, "uploadProfileWithBadges()");
+//    uploadProfile(Recipient.self().getProfileName(),
+//                  Optional.ofNullable(Recipient.self().getAbout()).orElse(""),
+//                  Optional.ofNullable(Recipient.self().getAboutEmoji()).orElse(""),
+//                  getSelfPaymentsAddressProtobuf(),
+//                  AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())),
+//                  badges);
+//  }
 
   /**
    * Uploads the profile based on all state that's written to disk, except we'll use the provided
@@ -236,8 +236,7 @@ public final class ProfileUtil {
                     Optional.ofNullable(Recipient.self().getAbout()).orElse(""),
                     Optional.ofNullable(Recipient.self().getAboutEmoji()).orElse(""),
                     getSelfPaymentsAddressProtobuf(),
-                    AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())),
-                    Recipient.self().getBadges());
+                    AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())));
     }
   }
 
@@ -253,8 +252,7 @@ public final class ProfileUtil {
                     about,
                     emoji,
                     getSelfPaymentsAddressProtobuf(),
-                    AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())),
-                    Recipient.self().getBadges());
+                    AvatarUploadParams.unchanged(AvatarHelper.hasAvatar(context, Recipient.self().getId())));
     }
   }
 
@@ -279,8 +277,7 @@ public final class ProfileUtil {
                   Optional.ofNullable(Recipient.self().getAbout()).orElse(""),
                   Optional.ofNullable(Recipient.self().getAboutEmoji()).orElse(""),
                   getSelfPaymentsAddressProtobuf(),
-                  AvatarUploadParams.forAvatar(avatar),
-                  Recipient.self().getBadges());
+                  AvatarUploadParams.forAvatar(avatar));
   }
 
   /**
@@ -316,20 +313,19 @@ public final class ProfileUtil {
                                     @Nullable String about,
                                     @Nullable String aboutEmoji,
                                     @Nullable SignalServiceProtos.PaymentAddress paymentsAddress,
-                                    @NonNull AvatarUploadParams avatar,
-                                    @NonNull List<Badge> badges)
+                                    @NonNull AvatarUploadParams avatar)
       throws IOException
   {
-    List<String> badgeIds = badges.stream()
-                                  .filter(Badge::getVisible)
-                                  .map(Badge::getId)
-                                  .collect(Collectors.toList());
+//    List<String> badgeIds = badges.stream()
+//                                  .filter(Badge::getVisible)
+//                                  .map(Badge::getId)
+//                                  .collect(Collectors.toList());
 
     Log.d(TAG, "Uploading " + (!profileName.isEmpty() ? "non-" : "") + "empty profile name.");
     Log.d(TAG, "Uploading " + (!Util.isEmpty(about) ? "non-" : "") + "empty about.");
     Log.d(TAG, "Uploading " + (!Util.isEmpty(aboutEmoji) ? "non-" : "") + "empty emoji.");
     Log.d(TAG, "Uploading " + (paymentsAddress != null ? "non-" : "") + "empty payments address.");
-    Log.d(TAG, "Uploading " + ((!badgeIds.isEmpty()) ? "non-" : "") + "empty badge list.");
+//    Log.d(TAG, "Uploading " + ((!badgeIds.isEmpty()) ? "non-" : "") + "empty badge list.");
 
     if (avatar.keepTheSame) {
       Log.d(TAG, "Leaving avatar unchanged. We think we " + (avatar.hasAvatar ? "" : "do not ") + "have one.");
@@ -345,8 +341,7 @@ public final class ProfileUtil {
                                                                                     about,
                                                                                     aboutEmoji,
                                                                                     Optional.ofNullable(paymentsAddress),
-                                                                                    avatar,
-                                                                                    badgeIds).orElse(null);
+                                                                                    avatar).orElse(null);
     SignalStore.registrationValues().markHasUploadedProfile();
     if (!avatar.keepTheSame) {
       SignalDatabase.recipients().setProfileAvatar(Recipient.self().getId(), avatarPath);

@@ -8,9 +8,9 @@ import androidx.annotation.Nullable;
 import org.signal.core.util.logging.Log;
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential;
 import org.signal.libsignal.zkgroup.profiles.ProfileKey;
-import org.thoughtcrime.securesms.badges.BadgeRepository;
-import org.thoughtcrime.securesms.badges.Badges;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.BadgeRepository;
+//import org.thoughtcrime.securesms.badges.Badges;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.crypto.ProfileKeyUtil;
 import org.thoughtcrime.securesms.database.RecipientTable;
 import org.thoughtcrime.securesms.database.SignalDatabase;
@@ -21,7 +21,7 @@ import org.thoughtcrime.securesms.jobmanager.impl.NetworkConstraint;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.profiles.ProfileName;
 import org.thoughtcrime.securesms.recipients.Recipient;
-import org.thoughtcrime.securesms.subscription.Subscriber;
+//import org.thoughtcrime.securesms.subscription.Subscriber;
 import org.thoughtcrime.securesms.util.Base64;
 import org.thoughtcrime.securesms.util.ProfileUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
@@ -135,7 +135,7 @@ public class RefreshOwnProfileJob extends BaseJob {
     setProfileAbout(profile.getAbout(), profile.getAboutEmoji());
     setProfileAvatar(profile.getAvatar());
     setProfileCapabilities(profile.getCapabilities());
-    setProfileBadges(profile.getBadges());
+//    setProfileBadges(profile.getBadges());
     ensureUnidentifiedAccessCorrect(profile.getUnidentifiedAccess(), profile.isUnrestrictedUnidentifiedAccess());
 
     profileAndCredential.getExpiringProfileKeyCredential()
@@ -244,140 +244,140 @@ public class RefreshOwnProfileJob extends BaseJob {
     }
   }
 
-  private void setProfileBadges(@Nullable List<SignalServiceProfile.Badge> badges) throws IOException {
-    if (badges == null) {
-      return;
-    }
+//  private void setProfileBadges(@Nullable List<SignalServiceProfile.Badge> badges) throws IOException {
+//    if (badges == null) {
+//      return;
+//    }
+//
+////    Set<String> localDonorBadgeIds  = Recipient.self()
+////                                               .getBadges()
+////                                               .stream()
+////                                               .filter(badge -> badge.getCategory() == Badge.Category.Donor)
+////                                               .map(Badge::getId)
+////                                               .collect(Collectors.toSet());
+//
+////    Set<String> remoteDonorBadgeIds = badges.stream()
+////                                            .filter(badge -> Objects.equals(badge.getCategory(), Badge.Category.Donor.getCode()))
+////                                            .map(SignalServiceProfile.Badge::getId)
+////                                            .collect(Collectors.toSet());
+//
+////    boolean remoteHasSubscriptionBadges = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isSubscription);
+////    boolean localHasSubscriptionBadges  = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isSubscription);
+////    boolean remoteHasBoostBadges        = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isBoost);
+////    boolean localHasBoostBadges         = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isBoost);
+////    boolean remoteHasGiftBadges         = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isGift);
+////    boolean localHasGiftBadges          = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isGift);
+//
+////    if (!remoteHasSubscriptionBadges && localHasSubscriptionBadges) {
+////      Badge mostRecentExpiration = Recipient.self()
+////                                            .getBadges()
+////                                            .stream()
+////                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
+////                                            .filter(badge -> isSubscription(badge.getId()))
+////                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
+////                                            .get();
+////
+////      Log.d(TAG, "Marking subscription badge as expired, should notify next time the conversation list is open.", true);
+////      SignalStore.donationsValues().setExpiredBadge(mostRecentExpiration);
+////
+////      if (!SignalStore.donationsValues().isUserManuallyCancelled()) {
+////        Log.d(TAG, "Detected an unexpected subscription expiry.", true);
+////        Subscriber subscriber = SignalStore.donationsValues().getSubscriber();
+////
+////        boolean isDueToPaymentFailure = false;
+////        if (subscriber != null) {
+////          ServiceResponse<ActiveSubscription> response = ApplicationDependencies.getDonationsService()
+////                                                                                .getSubscription(subscriber.getSubscriberId());
+////
+////          if (response.getResult().isPresent()) {
+////            ActiveSubscription activeSubscription = response.getResult().get();
+////            if (activeSubscription.isFailedPayment()) {
+////              Log.d(TAG, "Unexpected expiry due to payment failure.", true);
+////              isDueToPaymentFailure = true;
+////            }
+////
+////            if (activeSubscription.getChargeFailure() != null) {
+////              Log.d(TAG, "Active payment contains a charge failure: " + activeSubscription.getChargeFailure().getCode(), true);
+////            }
+////          }
+////        }
+////
+////        if (!isDueToPaymentFailure) {
+////          Log.d(TAG, "Unexpected expiry due to inactivity.", true);
+////        }
+////
+////        MultiDeviceSubscriptionSyncRequestJob.enqueue();
+////        SignalStore.donationsValues().setShouldCancelSubscriptionBeforeNextSubscribeAttempt(true);
+////      }
+////    } else if (!remoteHasBoostBadges && localHasBoostBadges) {
+////      Badge mostRecentExpiration = Recipient.self()
+////                                            .getBadges()
+////                                            .stream()
+////                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
+////                                            .filter(badge -> isBoost(badge.getId()))
+////                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
+////                                            .get();
+//
+//      Log.d(TAG, "Marking boost badge as expired, should notify next time the conversation list is open.", true);
+////      SignalStore.donationsValues().setExpiredBadge(mostRecentExpiration);
+////    } else {
+////      Badge badge = SignalStore.donationsValues().getExpiredBadge();
+////
+////      if (badge != null && badge.isSubscription() && remoteHasSubscriptionBadges) {
+////        Log.d(TAG, "Remote has subscription badges. Clearing local expired subscription badge.", true);
+////        SignalStore.donationsValues().setExpiredBadge(null);
+////      } else if (badge != null && badge.isBoost() && remoteHasBoostBadges) {
+////        Log.d(TAG, "Remote has boost badges. Clearing local expired boost badge.", true);
+////        SignalStore.donationsValues().setExpiredBadge(null);
+////      }
+////    }
+//
+////    if (!remoteHasGiftBadges && localHasGiftBadges) {
+////      Badge mostRecentExpiration = Recipient.self()
+////                                            .getBadges()
+////                                            .stream()
+////                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
+////                                            .filter(badge -> isGift(badge.getId()))
+////                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
+////                                            .get();
+////
+////      Log.d(TAG, "Marking gift badge as expired, should notify next time the manage donations screen is open.", true);
+////      SignalStore.donationsValues().setExpiredGiftBadge(mostRecentExpiration);
+////    } else if (remoteHasGiftBadges) {
+////      Log.d(TAG, "We have remote gift badges. Clearing local expired gift badge.", true);
+////      SignalStore.donationsValues().setExpiredGiftBadge(null);
+////    }
+//
+//    boolean userHasVisibleBadges   = badges.stream().anyMatch(SignalServiceProfile.Badge::isVisible);
+//    boolean userHasInvisibleBadges = badges.stream().anyMatch(b -> !b.isVisible());
+//
+////    List<Badge> appBadges = badges.stream().map(Badges::fromServiceBadge).collect(Collectors.toList());
+//
+//    if (userHasVisibleBadges && userHasInvisibleBadges) {
+//      boolean displayBadgesOnProfile = SignalStore.donationsValues().getDisplayBadgesOnProfile();
+//      Log.d(TAG, "Detected mixed visibility of badges. Telling the server to mark them all " +
+//                 (displayBadgesOnProfile ? "" : "not") +
+//                 " visible.", true);
+//
+//      BadgeRepository badgeRepository = new BadgeRepository(context);
+//      List<Badge> updatedBadges = badgeRepository.setVisibilityForAllBadgesSync(displayBadgesOnProfile, appBadges);
+//      SignalDatabase.recipients().setBadges(Recipient.self().getId(), updatedBadges);
+//    } else {
+//      SignalDatabase.recipients().setBadges(Recipient.self().getId(), appBadges);
+//    }
+//  }
 
-    Set<String> localDonorBadgeIds  = Recipient.self()
-                                               .getBadges()
-                                               .stream()
-                                               .filter(badge -> badge.getCategory() == Badge.Category.Donor)
-                                               .map(Badge::getId)
-                                               .collect(Collectors.toSet());
+//  private static boolean isSubscription(String badgeId) {
+//    return !isBoost(badgeId) && !isGift(badgeId);
+//  }
 
-    Set<String> remoteDonorBadgeIds = badges.stream()
-                                            .filter(badge -> Objects.equals(badge.getCategory(), Badge.Category.Donor.getCode()))
-                                            .map(SignalServiceProfile.Badge::getId)
-                                            .collect(Collectors.toSet());
+//  private static boolean isBoost(String badgeId) {
+//    return Objects.equals(badgeId, Badge.BOOST_BADGE_ID);
+//  }
 
-    boolean remoteHasSubscriptionBadges = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isSubscription);
-    boolean localHasSubscriptionBadges  = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isSubscription);
-    boolean remoteHasBoostBadges        = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isBoost);
-    boolean localHasBoostBadges         = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isBoost);
-    boolean remoteHasGiftBadges         = remoteDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isGift);
-    boolean localHasGiftBadges          = localDonorBadgeIds.stream().anyMatch(RefreshOwnProfileJob::isGift);
-
-    if (!remoteHasSubscriptionBadges && localHasSubscriptionBadges) {
-      Badge mostRecentExpiration = Recipient.self()
-                                            .getBadges()
-                                            .stream()
-                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
-                                            .filter(badge -> isSubscription(badge.getId()))
-                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
-                                            .get();
-
-      Log.d(TAG, "Marking subscription badge as expired, should notify next time the conversation list is open.", true);
-      SignalStore.donationsValues().setExpiredBadge(mostRecentExpiration);
-
-      if (!SignalStore.donationsValues().isUserManuallyCancelled()) {
-        Log.d(TAG, "Detected an unexpected subscription expiry.", true);
-        Subscriber subscriber = SignalStore.donationsValues().getSubscriber();
-
-        boolean isDueToPaymentFailure = false;
-        if (subscriber != null) {
-          ServiceResponse<ActiveSubscription> response = ApplicationDependencies.getDonationsService()
-                                                                                .getSubscription(subscriber.getSubscriberId());
-
-          if (response.getResult().isPresent()) {
-            ActiveSubscription activeSubscription = response.getResult().get();
-            if (activeSubscription.isFailedPayment()) {
-              Log.d(TAG, "Unexpected expiry due to payment failure.", true);
-              isDueToPaymentFailure = true;
-            }
-
-            if (activeSubscription.getChargeFailure() != null) {
-              Log.d(TAG, "Active payment contains a charge failure: " + activeSubscription.getChargeFailure().getCode(), true);
-            }
-          }
-        }
-
-        if (!isDueToPaymentFailure) {
-          Log.d(TAG, "Unexpected expiry due to inactivity.", true);
-        }
-
-        MultiDeviceSubscriptionSyncRequestJob.enqueue();
-        SignalStore.donationsValues().setShouldCancelSubscriptionBeforeNextSubscribeAttempt(true);
-      }
-    } else if (!remoteHasBoostBadges && localHasBoostBadges) {
-      Badge mostRecentExpiration = Recipient.self()
-                                            .getBadges()
-                                            .stream()
-                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
-                                            .filter(badge -> isBoost(badge.getId()))
-                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
-                                            .get();
-
-      Log.d(TAG, "Marking boost badge as expired, should notify next time the conversation list is open.", true);
-      SignalStore.donationsValues().setExpiredBadge(mostRecentExpiration);
-    } else {
-      Badge badge = SignalStore.donationsValues().getExpiredBadge();
-
-      if (badge != null && badge.isSubscription() && remoteHasSubscriptionBadges) {
-        Log.d(TAG, "Remote has subscription badges. Clearing local expired subscription badge.", true);
-        SignalStore.donationsValues().setExpiredBadge(null);
-      } else if (badge != null && badge.isBoost() && remoteHasBoostBadges) {
-        Log.d(TAG, "Remote has boost badges. Clearing local expired boost badge.", true);
-        SignalStore.donationsValues().setExpiredBadge(null);
-      }
-    }
-
-    if (!remoteHasGiftBadges && localHasGiftBadges) {
-      Badge mostRecentExpiration = Recipient.self()
-                                            .getBadges()
-                                            .stream()
-                                            .filter(badge -> badge.getCategory() == Badge.Category.Donor)
-                                            .filter(badge -> isGift(badge.getId()))
-                                            .max(Comparator.comparingLong(Badge::getExpirationTimestamp))
-                                            .get();
-
-      Log.d(TAG, "Marking gift badge as expired, should notify next time the manage donations screen is open.", true);
-      SignalStore.donationsValues().setExpiredGiftBadge(mostRecentExpiration);
-    } else if (remoteHasGiftBadges) {
-      Log.d(TAG, "We have remote gift badges. Clearing local expired gift badge.", true);
-      SignalStore.donationsValues().setExpiredGiftBadge(null);
-    }
-
-    boolean userHasVisibleBadges   = badges.stream().anyMatch(SignalServiceProfile.Badge::isVisible);
-    boolean userHasInvisibleBadges = badges.stream().anyMatch(b -> !b.isVisible());
-
-    List<Badge> appBadges = badges.stream().map(Badges::fromServiceBadge).collect(Collectors.toList());
-
-    if (userHasVisibleBadges && userHasInvisibleBadges) {
-      boolean displayBadgesOnProfile = SignalStore.donationsValues().getDisplayBadgesOnProfile();
-      Log.d(TAG, "Detected mixed visibility of badges. Telling the server to mark them all " +
-                 (displayBadgesOnProfile ? "" : "not") +
-                 " visible.", true);
-
-      BadgeRepository badgeRepository = new BadgeRepository(context);
-      List<Badge> updatedBadges = badgeRepository.setVisibilityForAllBadgesSync(displayBadgesOnProfile, appBadges);
-      SignalDatabase.recipients().setBadges(Recipient.self().getId(), updatedBadges);
-    } else {
-      SignalDatabase.recipients().setBadges(Recipient.self().getId(), appBadges);
-    }
-  }
-
-  private static boolean isSubscription(String badgeId) {
-    return !isBoost(badgeId) && !isGift(badgeId);
-  }
-
-  private static boolean isBoost(String badgeId) {
-    return Objects.equals(badgeId, Badge.BOOST_BADGE_ID);
-  }
-
-  private static boolean isGift(String badgeId) {
-    return Objects.equals(badgeId, Badge.GIFT_BADGE_ID);
-  }
+//  private static boolean isGift(String badgeId) {
+//    return Objects.equals(badgeId, Badge.GIFT_BADGE_ID);
+//  }
 
   public static final class Factory implements Job.Factory<RefreshOwnProfileJob> {
 

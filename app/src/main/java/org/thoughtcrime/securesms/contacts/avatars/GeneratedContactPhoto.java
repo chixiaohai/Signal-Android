@@ -13,9 +13,9 @@ import androidx.core.content.ContextCompat;
 import com.airbnb.lottie.SimpleColorFilter;
 
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.Avatar;
-import org.thoughtcrime.securesms.avatar.AvatarRenderer;
-import org.thoughtcrime.securesms.avatar.Avatars;
+//import org.thoughtcrime.securesms.avatar.Avatar;
+//import org.thoughtcrime.securesms.avatar.AvatarRenderer;
+//import org.thoughtcrime.securesms.avatar.Avatars;
 import org.thoughtcrime.securesms.conversation.colors.AvatarColor;
 import org.thoughtcrime.securesms.util.NameUtil;
 
@@ -51,14 +51,14 @@ public class GeneratedContactPhoto implements FallbackContactPhoto {
     String character = NameUtil.getAbbreviation(name);
 
     if (!TextUtils.isEmpty(character)) {
-      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(color);
-      Avatar.Text             avatar          = new Avatar.Text(character, new Avatars.ColorPair(color, foregroundColor), Avatar.DatabaseId.DoNotPersist.INSTANCE);
-      Drawable                foreground      = AvatarRenderer.createTextDrawable(context, avatar, inverted, targetSize, false);
+//      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(color);
+//      Avatar.Text             avatar          = new Avatar.Text(character, new Avatars.ColorPair(color, foregroundColor), Avatar.DatabaseId.DoNotPersist.INSTANCE);
+//      Drawable                foreground      = AvatarRenderer.createTextDrawable(context, avatar, inverted, targetSize, false);
       Drawable                background      = Objects.requireNonNull(ContextCompat.getDrawable(context, R.drawable.circle_tintable));
 
-      background.setColorFilter(new SimpleColorFilter(inverted ? foregroundColor.getColorInt() : color.colorInt()));
-
-      return new LayerDrawable(new Drawable[] { background, foreground });
+//      background.setColorFilter(new SimpleColorFilter(inverted ? foregroundColor.getColorInt() : color.colorInt()));
+//
+//      return new LayerDrawable(new Drawable[] { background, foreground });
     }
 
     return newFallbackDrawable(context, color, inverted);

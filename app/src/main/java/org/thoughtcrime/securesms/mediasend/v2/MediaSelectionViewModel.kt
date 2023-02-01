@@ -30,7 +30,7 @@ import org.thoughtcrime.securesms.mms.MediaConstraints
 import org.thoughtcrime.securesms.mms.SentMediaQuality
 import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.scribbles.ImageEditorFragment
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.Util
 import org.thoughtcrime.securesms.util.livedata.Store
 import java.util.Collections
@@ -115,13 +115,13 @@ class MediaSelectionViewModel(
       addMedia(initialMedia)
     }
 
-    disposables += selectedMediaSubject.map { media ->
-      Stories.MediaTransform.getSendRequirements(media)
-    }.subscribeBy { requirements ->
-      store.update {
-        it.copy(storySendRequirements = requirements)
-      }
-    }
+//    disposables += selectedMediaSubject.map { media ->
+//      Stories.MediaTransform.getSendRequirements(media)
+//    }.subscribeBy { requirements ->
+//      store.update {
+//        it.copy(storySendRequirements = requirements)
+//      }
+//    }
   }
 
   override fun onCleared() {
@@ -153,9 +153,9 @@ class MediaSelectionViewModel(
     return store.state.isStory
   }
 
-  fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements {
-    return store.state.storySendRequirements
-  }
+//  fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements {
+//    return store.state.storySendRequirements
+//  }
 
   private fun addMedia(media: List<Media>) {
     val newSelectionList: List<Media> = linkedSetOf<Media>().apply {
@@ -361,13 +361,13 @@ class MediaSelectionViewModel(
       return
     }
 
-    val filteredPreUploadMedia = if (destination is MediaSelectionDestination.SingleRecipient || !Stories.isFeatureEnabled()) {
-      media
-    } else {
-      media.filter { Stories.MediaTransform.canPreUploadMedia(it) }
-    }
+//    val filteredPreUploadMedia = if (destination is MediaSelectionDestination.SingleRecipient {
+//      media
+//    } else {
+//      media.filter { Stories.MediaTransform.canPreUploadMedia(it) }
+//    }
 
-    repository.uploadRepository.startUpload(filteredPreUploadMedia, store.state.recipient)
+//    repository.uploadRepository.startUpload(filteredPreUploadMedia, store.state.recipient)
   }
 
   private fun cancelUpload(media: Media) {

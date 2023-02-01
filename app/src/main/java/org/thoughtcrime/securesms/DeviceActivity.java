@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.os.Vibrator;
 import android.text.TextUtils;
 import android.transition.TransitionInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -106,18 +104,6 @@ public class DeviceActivity extends PassphraseRequiredActivity
   }
 
   @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.device_add, menu);
-    cameraSwitchItem = menu.findItem(R.id.device_add_camera_switch);
-    cameraSwitchItem.setVisible(false);
-    return super.onCreateOptionsMenu(menu);
-  }
-
-  public MenuItem getCameraSwitchItem() {
-    return cameraSwitchItem;
-  }
-
-  @Override
   public void onClick(View v) {
     Permissions.with(this)
                .request(Manifest.permission.CAMERA)
@@ -136,7 +122,7 @@ public class DeviceActivity extends PassphraseRequiredActivity
   @Override
   public void onQrDataFound(@NonNull final String data) {
     ThreadUtil.runOnMain(() -> {
-      ((Vibrator)getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
+      ((Vibrator) getSystemService(Context.VIBRATOR_SERVICE)).vibrate(50);
       Uri uri = Uri.parse(data);
       deviceLinkFragment.setLinkClickedListener(uri, DeviceActivity.this);
 
@@ -177,12 +163,12 @@ public class DeviceActivity extends PassphraseRequiredActivity
                                                      R.string.DeviceProvisioningActivity_content_progress_title,
                                                      R.string.DeviceProvisioningActivity_content_progress_content)
     {
-      private static final int SUCCESS        = 0;
-      private static final int NO_DEVICE      = 1;
-      private static final int NETWORK_ERROR  = 2;
-      private static final int KEY_ERROR      = 3;
+      private static final int SUCCESS = 0;
+      private static final int NO_DEVICE = 1;
+      private static final int NETWORK_ERROR = 2;
+      private static final int KEY_ERROR = 3;
       private static final int LIMIT_EXCEEDED = 4;
-      private static final int BAD_CODE       = 5;
+      private static final int BAD_CODE = 5;
 
       @Override
       protected Integer doInBackground(Void... params) {

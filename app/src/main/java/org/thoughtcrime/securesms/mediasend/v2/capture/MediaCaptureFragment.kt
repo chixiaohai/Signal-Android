@@ -19,7 +19,7 @@ import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionNavigator.Companion
 import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionViewModel
 import org.thoughtcrime.securesms.mms.MediaConstraints
 import org.thoughtcrime.securesms.permissions.Permissions
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.LifecycleDisposable
 import org.thoughtcrime.securesms.util.navigation.safeNavigate
 import java.io.FileDescriptor
@@ -82,11 +82,11 @@ class MediaCaptureFragment : Fragment(R.layout.fragment_container), CameraFragme
     }
 
     lifecycleDisposable.bindTo(viewLifecycleOwner)
-    lifecycleDisposable += sharedViewModel.hudCommands.subscribe { command ->
-      if (command == HudCommand.GoToText) {
-        findNavController().safeNavigate(R.id.action_mediaCaptureFragment_to_textStoryPostCreationFragment)
-      }
-    }
+//    lifecycleDisposable += sharedViewModel.hudCommands.subscribe { command ->
+//      if (command == HudCommand.GoToText) {
+//        findNavController().safeNavigate(R.id.action_mediaCaptureFragment_to_textStoryPostCreationFragment)
+//      }
+//    }
 
     if (isFirst()) {
       requireActivity().onBackPressedDispatcher.addCallback(
@@ -158,8 +158,12 @@ class MediaCaptureFragment : Fragment(R.layout.fragment_container), CameraFragme
   }
 
   override fun getMaxVideoDuration(): Int {
-    return if (sharedViewModel.isStory()) TimeUnit.MILLISECONDS.toSeconds(Stories.MAX_VIDEO_DURATION_MILLIS).toInt() else -1
+    TODO("Not yet implemented")
   }
+
+//  override fun getMaxVideoDuration(): Int {
+//    return if (sharedViewModel.isStory()) TimeUnit.MILLISECONDS.toSeconds(Stories.MAX_VIDEO_DURATION_MILLIS).toInt() else -1
+//  }
 
   private fun isFirst(): Boolean {
     return arguments?.getBoolean("first") == true

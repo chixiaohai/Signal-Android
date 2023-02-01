@@ -32,7 +32,7 @@ import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.keyvalue.StorySend;
 import org.thoughtcrime.securesms.linkpreview.LinkPreview;
 import org.thoughtcrime.securesms.mediasend.Media;
-import org.thoughtcrime.securesms.mediasend.v2.text.TextStoryBackgroundColors;
+//import org.thoughtcrime.securesms.mediasend.v2.text.TextStoryBackgroundColors;
 import org.thoughtcrime.securesms.mms.ImageSlide;
 import org.thoughtcrime.securesms.mms.OutgoingMediaMessage;
 import org.thoughtcrime.securesms.mms.OutgoingSecureMediaMessage;
@@ -47,7 +47,7 @@ import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingEncryptedMessage;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
-import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.Stories;
 import org.thoughtcrime.securesms.util.Base64;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.MessageUtil;
@@ -91,7 +91,7 @@ public final class MultiShareSender {
     String                     message                           = multiShareArgs.getDraftText();
     SlideDeck                  slideDeck;
     List<OutgoingMediaMessage> storiesBatch                      = new LinkedList<>();
-    ChatColors                 generatedTextStoryBackgroundColor = TextStoryBackgroundColors.getRandomBackgroundColor();
+//    ChatColors                 generatedTextStoryBackgroundColor = TextStoryBackgroundColors.getRandomBackgroundColor();
 
     try {
       slideDeck = buildSlideDeck(context, multiShareArgs);
@@ -146,8 +146,7 @@ public final class MultiShareSender {
                                               recipientSearchKey.isStory(),
                                               sentTimestamp,
                                               canSendAsTextStory,
-                                              storiesBatch,
-                                              generatedTextStoryBackgroundColor);
+                                              storiesBatch);
         results.add(new MultiShareSendResult(recipientSearchKey, MultiShareSendResult.Type.SUCCESS));
       } else if (recipientSearchKey.isStory()) {
         results.add(new MultiShareSendResult(recipientSearchKey, MultiShareSendResult.Type.INVALID_SHARE_TO_STORY));
@@ -214,8 +213,7 @@ public final class MultiShareSender {
                                                             boolean isStory,
                                                             long sentTimestamp,
                                                             boolean canSendAsTextStory,
-                                                            @NonNull List<OutgoingMediaMessage> storiesToBatchSend,
-                                                            @NonNull ChatColors generatedTextStoryBackgroundColor)
+                                                            @NonNull List<OutgoingMediaMessage> storiesToBatchSend)
   {
     String body = multiShareArgs.getDraftText();
     if (sendType.usesSignalTransport() && !forceSms && body != null) {
@@ -229,98 +227,98 @@ public final class MultiShareSender {
 
     List<OutgoingMediaMessage> outgoingMessages = new ArrayList<>();
 
-    if (isStory) {
-      final StoryType storyType;
-      if (recipient.isDistributionList()) {
-        storyType = SignalDatabase.distributionLists().getStoryType(recipient.requireDistributionListId());
-      } else {
-        storyType = StoryType.STORY_WITH_REPLIES;
-      }
-
-      if (!recipient.isMyStory()) {
-        SignalStore.storyValues().setLatestStorySend(StorySend.newSend(recipient));
-      }
-
-      if (multiShareArgs.isTextStory()) {
-        OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
-                                                                             new SlideDeck(),
-                                                                             body,
-                                                                             sentTimestamp,
-                                                                             subscriptionId,
-                                                                             0L,
-                                                                             false,
-                                                                             ThreadTable.DistributionTypes.DEFAULT,
-                                                                             storyType.toTextStoryType(),
-                                                                             null,
-                                                                             false,
-                                                                             null,
-                                                                             Collections.emptyList(),
-                                                                             buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
-                                                                             Collections.emptyList(),
-                                                                             null);
-
-        outgoingMessages.add(outgoingMediaMessage);
-      } else if (canSendAsTextStory) {
-        outgoingMessages.add(generateTextStory(context, recipient, multiShareArgs, sentTimestamp, storyType, generatedTextStoryBackgroundColor));
-      } else {
-        List<Slide> storySupportedSlides = slideDeck.getSlides()
-                                                    .stream()
-                                                    .flatMap(slide -> {
-                                                      if (slide instanceof VideoSlide) {
-                                                        return expandToClips(context, (VideoSlide) slide).stream();
-                                                      } else if (slide instanceof ImageSlide) {
-                                                        return java.util.stream.Stream.of(ensureDefaultQuality(context, (ImageSlide) slide));
-                                                      } else {
-                                                        return java.util.stream.Stream.of(slide);
-                                                      }
-                                                    })
-                                                    .filter(it -> MediaUtil.isStorySupportedType(it.getContentType()))
-                                                    .collect(Collectors.toList());
-
-        for (final Slide slide : storySupportedSlides) {
-          SlideDeck singletonDeck = new SlideDeck();
-          singletonDeck.addSlide(slide);
-
-          OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
-                                                                               singletonDeck,
-                                                                               body,
-                                                                               sentTimestamp,
-                                                                               subscriptionId,
-                                                                               0L,
-                                                                               false,
-                                                                               ThreadTable.DistributionTypes.DEFAULT,
-                                                                               storyType,
-                                                                               null,
-                                                                               false,
-                                                                               null,
-                                                                               Collections.emptyList(),
-                                                                               Collections.emptyList(),
-                                                                               validatedMentions,
-                                                                               null);
-
-          outgoingMessages.add(outgoingMediaMessage);
-        }
-      }
-    } else {
-      OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
-                                                                           slideDeck,
-                                                                           body,
-                                                                           sentTimestamp,
-                                                                           subscriptionId,
-                                                                           expiresIn,
-                                                                           isViewOnce,
-                                                                           ThreadTable.DistributionTypes.DEFAULT,
-                                                                           StoryType.NONE,
-                                                                           null,
-                                                                           false,
-                                                                           null,
-                                                                           Collections.emptyList(),
-                                                                           buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
-                                                                           validatedMentions,
-                                                                           null);
-
-      outgoingMessages.add(outgoingMediaMessage);
-    }
+//    if (isStory) {
+//      final StoryType storyType;
+//      if (recipient.isDistributionList()) {
+//        storyType = SignalDatabase.distributionLists().getStoryType(recipient.requireDistributionListId());
+//      } else {
+//        storyType = StoryType.STORY_WITH_REPLIES;
+//      }
+//
+//      if (!recipient.isMyStory()) {
+//        SignalStore.storyValues().setLatestStorySend(StorySend.newSend(recipient));
+//      }
+//
+//      if (multiShareArgs.isTextStory()) {
+//        OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
+//                                                                             new SlideDeck(),
+//                                                                             body,
+//                                                                             sentTimestamp,
+//                                                                             subscriptionId,
+//                                                                             0L,
+//                                                                             false,
+//                                                                             ThreadTable.DistributionTypes.DEFAULT,
+//                                                                             storyType.toTextStoryType(),
+//                                                                             null,
+//                                                                             false,
+//                                                                             null,
+//                                                                             Collections.emptyList(),
+//                                                                             buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
+//                                                                             Collections.emptyList(),
+//                                                                             null);
+//
+//        outgoingMessages.add(outgoingMediaMessage);
+//      } else if (canSendAsTextStory) {
+////        outgoingMessages.add(generateTextStory(context, recipient, multiShareArgs, sentTimestamp, storyType, generatedTextStoryBackgroundColor));
+//      } else {
+//        List<Slide> storySupportedSlides = slideDeck.getSlides()
+//                                                    .stream()
+//                                                    .flatMap(slide -> {
+//                                                      if (slide instanceof VideoSlide) {
+//                                                        return expandToClips(context, (VideoSlide) slide).stream();
+//                                                      } else if (slide instanceof ImageSlide) {
+//                                                        return java.util.stream.Stream.of(ensureDefaultQuality(context, (ImageSlide) slide));
+//                                                      } else {
+//                                                        return java.util.stream.Stream.of(slide);
+//                                                      }
+//                                                    })
+//                                                    .filter(it -> MediaUtil.isStorySupportedType(it.getContentType()))
+//                                                    .collect(Collectors.toList());
+//
+//        for (final Slide slide : storySupportedSlides) {
+//          SlideDeck singletonDeck = new SlideDeck();
+//          singletonDeck.addSlide(slide);
+//
+//          OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
+//                                                                               singletonDeck,
+//                                                                               body,
+//                                                                               sentTimestamp,
+//                                                                               subscriptionId,
+//                                                                               0L,
+//                                                                               false,
+//                                                                               ThreadTable.DistributionTypes.DEFAULT,
+//                                                                               storyType,
+//                                                                               null,
+//                                                                               false,
+//                                                                               null,
+//                                                                               Collections.emptyList(),
+//                                                                               Collections.emptyList(),
+//                                                                               validatedMentions,
+//                                                                               null);
+//
+//          outgoingMessages.add(outgoingMediaMessage);
+//        }
+//      }
+//    } else {
+//      OutgoingMediaMessage outgoingMediaMessage = new OutgoingMediaMessage(recipient,
+//                                                                           slideDeck,
+//                                                                           body,
+//                                                                           sentTimestamp,
+//                                                                           subscriptionId,
+//                                                                           expiresIn,
+//                                                                           isViewOnce,
+//                                                                           ThreadTable.DistributionTypes.DEFAULT,
+//                                                                           StoryType.NONE,
+//                                                                           null,
+//                                                                           false,
+//                                                                           null,
+//                                                                           Collections.emptyList(),
+//                                                                           buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
+//                                                                           validatedMentions,
+//                                                                           null);
+//
+//      outgoingMessages.add(outgoingMediaMessage);
+//    }
 
     if (isStory) {
       storiesToBatchSend.addAll(outgoingMessages);
@@ -335,19 +333,19 @@ public final class MultiShareSender {
     }
   }
 
-  private static Collection<Slide> expandToClips(@NonNull Context context, @NonNull VideoSlide videoSlide) {
-    long duration = Stories.MediaTransform.getVideoDuration(Objects.requireNonNull(videoSlide.getUri()));
-    if (duration > Stories.MAX_VIDEO_DURATION_MILLIS) {
-      return Stories.MediaTransform.clipMediaToStoryDuration(Stories.MediaTransform.videoSlideToMedia(videoSlide, duration))
-                                   .stream()
-                                   .map(media -> Stories.MediaTransform.mediaToVideoSlide(context, media))
-                                   .collect(Collectors.toList());
-    } else if (duration == 0L) {
-      return Collections.emptyList();
-    } else {
-      return Collections.singletonList(videoSlide);
-    }
-  }
+//  private static Collection<Slide> expandToClips(@NonNull Context context, @NonNull VideoSlide videoSlide) {
+//    long duration = Stories.MediaTransform.getVideoDuration(Objects.requireNonNull(videoSlide.getUri()));
+//    if (duration > Stories.MAX_VIDEO_DURATION_MILLIS) {
+//      return Stories.MediaTransform.clipMediaToStoryDuration(Stories.MediaTransform.videoSlideToMedia(videoSlide, duration))
+//                                   .stream()
+//                                   .map(media -> Stories.MediaTransform.mediaToVideoSlide(context, media))
+//                                   .collect(Collectors.toList());
+//    } else if (duration == 0L) {
+//      return Collections.emptyList();
+//    } else {
+//      return Collections.singletonList(videoSlide);
+//    }
+//  }
 
   private static List<LinkPreview> buildLinkPreviews(@NonNull Context context, @Nullable LinkPreview linkPreview) {
     if (linkPreview == null) {
@@ -414,60 +412,60 @@ public final class MultiShareSender {
     MessageSender.send(context, outgoingTextMessage, threadId, forceSms, null, null);
   }
 
-  private static @NonNull OutgoingMediaMessage generateTextStory(@NonNull Context context,
-                                                                 @NonNull Recipient recipient,
-                                                                 @NonNull MultiShareArgs multiShareArgs,
-                                                                 long sentTimestamp,
-                                                                 @NonNull StoryType storyType,
-                                                                 @NonNull ChatColors background)
-  {
-    return new OutgoingMediaMessage(
-        recipient,
-        Base64.encodeBytes(StoryTextPost.newBuilder()
-                                        .setBody(getBodyForTextStory(multiShareArgs.getDraftText(), multiShareArgs.getLinkPreview()))
-                                        .setStyle(StoryTextPost.Style.DEFAULT)
-                                        .setBackground(background.serialize())
-                                        .setTextBackgroundColor(0)
-                                        .setTextForegroundColor(Color.WHITE)
-                                        .build()
-                                        .toByteArray()),
-        Collections.emptyList(),
-        sentTimestamp,
-        -1,
-        0,
-        false,
-        ThreadTable.DistributionTypes.DEFAULT,
-        storyType.toTextStoryType(),
-        null,
-        false,
-        null,
-        Collections.emptyList(),
-        buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
-        Collections.emptyList(),
-        Collections.emptySet(),
-        Collections.emptySet(),
-        null);
-  }
+//  private static @NonNull OutgoingMediaMessage generateTextStory(@NonNull Context context,
+//                                                                 @NonNull Recipient recipient,
+//                                                                 @NonNull MultiShareArgs multiShareArgs,
+//                                                                 long sentTimestamp,
+//                                                                 @NonNull StoryType storyType,
+//                                                                 @NonNull ChatColors background)
+//  {
+//    return new OutgoingMediaMessage(
+//        recipient,
+//        Base64.encodeBytes(StoryTextPost.newBuilder()
+//                                        .setBody(getBodyForTextStory(multiShareArgs.getDraftText(), multiShareArgs.getLinkPreview()))
+//                                        .setStyle(StoryTextPost.Style.DEFAULT)
+//                                        .setBackground(background.serialize())
+//                                        .setTextBackgroundColor(0)
+//                                        .setTextForegroundColor(Color.WHITE)
+//                                        .build()
+//                                        .toByteArray()),
+//        Collections.emptyList(),
+//        sentTimestamp,
+//        -1,
+//        0,
+//        false,
+//        ThreadTable.DistributionTypes.DEFAULT,
+//        storyType.toTextStoryType(),
+//        null,
+//        false,
+//        null,
+//        Collections.emptyList(),
+//        buildLinkPreviews(context, multiShareArgs.getLinkPreview()),
+//        Collections.emptyList(),
+//        Collections.emptySet(),
+//        Collections.emptySet(),
+//        null);
+//  }
 
-  private static @NonNull String getBodyForTextStory(@Nullable String draftText, @Nullable LinkPreview linkPreview) {
-    if (Util.isEmpty(draftText)) {
-      return "";
-    }
-
-    BreakIteratorCompat breakIteratorCompat = BreakIteratorCompat.getInstance();
-    breakIteratorCompat.setText(draftText);
-
-    String trimmed = breakIteratorCompat.take(Stories.MAX_TEXT_STORY_SIZE).toString();
-    if (linkPreview == null) {
-      return trimmed;
-    }
-
-    if (linkPreview.getUrl().equals(trimmed)) {
-      return "";
-    }
-
-    return trimmed.replace(linkPreview.getUrl(), "").trim();
-  }
+//  private static @NonNull String getBodyForTextStory(@Nullable String draftText, @Nullable LinkPreview linkPreview) {
+//    if (Util.isEmpty(draftText)) {
+//      return "";
+//    }
+//
+//    BreakIteratorCompat breakIteratorCompat = BreakIteratorCompat.getInstance();
+//    breakIteratorCompat.setText(draftText);
+//
+//    String trimmed = breakIteratorCompat.take(Stories.MAX_TEXT_STORY_SIZE).toString();
+//    if (linkPreview == null) {
+//      return trimmed;
+//    }
+//
+//    if (linkPreview.getUrl().equals(trimmed)) {
+//      return "";
+//    }
+//
+//    return trimmed.replace(linkPreview.getUrl(), "").trim();
+//  }
 
   private static boolean shouldSendAsPush(@NonNull Recipient recipient, boolean forceSms) {
     return recipient.isDistributionList() ||

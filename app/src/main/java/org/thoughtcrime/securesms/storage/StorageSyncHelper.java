@@ -21,7 +21,7 @@ import org.thoughtcrime.securesms.keyvalue.PhoneNumberPrivacyValues;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.payments.Entropy;
 import org.thoughtcrime.securesms.recipients.Recipient;
-import org.thoughtcrime.securesms.subscription.Subscriber;
+//import org.thoughtcrime.securesms.subscription.Subscriber;
 import org.thoughtcrime.securesms.util.Base64;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.Util;
@@ -143,9 +143,9 @@ public final class StorageSyncHelper {
                                                          .setUniversalExpireTimer(SignalStore.settings().getUniversalExpireTimer())
                                                          .setE164(self.requireE164())
                                                          .setDefaultReactions(SignalStore.emojiValues().getReactions())
-                                                         .setSubscriber(StorageSyncModels.localToRemoteSubscriber(SignalStore.donationsValues().getSubscriber()))
-                                                         .setDisplayBadgesOnProfile(SignalStore.donationsValues().getDisplayBadgesOnProfile())
-                                                         .setSubscriptionManuallyCancelled(SignalStore.donationsValues().isUserManuallyCancelled())
+//                                                         .setSubscriber(StorageSyncModels.localToRemoteSubscriber(SignalStore.donationsValues().getSubscriber()))
+//                                                         .setDisplayBadgesOnProfile(SignalStore.donationsValues().getDisplayBadgesOnProfile())
+//                                                         .setSubscriptionManuallyCancelled(SignalStore.donationsValues().isUserManuallyCancelled())
                                                          .setKeepMutedChatsArchived(SignalStore.settings().shouldKeepMutedChatsArchived())
                                                          .setHasSetMyStoriesPrivacy(SignalStore.storyValues().getUserHasBeenNotifiedAboutStories())
                                                          .setHasViewedOnboardingStory(SignalStore.storyValues().getUserHasViewedOnboardingStory())
@@ -176,7 +176,7 @@ public final class StorageSyncHelper {
     SignalStore.paymentsValues().setEnabledAndEntropy(update.getNew().getPayments().isEnabled(), Entropy.fromBytes(update.getNew().getPayments().getEntropy().orElse(null)));
     SignalStore.settings().setUniversalExpireTimer(update.getNew().getUniversalExpireTimer());
     SignalStore.emojiValues().setReactions(update.getNew().getDefaultReactions());
-    SignalStore.donationsValues().setDisplayBadgesOnProfile(update.getNew().isDisplayBadgesOnProfile());
+//    SignalStore.donationsValues().setDisplayBadgesOnProfile(update.getNew().isDisplayBadgesOnProfile());
     SignalStore.settings().setKeepMutedChatsArchived(update.getNew().isKeepMutedChatsArchived());
     SignalStore.storyValues().setUserHasBeenNotifiedAboutStories(update.getNew().hasSetMyStoriesPrivacy());
     SignalStore.storyValues().setUserHasViewedOnboardingStory(update.getNew().hasViewedOnboardingStory());
@@ -196,16 +196,16 @@ public final class StorageSyncHelper {
       SignalStore.storyValues().setViewedReceiptsEnabled(update.getNew().getStoryViewReceiptsState() == OptionalBool.ENABLED);
     }
 
-    if (update.getNew().isSubscriptionManuallyCancelled()) {
-      SignalStore.donationsValues().updateLocalStateForManualCancellation();
-    } else {
-      SignalStore.donationsValues().clearUserManuallyCancelled();
-    }
+//    if (update.getNew().isSubscriptionManuallyCancelled()) {
+//      SignalStore.donationsValues().updateLocalStateForManualCancellation();
+//    } else {
+//      SignalStore.donationsValues().clearUserManuallyCancelled();
+//    }
 
-    Subscriber subscriber = StorageSyncModels.remoteToLocalSubscriber(update.getNew().getSubscriber());
-    if (subscriber != null) {
-      SignalStore.donationsValues().setSubscriber(subscriber);
-    }
+//    Subscriber subscriber = StorageSyncModels.remoteToLocalSubscriber(update.getNew().getSubscriber());
+//    if (subscriber != null) {
+//      SignalStore.donationsValues().setSubscriber(subscriber);
+//    }
 
     if (fetchProfile && update.getNew().getAvatarUrlPath().isPresent()) {
       ApplicationDependencies.getJobManager().add(new RetrieveProfileAvatarJob(self, update.getNew().getAvatarUrlPath().get()));

@@ -24,8 +24,8 @@ import org.thoughtcrime.securesms.notifications.ReplyMethod
 import org.thoughtcrime.securesms.preferences.widgets.NotificationPrivacyPreference
 import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.service.KeyCachingService
-import org.thoughtcrime.securesms.stories.StoryViewerArgs
-import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity
+//import org.thoughtcrime.securesms.stories.StoryViewerArgs
+//import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity
 import org.thoughtcrime.securesms.util.Util
 import java.lang.NullPointerException
 
@@ -116,22 +116,23 @@ data class NotificationConversation(
   }
 
   fun getPendingIntent(context: Context): PendingIntent? {
-    val intent: Intent = if (thread.groupStoryId != null) {
-      StoryViewerActivity.createIntent(
-        context,
-        StoryViewerArgs(
-          recipientId = recipient.id,
-          storyId = thread.groupStoryId,
-          isInHiddenStoryMode = recipient.shouldHideStory(),
-          isFromNotification = true,
-          groupReplyStartPosition = mostRecentNotification.getStartingPosition(context)
-        )
-      )
-    } else {
+    val intent: Intent =
+//      if (thread.groupStoryId != null) {
+//      StoryViewerActivity.createIntent(
+//        context,
+//        StoryViewerArgs(
+//          recipientId = recipient.id,
+//          storyId = thread.groupStoryId,
+//          isInHiddenStoryMode = recipient.shouldHideStory(),
+//          isFromNotification = true,
+//          groupReplyStartPosition = mostRecentNotification.getStartingPosition(context)
+//        )
+//      )
+//    } else {
       ConversationIntents.createBuilder(context, recipient.id, thread.threadId)
         .withStartingPosition(mostRecentNotification.getStartingPosition(context))
         .build()
-    }.makeUniqueToPreventMerging()
+    .makeUniqueToPreventMerging()
 
     return try {
       TaskStackBuilder.create(context)

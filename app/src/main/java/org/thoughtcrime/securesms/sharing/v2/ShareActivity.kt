@@ -220,9 +220,9 @@ class ShareActivity : PassphraseRequiredActivity(), MultiselectForwardFragment.C
   }
 
   private fun openConversation(shareEvent: ShareEvent.OpenConversation) {
-    if (shareEvent.contact.isStory) {
-      error("Can't open a conversation for a story!")
-    }
+//    if (shareEvent.contact.isStory) {
+//      error("Can't open a conversation for a story!")
+//    }
 
     Log.d(TAG, "Opening conversation...")
 
@@ -264,15 +264,15 @@ class ShareActivity : PassphraseRequiredActivity(), MultiselectForwardFragment.C
       )
     }
 
-    val shareAsTextStory = multiShareArgs.allRecipientsAreStories() && media.isEmpty()
+//    val shareAsTextStory = multiShareArgs.allRecipientsAreStories() && media.isEmpty()
 
     val intent = share(
       this,
       MultiShareSender.getWorstTransportOption(this, multiShareArgs.recipientSearchKeys),
       media,
       multiShareArgs.recipientSearchKeys.toList(),
-      multiShareArgs.draftText,
-      shareAsTextStory
+      multiShareArgs.draftText
+//      shareAsTextStory
     )
 
     finishOnOkResultLauncher.launch(intent)

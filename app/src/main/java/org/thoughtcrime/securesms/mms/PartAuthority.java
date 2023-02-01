@@ -11,7 +11,7 @@ import androidx.annotation.Nullable;
 import org.thoughtcrime.securesms.BuildConfig;
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.attachments.AttachmentId;
-import org.thoughtcrime.securesms.avatar.AvatarPickerStorage;
+//import org.thoughtcrime.securesms.avatar.AvatarPickerStorage;
 import org.thoughtcrime.securesms.database.AttachmentTable;
 import org.thoughtcrime.securesms.database.SignalDatabase;
 import org.thoughtcrime.securesms.emoji.EmojiFiles;
@@ -77,7 +77,7 @@ public class PartAuthority {
       case BLOB_ROW:          return BlobProvider.getInstance().getStream(context, uri);
       case WALLPAPER_ROW:     return WallpaperStorage.read(context, getWallpaperFilename(uri));
       case EMOJI_ROW:         return EmojiFiles.openForReading(context, getEmojiFilename(uri));
-      case AVATAR_PICKER_ROW: return AvatarPickerStorage.read(context, getAvatarPickerFilename(uri));
+//      case AVATAR_PICKER_ROW: return AvatarPickerStorage.read(context, getAvatarPickerFilename(uri));
       default:                return context.getContentResolver().openInputStream(uri);
       }
     } catch (SecurityException se) {

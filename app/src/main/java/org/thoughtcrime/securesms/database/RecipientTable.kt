@@ -38,9 +38,9 @@ import org.signal.libsignal.zkgroup.InvalidInputException
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential
 import org.signal.libsignal.zkgroup.profiles.ProfileKey
 import org.signal.storageservice.protos.groups.local.DecryptedGroup
-import org.thoughtcrime.securesms.badges.Badges
-import org.thoughtcrime.securesms.badges.Badges.toDatabaseBadge
-import org.thoughtcrime.securesms.badges.models.Badge
+//import org.thoughtcrime.securesms.badges.Badges
+//import org.thoughtcrime.securesms.badges.Badges.toDatabaseBadge
+//import org.thoughtcrime.securesms.badges.models.Badge
 import org.thoughtcrime.securesms.color.MaterialColor
 import org.thoughtcrime.securesms.color.MaterialColor.UnknownColorException
 import org.thoughtcrime.securesms.conversation.colors.AvatarColor
@@ -1528,20 +1528,20 @@ open class RecipientTable(context: Context, databaseHelper: SignalDatabase) : Da
     return DeviceLastResetTime.newBuilder().build()
   }
 
-  fun setBadges(id: RecipientId, badges: List<Badge>) {
-    val badgeListBuilder = BadgeList.newBuilder()
-    for (badge in badges) {
-      badgeListBuilder.addBadges(toDatabaseBadge(badge))
-    }
-
-    val values = ContentValues(1).apply {
-      put(BADGES, badgeListBuilder.build().toByteArray())
-    }
-
-    if (update(id, values)) {
-      ApplicationDependencies.getDatabaseObserver().notifyRecipientChanged(id)
-    }
-  }
+//  fun setBadges(id: RecipientId, badges: List<Badge>) {
+//    val badgeListBuilder = BadgeList.newBuilder()
+//    for (badge in badges) {
+//      badgeListBuilder.addBadges(toDatabaseBadge(badge))
+//    }
+//
+//    val values = ContentValues(1).apply {
+//      put(BADGES, badgeListBuilder.build().toByteArray())
+//    }
+//
+//    if (update(id, values)) {
+//      ApplicationDependencies.getDatabaseObserver().notifyRecipientChanged(id)
+//    }
+//  }
 
   fun setCapabilities(id: RecipientId, capabilities: SignalServiceProfile.Capabilities) {
     var value: Long = 0
@@ -3903,7 +3903,7 @@ open class RecipientTable(context: Context, databaseHelper: SignalDatabase) : Da
       syncExtras = getSyncExtras(cursor),
       extras = getExtras(cursor),
       hasGroupsInCommon = cursor.requireBoolean(GROUPS_IN_COMMON),
-      badges = parseBadgeList(cursor.requireBlob(BADGES)),
+//      badges = parseBadgeList(cursor.requireBlob(BADGES)),
       needsPniSignature = cursor.requireBoolean(NEEDS_PNI_SIGNATURE),
       isHidden = cursor.requireBoolean(HIDDEN)
     )
@@ -3923,29 +3923,29 @@ open class RecipientTable(context: Context, databaseHelper: SignalDatabase) : Da
     )
   }
 
-  private fun parseBadgeList(serializedBadgeList: ByteArray?): List<Badge> {
-    var badgeList: BadgeList? = null
-    if (serializedBadgeList != null) {
-      try {
-        badgeList = BadgeList.parseFrom(serializedBadgeList)
-      } catch (e: InvalidProtocolBufferException) {
-        Log.w(TAG, e)
-      }
-    }
-
-    val badges: List<Badge>
-    if (badgeList != null) {
-      val protoBadges = badgeList.badgesList
-      badges = ArrayList(protoBadges.size)
-      for (protoBadge in protoBadges) {
-        badges.add(Badges.fromDatabaseBadge(protoBadge))
-      }
-    } else {
-      badges = emptyList()
-    }
-
-    return badges
-  }
+//  private fun parseBadgeList(serializedBadgeList: ByteArray?): List<Badge> {
+//    var badgeList: BadgeList? = null
+//    if (serializedBadgeList != null) {
+//      try {
+//        badgeList = BadgeList.parseFrom(serializedBadgeList)
+//      } catch (e: InvalidProtocolBufferException) {
+//        Log.w(TAG, e)
+//      }
+//    }
+//
+////    val badges: List<Badge>
+////    if (badgeList != null) {
+////      val protoBadges = badgeList.badgesList
+////      badges = ArrayList(protoBadges.size)
+////      for (protoBadge in protoBadges) {
+////        badges.add(Badges.fromDatabaseBadge(protoBadge))
+////      }
+////    } else {
+////      badges = emptyList()
+////    }
+//
+//    return badges
+//  }
 
   private fun getSyncExtras(cursor: Cursor): RecipientRecord.SyncExtras {
     val storageProtoRaw = cursor.optionalString(STORAGE_PROTO).orElse(null)

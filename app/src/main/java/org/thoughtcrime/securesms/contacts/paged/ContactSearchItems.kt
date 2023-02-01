@@ -7,7 +7,7 @@ import android.widget.TextView
 import com.google.android.material.button.MaterialButton
 import org.signal.core.util.dp
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.badges.BadgeImageView
+//import org.thoughtcrime.securesms.badges.BadgeImageView
 import org.thoughtcrime.securesms.components.AvatarImageView
 import org.thoughtcrime.securesms.components.FromTextView
 import org.thoughtcrime.securesms.components.menu.ActionItem
@@ -286,7 +286,7 @@ object ContactSearchItems {
   ) : MappingViewHolder<T>(itemView) {
 
     protected val avatar: AvatarImageView = itemView.findViewById(R.id.contact_photo_image)
-    protected val badge: BadgeImageView = itemView.findViewById(R.id.contact_badge)
+//    protected val badge: BadgeImageView = itemView.findViewById(R.id.contact_badge)
     protected val checkbox: CheckBox = itemView.findViewById(R.id.check_box)
     protected val name: FromTextView = itemView.findViewById(R.id.name)
     protected val number: TextView = itemView.findViewById(R.id.number)
@@ -304,7 +304,7 @@ object ContactSearchItems {
       }
 
       name.setText(getRecipient(model))
-      badge.setBadgeFromRecipient(getRecipient(model))
+//      badge.setBadgeFromRecipient(getRecipient(model))
 
       bindAvatar(model)
       bindNumberField(model)

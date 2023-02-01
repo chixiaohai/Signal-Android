@@ -9,9 +9,9 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.signal.core.util.concurrent.SignalExecutors
 import org.signal.core.util.logging.Log
-import org.thoughtcrime.securesms.badges.models.Badge
-import org.thoughtcrime.securesms.components.settings.app.subscription.InAppDonations
-import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalActivity
+//import org.thoughtcrime.securesms.badges.models.Badge
+//import org.thoughtcrime.securesms.components.settings.app.subscription.InAppDonations
+//import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalActivity
 import org.thoughtcrime.securesms.database.RemoteMegaphoneTable
 import org.thoughtcrime.securesms.database.SignalDatabase
 import org.thoughtcrime.securesms.database.model.RemoteMegaphoneRecord
@@ -51,7 +51,7 @@ object RemoteMegaphoneRepository {
   }
 
   private val donate: Action = Action { context, controller, remote ->
-    controller.onMegaphoneNavigationRequested(Intent(context, DonateToSignalActivity::class.java))
+//    controller.onMegaphoneNavigationRequested(Intent(context, DonateToSignalActivity::class.java))
     snooze.run(context, controller, remote)
   }
 
@@ -103,7 +103,7 @@ object RemoteMegaphoneRepository {
 
   private fun checkCondition(conditionalId: String): Boolean {
     return when (conditionalId) {
-      "standard_donate" -> shouldShowDonateMegaphone()
+//      "standard_donate" -> shouldShowDonateMegaphone()
       "internal_user" -> FeatureFlags.internalUser()
       else -> false
     }
@@ -120,15 +120,15 @@ object RemoteMegaphoneRepository {
     return gapDays == null || (record.snoozedAt + gapDays.days.inWholeMilliseconds <= now)
   }
 
-  private fun shouldShowDonateMegaphone(): Boolean {
-    return VersionTracker.getDaysSinceFirstInstalled(context) >= 7 &&
-      InAppDonations.hasAtLeastOnePaymentMethodAvailable() &&
-      Recipient.self()
-        .badges
-        .stream()
-        .filter { obj: Badge? -> Objects.nonNull(obj) }
-        .noneMatch { (_, category): Badge -> category === Badge.Category.Donor }
-  }
+//  private fun shouldShowDonateMegaphone(): Boolean {
+//    return VersionTracker.getDaysSinceFirstInstalled(context) >= 7 &&
+//      InAppDonations.hasAtLeastOnePaymentMethodAvailable() &&
+//      Recipient.self()
+//        .badges
+//        .stream()
+//        .filter { obj: Badge? -> Objects.nonNull(obj) }
+//        .noneMatch { (_, category): Badge -> category === Badge.Category.Donor }
+//  }
 
   fun interface Action {
     fun run(context: Context, controller: MegaphoneActionController, remoteMegaphone: RemoteMegaphoneRecord)

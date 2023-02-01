@@ -8,17 +8,17 @@
     android:layout_marginTop="28dp"
     android:layout_marginBottom="24dp">
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/expired_badge"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        app:layout_constraintHorizontal_bias="0.48"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:badge_size="badge_112"
-        tools:src="@drawable/test_gradient" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/expired_badge"-->
+<!--        android:layout_width="110dp"-->
+<!--        android:layout_height="110dp"-->
+<!--        app:layout_constraintHorizontal_bias="0.48"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:badge_size="badge_112"-->
+<!--        tools:src="@drawable/test_gradient" />-->
 
     <ImageView
         android:id="@+id/expired_badge_fade"

@@ -16,9 +16,9 @@ import org.signal.core.util.SetUtil;
 import org.signal.core.util.TranslationDetection;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.components.settings.app.AppSettingsActivity;
-import org.thoughtcrime.securesms.components.settings.app.subscription.InAppDonations;
+//import org.thoughtcrime.securesms.components.settings.app.subscription.InAppDonations;
 import org.thoughtcrime.securesms.database.model.MegaphoneRecord;
 import org.thoughtcrime.securesms.database.model.RemoteMegaphoneRecord;
 import org.thoughtcrime.securesms.dependencies.ApplicationDependencies;
@@ -266,10 +266,10 @@ public final class Megaphones {
         .setTitle(R.string.BecomeASustainerMegaphone__become_a_sustainer)
         .setImage(R.drawable.ic_become_a_sustainer_megaphone)
         .setBody(R.string.BecomeASustainerMegaphone__signal_is_powered_by)
-        .setActionButton(R.string.BecomeASustainerMegaphone__donate, (megaphone, listener) -> {
-          listener.onMegaphoneNavigationRequested(AppSettingsActivity.subscriptions(context));
-          listener.onMegaphoneCompleted(Event.BECOME_A_SUSTAINER);
-        })
+//        .setActionButton(R.string.BecomeASustainerMegaphone__donate, (megaphone, listener) -> {
+//          listener.onMegaphoneNavigationRequested(AppSettingsActivity.subscriptions(context));
+//          listener.onMegaphoneCompleted(Event.BECOME_A_SUSTAINER);
+//        })
         .setSecondaryButton(R.string.BecomeASustainerMegaphone__not_now, (megaphone, listener) -> {
           listener.onMegaphoneCompleted(Event.BECOME_A_SUSTAINER);
         })
@@ -281,10 +281,10 @@ public final class Megaphones {
         .setTitle(R.string.Donate2022Q2Megaphone_donate_to_signal)
         .setImage(R.drawable.ic_donate_q2_2022)
         .setBody(R.string.Donate2022Q2Megaphone_signal_is_powered_by_people_like_you)
-        .setActionButton(R.string.Donate2022Q2Megaphone_donate, (megaphone, listener) -> {
-          listener.onMegaphoneNavigationRequested(AppSettingsActivity.subscriptions(context));
-          listener.onMegaphoneCompleted(Event.DONATE_Q2_2022);
-        })
+//        .setActionButton(R.string.Donate2022Q2Megaphone_donate, (megaphone, listener) -> {
+//          listener.onMegaphoneNavigationRequested(AppSettingsActivity.subscriptions(context));
+//          listener.onMegaphoneCompleted(Event.DONATE_Q2_2022);
+//        })
         .setSecondaryButton(R.string.Donate2022Q2Megaphone_not_now, (megaphone, listener) -> {
           listener.onMegaphoneCompleted(Event.DONATE_Q2_2022);
         })
@@ -395,13 +395,13 @@ public final class Megaphones {
 
     return timeSinceLastDonatePrompt > MIN_TIME_BETWEEN_DONATE_MEGAPHONES &&
            VersionTracker.getDaysSinceFirstInstalled(context) >= 7 &&
-           LocaleFeatureFlags.isInDonateMegaphone() &&
-           InAppDonations.INSTANCE.hasAtLeastOnePaymentMethodAvailable() &&
-           Recipient.self()
-                    .getBadges()
-                    .stream()
-                    .filter(Objects::nonNull)
-                    .noneMatch(badge -> badge.getCategory() == Badge.Category.Donor);
+           LocaleFeatureFlags.isInDonateMegaphone();
+//           InAppDonations.INSTANCE.hasAtLeastOnePaymentMethodAvailable() &&
+//           Recipient.self()
+//                    .getBadges()
+//                    .stream()
+//                    .filter(Objects::nonNull)
+//                    .noneMatch(badge -> badge.getCategory() == Badge.Category.Donor);
   }
 
   private static boolean shouldShowOnboardingMegaphone(@NonNull Context context) {

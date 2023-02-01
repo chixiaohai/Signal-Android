@@ -8,7 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.conversation.colors.ChatColors;
 import org.thoughtcrime.securesms.database.ThreadTable;
 import org.thoughtcrime.securesms.mediasend.Media;
@@ -100,7 +100,7 @@ public class ConversationIntents {
     private final int              startingPosition;
     private final boolean          firstTimeInSelfCreatedGroup;
     private final boolean          withSearchOpen;
-    private final Badge giftBadge;
+//    private final Badge giftBadge;
     private final long  shareDataTimestamp;
 
     static Args from(@NonNull Bundle arguments) {
@@ -116,7 +116,6 @@ public class ConversationIntents {
                         -1,
                         false,
                         false,
-                        null,
                         -1L);
       }
 
@@ -130,7 +129,6 @@ public class ConversationIntents {
                       arguments.getInt(EXTRA_STARTING_POSITION, -1),
                       arguments.getBoolean(EXTRA_FIRST_TIME_IN_SELF_CREATED_GROUP, false),
                       arguments.getBoolean(EXTRA_WITH_SEARCH_OPEN, false),
-                      arguments.getParcelable(EXTRA_GIFT_BADGE),
                       arguments.getLong(EXTRA_SHARE_DATA_TIMESTAMP, -1L));
     }
 
@@ -144,7 +142,7 @@ public class ConversationIntents {
                  int startingPosition,
                  boolean firstTimeInSelfCreatedGroup,
                  boolean withSearchOpen,
-                 @Nullable Badge giftBadge,
+//                 @Nullable Badge giftBadge,
                  long shareDataTimestamp)
     {
       this.recipientId                 = recipientId;
@@ -157,7 +155,7 @@ public class ConversationIntents {
       this.startingPosition            = startingPosition;
       this.firstTimeInSelfCreatedGroup = firstTimeInSelfCreatedGroup;
       this.withSearchOpen              = withSearchOpen;
-      this.giftBadge          = giftBadge;
+//      this.giftBadge          = giftBadge;
       this.shareDataTimestamp = shareDataTimestamp;
     }
 
@@ -209,9 +207,9 @@ public class ConversationIntents {
       return withSearchOpen;
     }
 
-    public @Nullable Badge getGiftBadge() {
-      return giftBadge;
-    }
+//    public @Nullable Badge getGiftBadge() {
+//      return giftBadge;
+//    }
 
     public long getShareDataTimestamp() {
       return shareDataTimestamp;
@@ -234,7 +232,7 @@ public class ConversationIntents {
     private String         dataType;
     private boolean        firstTimeInSelfCreatedGroup;
     private boolean        withSearchOpen;
-    private Badge          giftBadge;
+//    private Badge          giftBadge;
     private long           shareDataTimestamp = -1L;
 
     private Builder(@NonNull Context context,
@@ -305,10 +303,10 @@ public class ConversationIntents {
       return this;
     }
 
-    public Builder withGiftBadge(@NonNull Badge badge) {
-      this.giftBadge = badge;
-      return this;
-    }
+//    public Builder withGiftBadge(@NonNull Badge badge) {
+//      this.giftBadge = badge;
+//      return this;
+//    }
 
     public Builder withShareDataTimestamp(long timestamp) {
       this.shareDataTimestamp = timestamp;
@@ -340,7 +338,7 @@ public class ConversationIntents {
       intent.putExtra(EXTRA_BORDERLESS, isBorderless);
       intent.putExtra(EXTRA_FIRST_TIME_IN_SELF_CREATED_GROUP, firstTimeInSelfCreatedGroup);
       intent.putExtra(EXTRA_WITH_SEARCH_OPEN, withSearchOpen);
-      intent.putExtra(EXTRA_GIFT_BADGE, giftBadge);
+//      intent.putExtra(EXTRA_GIFT_BADGE, giftBadge);
       intent.putExtra(EXTRA_SHARE_DATA_TIMESTAMP, shareDataTimestamp);
 
       if (draftText != null) {

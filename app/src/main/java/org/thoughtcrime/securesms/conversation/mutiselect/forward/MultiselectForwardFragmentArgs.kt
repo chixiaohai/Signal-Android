@@ -21,7 +21,7 @@ import org.thoughtcrime.securesms.database.model.MmsMessageRecord
 import org.thoughtcrime.securesms.mediasend.Media
 import org.thoughtcrime.securesms.mms.PartAuthority
 import org.thoughtcrime.securesms.sharing.MultiShareArgs
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.MediaUtil
 import java.util.Optional
 import java.util.function.Consumer
@@ -45,7 +45,7 @@ data class MultiselectForwardFragmentArgs @JvmOverloads constructor(
   val forceSelectionOnly: Boolean = false,
   val selectSingleRecipient: Boolean = false,
   val sendButtonColors: ViewColorSet = ViewColorSet.PRIMARY,
-  val storySendRequirements: Stories.MediaTransform.SendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND,
+//  val storySendRequirements: Stories.MediaTransform.SendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND,
   val isSearchEnabled: Boolean = true,
   val isViewOnce: Boolean = false
 ) : Parcelable {
@@ -74,7 +74,7 @@ data class MultiselectForwardFragmentArgs @JvmOverloads constructor(
             MultiselectForwardFragmentArgs(
               isMmsSupported,
               listOf(multiShareArgs),
-              storySendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND,
+//              storySendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND,
               sendButtonColors = sendButtonColors ?: ViewColorSet.PRIMARY
             )
           )
@@ -101,7 +101,7 @@ data class MultiselectForwardFragmentArgs @JvmOverloads constructor(
             MultiselectForwardFragmentArgs(
               canSendToNonPush,
               multiShareArgs,
-              storySendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
+//              storySendRequirements = Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
             )
           )
         }

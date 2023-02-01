@@ -19,6 +19,7 @@ import androidx.preference.PreferenceManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -34,7 +35,7 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
 
   private lateinit var viewModel: AdvancedPrivacySettingsViewModel
 
-  private var networkReceiver: NetworkReceiver? = null
+//  private var networkReceiver: NetworkReceiver? = null
 
   private val sealedSenderSummary: CharSequence by lazy {
     SpanUtil.learnMore(
@@ -67,15 +68,15 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
   override fun onResume() {
     super.onResume()
     viewModel.refresh()
-    registerNetworkReceiver()
+//    registerNetworkReceiver()
   }
 
   override fun onPause() {
     super.onPause()
-    unregisterNetworkReceiver()
+//    unregisterNetworkReceiver()
   }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     val repository = AdvancedPrivacySettingsRepository(requireContext())
     val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
     val factory = AdvancedPrivacySettingsViewModel.Factory(preferences, repository)
@@ -149,29 +150,29 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
         viewModel.setAlwaysRelayCalls(!state.alwaysRelayCalls)
       }
 
-      dividerPref()
+//      dividerPref()
 
-      sectionHeaderPref(R.string.preferences_communication__category_censorship_circumvention)
+//      sectionHeaderPref(R.string.preferences_communication__category_censorship_circumvention)
 
-      val censorshipSummaryResId: Int = when (state.censorshipCircumventionState) {
-        CensorshipCircumventionState.AVAILABLE -> R.string.preferences_communication__censorship_circumvention_if_enabled_signal_will_attempt_to_circumvent_censorship
-        CensorshipCircumventionState.AVAILABLE_MANUALLY_DISABLED -> R.string.preferences_communication__censorship_circumvention_you_have_manually_disabled
-        CensorshipCircumventionState.AVAILABLE_AUTOMATICALLY_ENABLED -> R.string.preferences_communication__censorship_circumvention_has_been_activated_based_on_your_accounts_phone_number
-        CensorshipCircumventionState.UNAVAILABLE_CONNECTED -> R.string.preferences_communication__censorship_circumvention_is_not_necessary_you_are_already_connected
-        CensorshipCircumventionState.UNAVAILABLE_NO_INTERNET -> R.string.preferences_communication__censorship_circumvention_can_only_be_activated_when_connected_to_the_internet
-      }
+//      val censorshipSummaryResId: Int = when (state.censorshipCircumventionState) {
+//        CensorshipCircumventionState.AVAILABLE -> R.string.preferences_communication__censorship_circumvention_if_enabled_signal_will_attempt_to_circumvent_censorship
+//        CensorshipCircumventionState.AVAILABLE_MANUALLY_DISABLED -> R.string.preferences_communication__censorship_circumvention_you_have_manually_disabled
+//        CensorshipCircumventionState.AVAILABLE_AUTOMATICALLY_ENABLED -> R.string.preferences_communication__censorship_circumvention_has_been_activated_based_on_your_accounts_phone_number
+//        CensorshipCircumventionState.UNAVAILABLE_CONNECTED -> R.string.preferences_communication__censorship_circumvention_is_not_necessary_you_are_already_connected
+//        CensorshipCircumventionState.UNAVAILABLE_NO_INTERNET -> R.string.preferences_communication__censorship_circumvention_can_only_be_activated_when_connected_to_the_internet
+//      }
 
-      switchPref(
-        title = DSLSettingsText.from(R.string.preferences_communication__censorship_circumvention),
-        summary = DSLSettingsText.from(censorshipSummaryResId),
-        isChecked = state.censorshipCircumventionEnabled,
-        isEnabled = state.censorshipCircumventionState.available,
-        onClick = {
-          viewModel.setCensorshipCircumventionEnabled(!state.censorshipCircumventionEnabled)
-        }
-      )
+//      switchPref(
+//        title = DSLSettingsText.from(R.string.preferences_communication__censorship_circumvention),
+//        summary = DSLSettingsText.from(censorshipSummaryResId),
+//        isChecked = state.censorshipCircumventionEnabled,
+//        isEnabled = state.censorshipCircumventionState.available,
+//        onClick = {
+//          viewModel.setCensorshipCircumventionEnabled(!state.censorshipCircumventionEnabled)
+//        }
+//      )
 
-      dividerPref()
+//      dividerPref()
 
       sectionHeaderPref(R.string.preferences_communication__category_sealed_sender)
 
@@ -209,26 +210,26 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
     }
   }
 
-  @Suppress("DEPRECATION")
-  private fun registerNetworkReceiver() {
-    val context: Context? = context
-    if (context != null && networkReceiver == null) {
-      networkReceiver = NetworkReceiver()
-      context.registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-    }
-  }
+//  @Suppress("DEPRECATION")
+//  private fun registerNetworkReceiver() {
+//    val context: Context? = context
+//    if (context != null && networkReceiver == null) {
+//      networkReceiver = NetworkReceiver()
+//      context.registerReceiver(networkReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+//    }
+//  }
 
-  private fun unregisterNetworkReceiver() {
-    val context: Context? = context
-    if (context != null && networkReceiver != null) {
-      context.unregisterReceiver(networkReceiver)
-      networkReceiver = null
-    }
-  }
+//  private fun unregisterNetworkReceiver() {
+//    val context: Context? = context
+//    if (context != null && networkReceiver != null) {
+//      context.unregisterReceiver(networkReceiver)
+//      networkReceiver = null
+//    }
+//  }
 
-  private inner class NetworkReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-      viewModel.refresh()
-    }
-  }
+//  private inner class NetworkReceiver : BroadcastReceiver() {
+//    override fun onReceive(context: Context, intent: Intent) {
+//      viewModel.refresh()
+//    }
+//  }
 }

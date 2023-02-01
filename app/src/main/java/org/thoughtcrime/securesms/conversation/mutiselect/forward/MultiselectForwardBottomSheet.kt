@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.FixedRoundedCornerBottomSheetDialogFragment
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.fragments.findListener
 
 class MultiselectForwardBottomSheet : FixedRoundedCornerBottomSheetDialogFragment(), MultiselectForwardFragment.Callback {
@@ -44,9 +44,10 @@ class MultiselectForwardBottomSheet : FixedRoundedCornerBottomSheetDialogFragmen
     return backgroundColor
   }
 
-  override fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? {
-    return findListener<Callback>()?.getStorySendRequirements()
-  }
+//  override fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? {
+//    return findListener<Callback>()?.getStorySendRequirements()
+//  }
+
   override fun setResult(bundle: Bundle) {
     setFragmentResult(MultiselectForwardFragment.RESULT_KEY, bundle)
   }
@@ -71,6 +72,6 @@ class MultiselectForwardBottomSheet : FixedRoundedCornerBottomSheetDialogFragmen
   interface Callback {
     fun onFinishForwardAction()
     fun onDismissForwardSheet()
-    fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? = null
+//    fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? = null
   }
 }

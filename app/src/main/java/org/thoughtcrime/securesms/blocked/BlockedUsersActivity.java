@@ -19,6 +19,7 @@ import org.thoughtcrime.securesms.ContactSelectionListFragment;
 import org.thoughtcrime.securesms.PassphraseRequiredActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.ContactFilterView;
+import org.thoughtcrime.securesms.components.Mp02CustomDialog;
 import org.thoughtcrime.securesms.contacts.ContactsCursorLoader;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
@@ -50,29 +51,29 @@ public class BlockedUsersActivity extends PassphraseRequiredActivity implements 
 
     viewModel = new ViewModelProvider(this, factory).get(BlockedUsersViewModel.class);
 
-    Toolbar           toolbar           = findViewById(R.id.toolbar);
-    ContactFilterView contactFilterView = findViewById(R.id.contact_filter_edit_text);
+//    Toolbar           toolbar           = findViewById(R.id.toolbar);
+//    ContactFilterView contactFilterView = findViewById(R.id.contact_filter_edit_text);
     View              container         = findViewById(R.id.fragment_container);
 
-    toolbar.setNavigationOnClickListener(unused -> onBackPressed());
-    contactFilterView.setOnFilterChangedListener(query -> {
-      Fragment fragment = getSupportFragmentManager().findFragmentByTag(CONTACT_SELECTION_FRAGMENT);
-      if (fragment != null) {
-        ((ContactSelectionListFragment) fragment).setQueryFilter(query);
-      }
-    });
-    contactFilterView.setHint(R.string.BlockedUsersActivity__add_blocked_user);
+//    toolbar.setNavigationOnClickListener(unused -> onBackPressed());
+//    contactFilterView.setOnFilterChangedListener(query -> {
+//      Fragment fragment = getSupportFragmentManager().findFragmentByTag(CONTACT_SELECTION_FRAGMENT);
+//      if (fragment != null) {
+//        ((ContactSelectionListFragment) fragment).setQueryFilter(query);
+//      }
+//    });
+//    contactFilterView.setHint(R.string.BlockedUsersActivity__add_blocked_user);
 
     //noinspection CodeBlock2Expr
-    getSupportFragmentManager().addOnBackStackChangedListener(() -> {
-      if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-        contactFilterView.setVisibility(View.VISIBLE);
-        contactFilterView.focusAndShowKeyboard();
-      } else {
-        contactFilterView.setVisibility(View.GONE);
-        ViewUtil.hideKeyboard(this, contactFilterView);
-      }
-    });
+//    getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+//      if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
+//        contactFilterView.setVisibility(View.VISIBLE);
+//        contactFilterView.focusAndShowKeyboard();
+//      } else {
+//        contactFilterView.setVisibility(View.GONE);
+//        ViewUtil.hideKeyboard(this, contactFilterView);
+//      }
+//    });
 
     getSupportFragmentManager().beginTransaction()
                                .add(R.id.fragment_container, new BlockedUsersFragment())
@@ -92,27 +93,49 @@ public class BlockedUsersActivity extends PassphraseRequiredActivity implements 
   public void onBeforeContactSelected(@NonNull Optional<RecipientId> recipientId, String number, @NonNull Consumer<Boolean> callback) {
     final String displayName = recipientId.map(id -> Recipient.resolved(id).getDisplayName(this)).orElse(number);
 
-    AlertDialog confirmationDialog = new MaterialAlertDialogBuilder(this)
-        .setTitle(R.string.BlockedUsersActivity__block_user)
-        .setMessage(getString(R.string.BlockedUserActivity__s_will_not_be_able_to, displayName))
-        .setPositiveButton(R.string.BlockedUsersActivity__block, (dialog, which) -> {
-          if (recipientId.isPresent()) {
-            viewModel.block(recipientId.get());
-          } else {
-            viewModel.createAndBlock(number);
-          }
-          dialog.dismiss();
-          onBackPressed();
-        })
-        .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
-        .setCancelable(true)
-        .create();
+//    AlertDialog confirmationDialog = new MaterialAlertDialogBuilder(this)
+//        .setTitle(R.string.BlockedUsersActivity__block_user)
+//        .setMessage(getString(R.string.BlockedUserActivity__s_will_not_be_able_to, displayName))
+//        .setPositiveButton(R.string.BlockedUsersActivity__block, (dialog, which) -> {
+//          if (recipientId.isPresent()) {
+//            viewModel.block(recipientId.get());
+//          } else {
+//            viewModel.createAndBlock(number);
+//          }
+//          dialog.dismiss();
+//          onBackPressed();
+//        })
+//        .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
+//        .setCancelable(true)
+//        .create();
+//
+//    confirmationDialog.setOnShowListener(dialog -> {
+//      confirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+//    });
+//
+//    confirmationDialog.show();
 
-    confirmationDialog.setOnShowListener(dialog -> {
-      confirmationDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+    Mp02CustomDialog dialog = new Mp02CustomDialog(BlockedUsersActivity.this);
+    dialog.setMessage(getString(R.string.BlockedUserActivity__s_will_not_be_able_to, displayName));
+    dialog.setNegativeListener(android.R.string.cancel, new Mp02CustomDialog.Mp02DialogKeyListener() {
+      @Override
+      public void onDialogKeyClicked() {
+        dialog.dismiss();
+      }
     });
-
-    confirmationDialog.show();
+    dialog.setPositiveListener(R.string.BlockedUsersActivity__block, new Mp02CustomDialog.Mp02DialogKeyListener() {
+      @Override
+      public void onDialogKeyClicked() {
+        if (recipientId.isPresent()) {
+          viewModel.block(recipientId.get());
+        } else {
+          viewModel.createAndBlock(number);
+        }
+        dialog.dismiss();
+        onBackPressed();
+      }
+    });
+    dialog.show();
 
     callback.accept(false);
   }
@@ -171,6 +194,6 @@ public class BlockedUsersActivity extends PassphraseRequiredActivity implements 
         throw new IllegalArgumentException("Unsupported event type " + event);
     }
 
-    Snackbar.make(view, getString(messageResId, displayName), Snackbar.LENGTH_SHORT).show();
+//    Snackbar.make(view, getString(messageResId, displayName), Snackbar.LENGTH_SHORT).show();
   }
 }

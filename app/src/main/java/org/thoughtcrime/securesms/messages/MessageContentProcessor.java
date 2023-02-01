@@ -128,7 +128,7 @@ import org.thoughtcrime.securesms.sms.OutgoingEndSessionMessage;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
 import org.thoughtcrime.securesms.stickers.StickerLocator;
 import org.thoughtcrime.securesms.storage.StorageSyncHelper;
-import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.Stories;
 import org.thoughtcrime.securesms.util.Base64;
 import org.thoughtcrime.securesms.util.FeatureFlags;
 import org.thoughtcrime.securesms.util.GroupUtil;
@@ -1422,9 +1422,9 @@ public final class MessageContentProcessor {
                                                           .filter(it -> it.getStoryType().isStory() && !it.getStoryType().isTextStory())
                                                           .toList();
 
-    for (final MediaMmsMessageRecord mediaMmsMessageRecord : toEnqueueDownload) {
-      Stories.enqueueAttachmentsFromStoryForDownloadSync(mediaMmsMessageRecord, false);
-    }
+//    for (final MediaMmsMessageRecord mediaMmsMessageRecord : toEnqueueDownload) {
+//      Stories.enqueueAttachmentsFromStoryForDownloadSync(mediaMmsMessageRecord, false);
+//    }
 
     SignalDatabase.mms().setIncomingMessagesViewed(toMarkViewed);
     SignalDatabase.mms().setOutgoingGiftsRevealed(toMarkViewed);
@@ -1529,7 +1529,7 @@ public final class MessageContentProcessor {
     }
 
     if (insertResult.isPresent()) {
-      Stories.enqueueNextStoriesForDownload(threadRecipient.getId(), false, FeatureFlags.storiesAutoDownloadMaximum());
+//      Stories.enqueueNextStoriesForDownload(threadRecipient.getId(), false, FeatureFlags.storiesAutoDownloadMaximum());
       ApplicationDependencies.getExpireStoriesManager().scheduleIfNecessary();
     }
   }

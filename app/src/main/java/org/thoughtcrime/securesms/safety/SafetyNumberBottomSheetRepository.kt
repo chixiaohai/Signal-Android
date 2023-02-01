@@ -15,7 +15,7 @@ import org.thoughtcrime.securesms.database.model.IdentityRecord
 import org.thoughtcrime.securesms.dependencies.ApplicationDependencies
 import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientId
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import java.util.Optional
 
 /**
@@ -94,7 +94,7 @@ class SafetyNumberBottomSheetRepository {
           .filter { it.members.contains(recipientId) }
           .forEach {
             SignalDatabase.distributionLists.excludeFromStory(recipientId, it)
-            Stories.onStorySettingsChanged(it.id)
+//            Stories.onStorySettingsChanged(it.id)
           }
       }
     }.subscribeOn(Schedulers.io())
@@ -108,7 +108,7 @@ class SafetyNumberBottomSheetRepository {
       val record = SignalDatabase.distributionLists.getList(distributionList)
       if (record != null) {
         SignalDatabase.distributionLists.excludeAllFromStory(recipientIds, record)
-        Stories.onStorySettingsChanged(distributionList)
+//        Stories.onStorySettingsChanged(distributionList)
       }
     }.subscribeOn(Schedulers.io())
   }

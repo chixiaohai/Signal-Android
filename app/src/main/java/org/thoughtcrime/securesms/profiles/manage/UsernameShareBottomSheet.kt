@@ -44,16 +44,16 @@ class UsernameShareBottomSheet : DSLSettingsBottomSheetFragment() {
 
   private fun getConfiguration(recipient: Recipient): DSLConfiguration {
     return configure {
-      noPadTextPref(
-        title = DSLSettingsText.from(
-          R.string.UsernameShareBottomSheet__copy_or_share_a_username_link,
-          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyMedium),
-          DSLSettingsText.CenterModifier,
-          DSLSettingsText.ColorModifier(
-            ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant),
-          )
-        )
-      )
+//      noPadTextPref(
+//        title = DSLSettingsText.from(
+//          R.string.UsernameShareBottomSheet__copy_or_share_a_username_link,
+//          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyMedium),
+//          DSLSettingsText.CenterModifier,
+//          DSLSettingsText.ColorModifier(
+//            ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant),
+//          )
+//        )
+//      )
 
       space(DimensionUnit.DP.toPixels(32f).toInt())
 

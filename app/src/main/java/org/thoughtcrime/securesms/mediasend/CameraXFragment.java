@@ -301,16 +301,16 @@ public class CameraXFragment extends LoggingFragment implements CameraFragment {
       cameraCard.setRadius(0f);
     }
 
-    ViewUtil.setBottomMargin(controls, cameraDisplay.getCameraCaptureMarginBottom(getResources()));
+//    ViewUtil.setBottomMargin(controls, cameraDisplay.getCameraCaptureMarginBottom(getResources()));
 
-    if (cameraDisplay.getCameraViewportGravity() == CameraDisplay.CameraViewportGravity.CENTER) {
-      ConstraintSet constraintSet = new ConstraintSet();
-      constraintSet.clone((ConstraintLayout) requireView());
-      constraintSet.connect(R.id.camerax_camera_parent, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-      constraintSet.applyTo((ConstraintLayout) requireView());
-    } else {
-      ViewUtil.setBottomMargin(cameraCard, cameraDisplay.getCameraViewportMarginBottom());
-    }
+//    if (cameraDisplay.getCameraViewportGravity() == CameraDisplay.CameraViewportGravity.CENTER) {
+//      ConstraintSet constraintSet = new ConstraintSet();
+//      constraintSet.clone((ConstraintLayout) requireView());
+//      constraintSet.connect(R.id.camerax_camera_parent, ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
+//      constraintSet.applyTo((ConstraintLayout) requireView());
+//    } else {
+//      ViewUtil.setBottomMargin(cameraCard, cameraDisplay.getCameraViewportMarginBottom());
+//    }
   }
 
   @SuppressLint({ "ClickableViewAccessibility", "MissingPermission" })

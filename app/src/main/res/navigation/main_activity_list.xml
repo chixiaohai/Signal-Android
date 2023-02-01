@@ -15,9 +15,9 @@
             app:exitAnim="@anim/slide_to_start"
             app:popEnterAnim="@anim/slide_from_start"
             app:popExitAnim="@anim/slide_to_end" />
-        <action
-            android:id="@+id/action_conversationListFragment_to_storiesLandingFragment"
-            app:destination="@id/storiesLandingFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_conversationListFragment_to_storiesLandingFragment"-->
+<!--            app:destination="@id/storiesLandingFragment" />-->
     </fragment>
 
     <fragment
@@ -25,9 +25,9 @@
         android:name="org.thoughtcrime.securesms.conversationlist.ConversationListArchiveFragment"
         android:label="conversation_list_archive_fragment" />
 
-    <fragment
-        android:id="@+id/storiesLandingFragment"
-        android:name="org.thoughtcrime.securesms.stories.landing.StoriesLandingFragment"
-        android:label="stories_landing_fragment" />
+<!--    <fragment-->
+<!--        android:id="@+id/storiesLandingFragment"-->
+<!--        android:name="org.thoughtcrime.securesms.stories.landing.StoriesLandingFragment"-->
+<!--        android:label="stories_landing_fragment" />-->
 
 </navigation>

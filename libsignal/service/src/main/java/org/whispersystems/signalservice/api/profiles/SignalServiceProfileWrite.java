@@ -38,7 +38,7 @@ public class SignalServiceProfileWrite {
   public SignalServiceProfileWrite(){
   }
 
-  public SignalServiceProfileWrite(String version, byte[] name, byte[] about, byte[] aboutEmoji, byte[] paymentAddress, boolean hasAvatar, boolean sameAvatar, byte[] commitment, List<String> badgeIds) {
+  public SignalServiceProfileWrite(String version, byte[] name, byte[] about, byte[] aboutEmoji, byte[] paymentAddress, boolean hasAvatar, boolean sameAvatar, byte[] commitment) {
     this.version        = version;
     this.name           = name;
     this.about          = about;
@@ -47,7 +47,6 @@ public class SignalServiceProfileWrite {
     this.avatar         = hasAvatar;
     this.sameAvatar     = sameAvatar;
     this.commitment     = commitment;
-    this.badgeIds       = badgeIds;
   }
 
   public boolean hasAvatar() {

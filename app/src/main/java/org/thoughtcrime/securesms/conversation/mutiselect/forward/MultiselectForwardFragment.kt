@@ -40,18 +40,18 @@ import org.thoughtcrime.securesms.contacts.paged.ContactSearchMediator
 import org.thoughtcrime.securesms.contacts.paged.ContactSearchState
 import org.thoughtcrime.securesms.database.model.IdentityRecord
 import org.thoughtcrime.securesms.keyvalue.SignalStore
-import org.thoughtcrime.securesms.mediasend.v2.stories.ChooseGroupStoryBottomSheet
-import org.thoughtcrime.securesms.mediasend.v2.stories.ChooseStoryTypeBottomSheet
+//import org.thoughtcrime.securesms.mediasend.v2.stories.ChooseGroupStoryBottomSheet
+//import org.thoughtcrime.securesms.mediasend.v2.stories.ChooseStoryTypeBottomSheet
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.safety.SafetyNumberBottomSheet
 import org.thoughtcrime.securesms.sharing.ShareSelectionAdapter
 import org.thoughtcrime.securesms.sharing.ShareSelectionMappingModel
-import org.thoughtcrime.securesms.stories.GroupStoryEducationSheet
-import org.thoughtcrime.securesms.stories.Stories
-import org.thoughtcrime.securesms.stories.Stories.getHeaderAction
-import org.thoughtcrime.securesms.stories.settings.create.CreateStoryFlowDialogFragment
-import org.thoughtcrime.securesms.stories.settings.create.CreateStoryWithViewersFragment
-import org.thoughtcrime.securesms.stories.settings.privacy.ChooseInitialMyStoryMembershipBottomSheetDialogFragment
+//import org.thoughtcrime.securesms.stories.GroupStoryEducationSheet
+//import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories.getHeaderAction
+//import org.thoughtcrime.securesms.stories.settings.create.CreateStoryFlowDialogFragment
+//import org.thoughtcrime.securesms.stories.settings.create.CreateStoryWithViewersFragment
+//import org.thoughtcrime.securesms.stories.settings.privacy.ChooseInitialMyStoryMembershipBottomSheetDialogFragment
 import org.thoughtcrime.securesms.util.BottomSheetUtil
 import org.thoughtcrime.securesms.util.FeatureFlags
 import org.thoughtcrime.securesms.util.FullscreenHelper
@@ -78,12 +78,14 @@ import org.thoughtcrime.securesms.util.visible
  * It is up to the user of this fragment to handle the result accordingly utilizing a fragment result listener.
  */
 class MultiselectForwardFragment :
+
   Fragment(R.layout.multiselect_forward_fragment),
   SafetyNumberBottomSheet.Callbacks,
-  ChooseStoryTypeBottomSheet.Callback,
-  GroupStoryEducationSheet.Callback,
-  WrapperDialogFragment.WrapperDialogFragmentCallback,
-  ChooseInitialMyStoryMembershipBottomSheetDialogFragment.Callback {
+//  ChooseStoryTypeBottomSheet.Callback,
+//  GroupStoryEducationSheet.Callback,
+  WrapperDialogFragment.WrapperDialogFragmentCallback
+//  ChooseInitialMyStoryMembershipBottomSheetDialogFragment.Callback
+{
 
   private val viewModel: MultiselectForwardViewModel by viewModels(factoryProducer = this::createViewModelFactory)
   private val disposables = LifecycleDisposable()
@@ -98,7 +100,7 @@ class MultiselectForwardFragment :
   private var handler: Handler? = null
 
   private fun createViewModelFactory(): MultiselectForwardViewModel.Factory {
-    return MultiselectForwardViewModel.Factory(args.storySendRequirements, args.multiShareArgs, args.forceSelectionOnly, MultiselectForwardRepository())
+    return MultiselectForwardViewModel.Factory()
   }
 
   private val args: MultiselectForwardFragmentArgs by lazy {
@@ -117,7 +119,7 @@ class MultiselectForwardFragment :
     view.minimumHeight = resources.displayMetrics.heightPixels
 
     contactSearchRecycler = view.findViewById(R.id.contact_selection_list)
-    contactSearchMediator = ContactSearchMediator(this, contactSearchRecycler, FeatureFlags.shareSelectionLimit(), !args.selectSingleRecipient, ContactSearchItems.DisplaySmsTag.DEFAULT, this::getConfiguration, this::filterContacts)
+//    contactSearchMediator = ContactSearchMediator(this, contactSearchRecycler, FeatureFlags.shareSelectionLimit(), !args.selectSingleRecipient, ContactSearchItems.DisplaySmsTag.DEFAULT, this::getConfiguration, this::filterContacts)
 
     callback = findListener()!!
     disposables.bindTo(viewLifecycleOwner.lifecycle)
@@ -236,19 +238,19 @@ class MultiselectForwardFragment :
       sendButton.isEnabled = it.stage == MultiselectForwardState.Stage.Selection
     }
 
-    setFragmentResultListener(CreateStoryWithViewersFragment.REQUEST_KEY) { _, bundle ->
-      val recipientId: RecipientId = bundle.getParcelable(CreateStoryWithViewersFragment.STORY_RECIPIENT)!!
-      contactSearchMediator.setKeysSelected(setOf(ContactSearchKey.RecipientSearchKey.Story(recipientId)))
-      contactFilterView.clear()
-    }
+//    setFragmentResultListener(CreateStoryWithViewersFragment.REQUEST_KEY) { _, bundle ->
+//      val recipientId: RecipientId = bundle.getParcelable(CreateStoryWithViewersFragment.STORY_RECIPIENT)!!
+//      contactSearchMediator.setKeysSelected(setOf(ContactSearchKey.RecipientSearchKey.Story(recipientId)))
+//      contactFilterView.clear()
+//    }
 
-    setFragmentResultListener(ChooseGroupStoryBottomSheet.GROUP_STORY) { _, bundle ->
-      val groups: Set<RecipientId> = bundle.getParcelableArrayList<RecipientId>(ChooseGroupStoryBottomSheet.RESULT_SET)?.toSet() ?: emptySet()
-      val keys: Set<ContactSearchKey.RecipientSearchKey.Story> = groups.map { ContactSearchKey.RecipientSearchKey.Story(it) }.toSet()
-      contactSearchMediator.addToVisibleGroupStories(keys)
-      contactSearchMediator.setKeysSelected(keys)
-      contactFilterView.clear()
-    }
+//    setFragmentResultListener(ChooseGroupStoryBottomSheet.GROUP_STORY) { _, bundle ->
+//      val groups: Set<RecipientId> = bundle.getParcelableArrayList<RecipientId>(ChooseGroupStoryBottomSheet.RESULT_SET)?.toSet() ?: emptySet()
+//      val keys: Set<ContactSearchKey.RecipientSearchKey.Story> = groups.map { ContactSearchKey.RecipientSearchKey.Story(it) }.toSet()
+//      contactSearchMediator.addToVisibleGroupStories(keys)
+//      contactSearchMediator.setKeysSelected(keys)
+//      contactFilterView.clear()
+//    }
   }
 
   override fun onResume() {
@@ -370,30 +372,30 @@ class MultiselectForwardFragment :
     viewModel.cancelSend()
   }
 
-  private fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements {
-    return requireListener<Callback>().getStorySendRequirements() ?: viewModel.snapshot.storySendRequirements
-  }
+//  private fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements {
+//    return requireListener<Callback>().getStorySendRequirements() ?: viewModel.snapshot.storySendRequirements
+//  }
 
-  private fun filterContacts(view: View?, contactSet: Set<ContactSearchKey>): Set<ContactSearchKey> {
-    val storySendRequirements = getStorySendRequirements()
-    val resultsSet = contactSet.filterNot {
-      it is ContactSearchKey.RecipientSearchKey && it.isStory && storySendRequirements == Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
-    }
-
-    if (view != null && contactSet.any { it is ContactSearchKey.RecipientSearchKey && it.isStory }) {
-      when (storySendRequirements) {
-        Stories.MediaTransform.SendRequirements.REQUIRES_CLIP -> {
-          displayTooltip(view, R.string.MultiselectForwardFragment__videos_will_be_trimmed)
-        }
-        Stories.MediaTransform.SendRequirements.CAN_NOT_SEND -> {
-          displayTooltip(view, R.string.MultiselectForwardFragment__videos_sent_to_stories_cant)
-        }
-        Stories.MediaTransform.SendRequirements.VALID_DURATION -> Unit
-      }
-    }
-
-    return resultsSet.toSet()
-  }
+//  private fun filterContacts(view: View?, contactSet: Set<ContactSearchKey>): Set<ContactSearchKey> {
+//    val storySendRequirements = getStorySendRequirements()
+//    val resultsSet = contactSet.filterNot {
+//      it is ContactSearchKey.RecipientSearchKey && it.isStory && storySendRequirements == Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
+//    }
+//
+//    if (view != null && contactSet.any { it is ContactSearchKey.RecipientSearchKey && it.isStory }) {
+//      when (storySendRequirements) {
+//        Stories.MediaTransform.SendRequirements.REQUIRES_CLIP -> {
+//          displayTooltip(view, R.string.MultiselectForwardFragment__videos_will_be_trimmed)
+//        }
+//        Stories.MediaTransform.SendRequirements.CAN_NOT_SEND -> {
+//          displayTooltip(view, R.string.MultiselectForwardFragment__videos_sent_to_stories_cant)
+//        }
+//        Stories.MediaTransform.SendRequirements.VALID_DURATION -> Unit
+//      }
+//    }
+//
+//    return resultsSet.toSet()
+//  }
 
   private fun displayTooltip(anchor: View, @StringRes text: Int) {
     // 22dp + gutter
@@ -407,25 +409,25 @@ class MultiselectForwardFragment :
     return findListener<SearchConfigurationProvider>()?.getSearchConfiguration(childFragmentManager, contactSearchState) ?: ContactSearchConfiguration.build {
       query = contactSearchState.query
 
-      if (Stories.isFeatureEnabled() && isSelectedMediaValidForStories()) {
-        val expandedConfig: ContactSearchConfiguration.ExpandConfig? = if (isSelectedMediaValidForNonStories()) {
-          ContactSearchConfiguration.ExpandConfig(
-            isExpanded = contactSearchState.expandedSections.contains(ContactSearchConfiguration.SectionKey.STORIES),
-            maxCountWhenNotExpanded = { it + 1 }
-          )
-        } else {
-          null
-        }
-
-        addSection(
-          ContactSearchConfiguration.Section.Stories(
-            groupStories = contactSearchState.groupStories,
-            includeHeader = true,
-            headerAction = getHeaderAction(childFragmentManager),
-            expandConfig = expandedConfig
-          )
-        )
-      }
+//      if (Stories.isFeatureEnabled() && isSelectedMediaValidForStories()) {
+//        val expandedConfig: ContactSearchConfiguration.ExpandConfig? = if (isSelectedMediaValidForNonStories()) {
+//          ContactSearchConfiguration.ExpandConfig(
+//            isExpanded = contactSearchState.expandedSections.contains(ContactSearchConfiguration.SectionKey.STORIES),
+//            maxCountWhenNotExpanded = { it + 1 }
+//          )
+//        } else {
+//          null
+//        }
+//
+//        addSection(
+//          ContactSearchConfiguration.Section.Stories(
+//            groupStories = contactSearchState.groupStories,
+//            includeHeader = true,
+//            headerAction = getHeaderAction(childFragmentManager),
+//            expandConfig = expandedConfig
+//          )
+//        )
+//      }
 
       if (isSelectedMediaValidForNonStories()) {
         if (query.isNullOrEmpty()) {
@@ -467,30 +469,30 @@ class MultiselectForwardFragment :
     return args.multiShareArgs.all { it.isValidForNonStories }
   }
 
-  override fun onGroupStoryClicked() {
-    if (SignalStore.storyValues().userHasSeenGroupStoryEducationSheet) {
-      onGroupStoryEducationSheetNext()
-    } else {
-      GroupStoryEducationSheet().show(childFragmentManager, GroupStoryEducationSheet.KEY)
-    }
-  }
-
-  override fun onNewStoryClicked() {
-    CreateStoryFlowDialogFragment().show(parentFragmentManager, CreateStoryWithViewersFragment.REQUEST_KEY)
-  }
-
-  override fun onGroupStoryEducationSheetNext() {
-    ChooseGroupStoryBottomSheet().show(parentFragmentManager, ChooseGroupStoryBottomSheet.GROUP_STORY)
-  }
+//  override fun onGroupStoryClicked() {
+//    if (SignalStore.storyValues().userHasSeenGroupStoryEducationSheet) {
+//      onGroupStoryEducationSheetNext()
+//    } else {
+//      GroupStoryEducationSheet().show(childFragmentManager, GroupStoryEducationSheet.KEY)
+//    }
+//  }
+//
+//  override fun onNewStoryClicked() {
+//    CreateStoryFlowDialogFragment().show(parentFragmentManager, CreateStoryWithViewersFragment.REQUEST_KEY)
+//  }
+//
+//  override fun onGroupStoryEducationSheetNext() {
+//    ChooseGroupStoryBottomSheet().show(parentFragmentManager, ChooseGroupStoryBottomSheet.GROUP_STORY)
+//  }
 
   override fun onWrapperDialogFragmentDismissed() {
     contactSearchMediator.refresh()
   }
 
-  override fun onMyStoryConfigured(recipientId: RecipientId) {
-    contactSearchMediator.setKeysSelected(setOf(ContactSearchKey.RecipientSearchKey.Story(recipientId)))
-    contactSearchMediator.refresh()
-  }
+//  override fun onMyStoryConfigured(recipientId: RecipientId) {
+//    contactSearchMediator.setKeysSelected(setOf(ContactSearchKey.RecipientSearchKey.Story(recipientId)))
+//    contactSearchMediator.refresh()
+//  }
 
   interface Callback {
     fun onFinishForwardAction()
@@ -499,7 +501,7 @@ class MultiselectForwardFragment :
     fun setResult(bundle: Bundle)
     fun getContainer(): ViewGroup
     fun getDialogBackgroundColor(): Int
-    fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? = null
+//    fun getStorySendRequirements(): Stories.MediaTransform.SendRequirements? = null
   }
 
   companion object {

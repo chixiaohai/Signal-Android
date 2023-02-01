@@ -8,7 +8,7 @@ import org.thoughtcrime.securesms.jobs.StoryOnboardingDownloadJob
 import org.thoughtcrime.securesms.keyvalue.InternalValues
 import org.thoughtcrime.securesms.keyvalue.SignalStore
 import org.thoughtcrime.securesms.recipients.Recipient
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.livedata.Store
 
 class InternalSettingsViewModel(private val repository: InternalSettingsRepository) : ViewModel() {
@@ -124,13 +124,14 @@ class InternalSettingsViewModel(private val repository: InternalSettingsReposito
     removeSenderKeyMinimium = SignalStore.internalValues().removeSenderKeyMinimum(),
     delayResends = SignalStore.internalValues().delayResends(),
     disableStorageService = SignalStore.internalValues().storageServiceDisabled(),
-    canClearOnboardingState = SignalStore.storyValues().hasDownloadedOnboardingStory && Stories.isFeatureEnabled()
+    canClearOnboardingState = SignalStore.storyValues().hasDownloadedOnboardingStory
+//      && Stories.isFeatureEnabled()
   )
 
   fun onClearOnboardingState() {
     SignalStore.storyValues().hasDownloadedOnboardingStory = false
     SignalStore.storyValues().userHasViewedOnboardingStory = false
-    Stories.onStorySettingsChanged(Recipient.self().id)
+//    Stories.onStorySettingsChanged(Recipient.self().id)
     refresh()
     StoryOnboardingDownloadJob.enqueueIfNeeded()
   }

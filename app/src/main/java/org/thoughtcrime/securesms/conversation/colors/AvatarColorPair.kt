@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.avatar.Avatars
+//import org.thoughtcrime.securesms.avatar.Avatars
 
 class AvatarColorPair private constructor(
   @ColorInt val foregroundColor: Int,
@@ -23,7 +23,8 @@ class AvatarColorPair private constructor(
           backgroundColor = ContextCompat.getColor(context, R.color.signal_colorSurfaceVariant)
         )
         else -> AvatarColorPair(
-          foregroundColor = Avatars.getForegroundColor(avatarColor).colorInt,
+//          foregroundColor = Avatars.getForegroundColor(avatarColor).colorInt,
+          foregroundColor = ContextCompat.getColor(context, R.color.signal_colorOnSurfaceVariant),
           backgroundColor = avatarColor.colorInt()
         )
       }

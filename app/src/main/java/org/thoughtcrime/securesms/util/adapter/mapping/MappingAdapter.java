@@ -1,11 +1,14 @@
 package org.thoughtcrime.securesms.util.adapter.mapping;
 
+import android.annotation.SuppressLint;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,9 +47,9 @@ import kotlin.jvm.functions.Function1;
  */
 public class MappingAdapter extends ListAdapter<MappingModel<?>, MappingViewHolder<?>> {
 
-  final Map<Integer, Factory<?>> factories;
+  private final Map<Integer, Factory<?>> factories;
   final Map<Class<?>, Integer>   itemTypes;
-        int                      typeCount;
+  private       int                      typeCount;
 
   public MappingAdapter() {
     super(new MappingDiffCallback());
@@ -101,12 +104,6 @@ public class MappingAdapter extends ListAdapter<MappingModel<?>, MappingViewHold
   }
 
   @Override
-  public void onBindViewHolder(@NonNull MappingViewHolder<?> holder, int position, @NonNull List<Object> payloads) {
-    holder.setPayload(payloads);
-    onBindViewHolder(holder, position);
-  }
-
-  @Override
   public void onBindViewHolder(@NonNull MappingViewHolder holder, int position) {
     //noinspection unchecked
     holder.bind(getItem(position));
@@ -125,5 +122,45 @@ public class MappingAdapter extends ListAdapter<MappingModel<?>, MappingViewHold
       return Optional.ofNullable(currentList.get(index));
     }
     return Optional.empty();
+  }
+
+  private static class MappingDiffCallback extends DiffUtil.ItemCallback<MappingModel<?>> {
+    @Override
+    public boolean areItemsTheSame(@NonNull MappingModel oldItem, @NonNull MappingModel newItem) {
+      if (oldItem.getClass() == newItem.getClass()) {
+        //noinspection unchecked
+        return oldItem.areItemsTheSame(newItem);
+      }
+      return false;
+    }
+
+    @SuppressLint("DiffUtilEquals")
+    @Override
+    public boolean areContentsTheSame(@NonNull MappingModel oldItem, @NonNull MappingModel newItem) {
+      if (oldItem.getClass() == newItem.getClass()) {
+        //noinspection unchecked
+        return oldItem.areContentsTheSame(newItem);
+      }
+      return false;
+    }
+  }
+
+  public interface Factory<T extends MappingModel<T>> {
+    @NonNull MappingViewHolder<T> createViewHolder(@NonNull ViewGroup parent);
+  }
+
+  public static class LayoutFactory<T extends MappingModel<T>> implements Factory<T> {
+    private       Function<View, MappingViewHolder<T>> creator;
+    private final int                                  layout;
+
+    public LayoutFactory(@NonNull Function<View, MappingViewHolder<T>> creator, @LayoutRes int layout) {
+      this.creator = creator;
+      this.layout  = layout;
+    }
+
+    @Override
+    public @NonNull MappingViewHolder<T> createViewHolder(@NonNull ViewGroup parent) {
+      return creator.apply(LayoutInflater.from(parent.getContext()).inflate(layout, parent, false));
+    }
   }
 }

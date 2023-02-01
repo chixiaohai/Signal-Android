@@ -11,7 +11,7 @@ import org.thoughtcrime.securesms.groups.GroupId
 import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.storage.StorageSyncHelper
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 
 class ContactSearchRepository {
   @CheckResult
@@ -61,7 +61,7 @@ class ContactSearchRepository {
   fun deletePrivateStory(distributionListId: DistributionListId): Completable {
     return Completable.fromAction {
       SignalDatabase.distributionLists.deleteList(distributionListId)
-      Stories.onStorySettingsChanged(distributionListId)
+//      Stories.onStorySettingsChanged(distributionListId)
     }.subscribeOn(Schedulers.io())
   }
 }

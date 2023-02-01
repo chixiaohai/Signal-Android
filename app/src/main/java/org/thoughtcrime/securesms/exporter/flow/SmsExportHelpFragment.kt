@@ -22,9 +22,9 @@ class SmsExportHelpFragment : LoggingFragment(R.layout.sms_export_help_fragment)
       }
     }
 
-    childFragmentManager
-      .beginTransaction()
-      .replace(binding.smsExportHelpFragmentFragment.id, HelpFragment().apply { arguments = bundleOf(HelpFragment.START_CATEGORY_INDEX to HelpFragment.SMS_EXPORT_INDEX) })
-      .commitNow()
+//    childFragmentManager
+//      .beginTransaction()
+//      .replace(binding.smsExportHelpFragmentFragment.id, HelpFragment().apply { arguments = bundleOf(HelpFragment.START_CATEGORY_INDEX to HelpFragment.SMS_EXPORT_INDEX) })
+//      .commitNow()
   }
 }

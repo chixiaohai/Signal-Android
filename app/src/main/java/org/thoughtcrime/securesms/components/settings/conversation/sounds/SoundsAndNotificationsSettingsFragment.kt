@@ -6,6 +6,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.thoughtcrime.securesms.MuteDialog
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsIcon
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
@@ -38,7 +39,7 @@ class SoundsAndNotificationsSettingsFragment : DSLSettingsFragment(
     viewModel.channelConsistencyCheck()
   }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     viewModel.state.observe(viewLifecycleOwner) { state ->
       if (state.channelConsistencyCheckComplete && state.recipientId != Recipient.UNKNOWN.id) {
         adapter.submitList(getConfiguration(state).toMappingModelList())

@@ -40,7 +40,7 @@ import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.scribbles.ImageEditorFragment
 import org.thoughtcrime.securesms.sms.MessageSender
 import org.thoughtcrime.securesms.sms.MessageSender.PreUploadResult
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.MessageUtil
 import java.util.Collections
 import java.util.Optional
@@ -92,7 +92,8 @@ class MediaSelectionRepository(context: Context) {
     val sentMediaQuality = if (isSendingToStories) SentMediaQuality.STANDARD else quality
 
     return Maybe.create<MediaSendActivityResult> { emitter ->
-      val trimmedBody: String = if (isViewOnce) "" else getTruncatedBody(message?.toString()?.trim()) ?: ""
+//      val trimmedBody: String = if (isViewOnce) "" else getTruncatedBody(message?.toString()?.trim()) ?: ""
+      val trimmedBody: String = if (isViewOnce) "" else message?.toString()?.trim() ?: ""
       val trimmedMentions: List<Mention> = if (isViewOnce) emptyList() else mentions
       val modelsToTransform: Map<Media, MediaTransform> = buildModelsToTransform(selectedMedia, stateMap, sentMediaQuality)
       val oldToNewMediaMap: Map<Media, Media> = MediaRepository.transformMediaSync(context, selectedMedia, modelsToTransform)
@@ -133,20 +134,20 @@ class MediaSelectionRepository(context: Context) {
           )
         }
 
-        val clippedVideosForStories: List<Media> = if (isSendingToStories) {
-          updatedMedia.filter {
-            Stories.MediaTransform.getSendRequirements(it) == Stories.MediaTransform.SendRequirements.REQUIRES_CLIP
-          }.map { media ->
-            Stories.MediaTransform.clipMediaToStoryDuration(media)
-          }.flatten()
-        } else emptyList()
+//        val clippedVideosForStories: List<Media> = if (isSendingToStories) {
+//          updatedMedia.filter {
+//            Stories.MediaTransform.getSendRequirements(it) == Stories.MediaTransform.SendRequirements.REQUIRES_CLIP
+//          }.map { media ->
+//            Stories.MediaTransform.clipMediaToStoryDuration(media)
+//          }.flatten()
+//        } else emptyList()
 
         uploadRepository.applyMediaUpdates(oldToNewMediaMap, singleRecipient)
         uploadRepository.updateCaptions(updatedMedia)
         uploadRepository.updateDisplayOrder(updatedMedia)
         uploadRepository.getPreUploadResults { uploadResults ->
           if (contacts.isNotEmpty()) {
-            sendMessages(contacts, splitBody, uploadResults, trimmedMentions, isViewOnce, clippedVideosForStories)
+            sendMessages(contacts, splitBody, uploadResults, trimmedMentions, isViewOnce)
             uploadRepository.deleteAbandonedAttachments()
             emitter.onComplete()
           } else if (uploadResults.isNotEmpty()) {
@@ -160,15 +161,15 @@ class MediaSelectionRepository(context: Context) {
     }.subscribeOn(Schedulers.io()).cast(MediaSendActivityResult::class.java)
   }
 
-  private fun getTruncatedBody(body: String?): String? {
-    return if (!Stories.isFeatureEnabled() || body.isNullOrEmpty()) {
-      body
-    } else {
-      val iterator = BreakIteratorCompat.getInstance()
-      iterator.setText(body)
-      iterator.take(Stories.MAX_CAPTION_SIZE).toString()
-    }
-  }
+//  private fun getTruncatedBody(body: String?): String? {
+//    return if (!Stories.isFeatureEnabled() || body.isNullOrEmpty()) {
+//      body
+//    } else {
+//      val iterator = BreakIteratorCompat.getInstance()
+//      iterator.setText(body)
+//      iterator.take(Stories.MAX_CAPTION_SIZE).toString()
+//    }
+//  }
 
   fun deleteBlobs(media: List<Media>) {
     media
@@ -228,14 +229,14 @@ class MediaSelectionRepository(context: Context) {
     body: String,
     preUploadResults: Collection<PreUploadResult>,
     mentions: List<Mention>,
-    isViewOnce: Boolean,
-    storyClips: List<Media>
+    isViewOnce: Boolean
+//    storyClips: List<Media>
   ) {
     val nonStoryMessages: MutableList<OutgoingSecureMediaMessage> = ArrayList(contacts.size)
     val storyPreUploadMessages: MutableMap<PreUploadResult, MutableList<OutgoingSecureMediaMessage>> = mutableMapOf()
     val storyClipMessages: MutableList<OutgoingSecureMediaMessage> = ArrayList()
     val distributionListPreUploadSentTimestamps: MutableMap<PreUploadResult, Long> = mutableMapOf()
-    val distributionListStoryClipsSentTimestamps: MutableMap<MediaKey, Long> = mutableMapOf()
+//    val distributionListStoryClipsSentTimestamps: MutableMap<MediaKey, Long> = mutableMapOf()
 
     for (contact in contacts) {
       val recipient = Recipient.resolved(contact.recipientId)
@@ -272,90 +273,91 @@ class MediaSelectionRepository(context: Context) {
         null
       )
 
-      if (isStory) {
-        preUploadResults.filterNot { result -> storyClips.any { it.uri == result.media.uri } }.forEach {
-          val list = storyPreUploadMessages[it] ?: mutableListOf()
-          list.add(
-            OutgoingSecureMediaMessage(message).withSentTimestamp(
-              if (recipient.isDistributionList) {
-                distributionListPreUploadSentTimestamps.getOrPut(it) { System.currentTimeMillis() }
-              } else {
-                System.currentTimeMillis()
-              }
-            )
-          )
-          storyPreUploadMessages[it] = list
+//      if (isStory) {
+//        preUploadResults.filterNot { result -> storyClips.any { it.uri == result.media.uri } }.forEach {
+//          val list = storyPreUploadMessages[it] ?: mutableListOf()
+//          list.add(
+//            OutgoingSecureMediaMessage(message).withSentTimestamp(
+//              if (recipient.isDistributionList) {
+//                distributionListPreUploadSentTimestamps.getOrPut(it) { System.currentTimeMillis() }
+//              } else {
+//                System.currentTimeMillis()
+//              }
+//            )
+//          )
+//          storyPreUploadMessages[it] = list
+//
+//          // XXX We must do this to avoid sending out messages to the same recipient with the same
+//          //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
+//          ThreadUtil.sleep(5)
+//        }
+//
+//        storyClips.forEach {
+//          storyClipMessages.add(
+//            OutgoingSecureMediaMessage(
+//              OutgoingMediaMessage(
+//                recipient,
+//                body,
+//                listOf(MediaUploadRepository.asAttachment(context, it)),
+//                if (recipient.isDistributionList) distributionListStoryClipsSentTimestamps.getOrPut(it.asKey()) { System.currentTimeMillis() } else System.currentTimeMillis(),
+//                -1,
+//                0,
+//                isViewOnce,
+//                ThreadTable.DistributionTypes.DEFAULT,
+//                storyType,
+//                null,
+//                false,
+//                null,
+//                emptyList(),
+//                emptyList(),
+//                mentions,
+//                mutableSetOf(),
+//                mutableSetOf(),
+//                null
+//              )
+//            )
+//          )
+//
+//          // XXX We must do this to avoid sending out messages to the same recipient with the same
+//          //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
+//          ThreadUtil.sleep(5)
+//        }
+//      } else {
+//        nonStoryMessages.add(OutgoingSecureMediaMessage(message))
+//
+//        // XXX We must do this to avoid sending out messages to the same recipient with the same
+//        //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
+//        ThreadUtil.sleep(5)
+//      }
+//    }
 
-          // XXX We must do this to avoid sending out messages to the same recipient with the same
-          //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
-          ThreadUtil.sleep(5)
+      if (nonStoryMessages.isNotEmpty()) {
+        Log.d(TAG, "Sending ${nonStoryMessages.size} preupload messages to chats")
+        MessageSender.sendMediaBroadcast(
+          context,
+          nonStoryMessages,
+          preUploadResults,
+          true
+        )
+      }
+
+      if (storyPreUploadMessages.isNotEmpty()) {
+        Log.d(TAG, "Sending ${storyPreUploadMessages.size} preload messages to stories")
+        storyPreUploadMessages.forEach { (preUploadResult, messages) ->
+          MessageSender.sendMediaBroadcast(context, messages, Collections.singleton(preUploadResult), nonStoryMessages.isEmpty())
         }
+      }
 
-        storyClips.forEach {
-          storyClipMessages.add(
-            OutgoingSecureMediaMessage(
-              OutgoingMediaMessage(
-                recipient,
-                body,
-                listOf(MediaUploadRepository.asAttachment(context, it)),
-                if (recipient.isDistributionList) distributionListStoryClipsSentTimestamps.getOrPut(it.asKey()) { System.currentTimeMillis() } else System.currentTimeMillis(),
-                -1,
-                0,
-                isViewOnce,
-                ThreadTable.DistributionTypes.DEFAULT,
-                storyType,
-                null,
-                false,
-                null,
-                emptyList(),
-                emptyList(),
-                mentions,
-                mutableSetOf(),
-                mutableSetOf(),
-                null
-              )
-            )
-          )
-
-          // XXX We must do this to avoid sending out messages to the same recipient with the same
-          //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
-          ThreadUtil.sleep(5)
-        }
-      } else {
-        nonStoryMessages.add(OutgoingSecureMediaMessage(message))
-
-        // XXX We must do this to avoid sending out messages to the same recipient with the same
-        //     sentTimestamp. If we do this, they'll be considered dupes by the receiver.
-        ThreadUtil.sleep(5)
+      if (storyClipMessages.isNotEmpty()) {
+        Log.d(TAG, "Sending ${storyClipMessages.size} video clip messages to stories")
+        MessageSender.sendStories(context, storyClipMessages, null, null)
       }
     }
 
-    if (nonStoryMessages.isNotEmpty()) {
-      Log.d(TAG, "Sending ${nonStoryMessages.size} preupload messages to chats")
-      MessageSender.sendMediaBroadcast(
-        context,
-        nonStoryMessages,
-        preUploadResults,
-        true
-      )
-    }
+//  private fun Media.asKey(): MediaKey {
+//    return MediaKey(this, this.transformProperties)
+//  }
 
-    if (storyPreUploadMessages.isNotEmpty()) {
-      Log.d(TAG, "Sending ${storyPreUploadMessages.size} preload messages to stories")
-      storyPreUploadMessages.forEach { (preUploadResult, messages) ->
-        MessageSender.sendMediaBroadcast(context, messages, Collections.singleton(preUploadResult), nonStoryMessages.isEmpty())
-      }
-    }
-
-    if (storyClipMessages.isNotEmpty()) {
-      Log.d(TAG, "Sending ${storyClipMessages.size} video clip messages to stories")
-      MessageSender.sendStories(context, storyClipMessages, null, null)
-    }
+    data class MediaKey(val media: Media, val mediaTransform: Optional<TransformProperties>)
   }
-
-  private fun Media.asKey(): MediaKey {
-    return MediaKey(this, this.transformProperties)
-  }
-
-  data class MediaKey(val media: Media, val mediaTransform: Optional<TransformProperties>)
 }

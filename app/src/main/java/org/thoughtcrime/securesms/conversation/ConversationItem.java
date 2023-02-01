@@ -73,9 +73,9 @@ import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.BindableConversationItem;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.attachments.DatabaseAttachment;
-import org.thoughtcrime.securesms.badges.BadgeImageView;
-import org.thoughtcrime.securesms.badges.gifts.GiftMessageView;
-import org.thoughtcrime.securesms.badges.gifts.OpenableGift;
+//import org.thoughtcrime.securesms.badges.BadgeImageView;
+//import org.thoughtcrime.securesms.badges.gifts.GiftMessageView;
+//import org.thoughtcrime.securesms.badges.gifts.OpenableGift;
 import org.thoughtcrime.securesms.components.AlertView;
 import org.thoughtcrime.securesms.components.AudioView;
 import org.thoughtcrime.securesms.components.AvatarImageView;
@@ -204,7 +204,7 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
             private   AvatarImageView            contactPhoto;
             private   AlertView                  alertView;
             protected ReactionsConversationView  reactionsView;
-            protected BadgeImageView             badgeImageView;
+//            protected BadgeImageView             badgeImageView;
 
   private @NonNull  Set<MultiselectPart>                    batchSelected = new HashSet<>();
   private @NonNull  Outliner                                outliner      = new Outliner();
@@ -236,7 +236,7 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
   private final UrlClickListener                urlClickListener             = new UrlClickListener();
   private final Rect                            thumbnailMaskingRect         = new Rect();
   private final TouchDelegateChangedListener    touchDelegateChangedListener = new TouchDelegateChangedListener();
-  private final GiftMessageViewCallback         giftMessageViewCallback      = new GiftMessageViewCallback();
+//  private final GiftMessageViewCallback         giftMessageViewCallback      = new GiftMessageViewCallback();
 
   private final Context context;
 
@@ -307,7 +307,7 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
     this.quoteView                 =                    findViewById(R.id.quote_view);
     this.replyIcon                 =                    findViewById(R.id.reply_icon);
     this.reactionsView             =                    findViewById(R.id.reactions_view);
-    this.badgeImageView            =                    findViewById(R.id.badge);
+//    this.badgeImageView            =                    findViewById(R.id.badge);
 
     setOnClickListener(new ClickListener(null));
 
@@ -1419,8 +1419,8 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
     });
 
     contactPhoto.setAvatar(glideRequests, recipient, false);
-    badgeImageView.setBadgeFromRecipient(recipient, glideRequests);
-    badgeImageView.setClickable(false);
+//    badgeImageView.setBadgeFromRecipient(recipient, glideRequests);
+//    badgeImageView.setClickable(false);
   }
 
   private void linkifyMessageBody(@NonNull Spannable messageBody,
@@ -1715,10 +1715,10 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
 
       if (!next.isPresent() || next.get().isUpdate() || !current.getRecipient().equals(next.get().getRecipient()) || !isWithinClusteringTime(current, next.get())) {
         contactPhoto.setVisibility(VISIBLE);
-        badgeImageView.setVisibility(VISIBLE);
+//        badgeImageView.setVisibility(VISIBLE);
       } else {
         contactPhoto.setVisibility(GONE);
-        badgeImageView.setVisibility(GONE);
+//        badgeImageView.setVisibility(GONE);
       }
     } else {
       if (groupSenderHolder != null) {
@@ -1729,9 +1729,9 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
         contactPhotoHolder.setVisibility(GONE);
       }
 
-      if (badgeImageView != null) {
-        badgeImageView.setVisibility(GONE);
-      }
+//      if (badgeImageView != null) {
+//        badgeImageView.setVisibility(GONE);
+//      }
     }
   }
 
@@ -2293,13 +2293,13 @@ public final class ConversationItem extends RelativeLayout implements BindableCo
     }
   }
 
-  private class GiftMessageViewCallback implements GiftMessageView.Callback {
-
-    @Override
-    public void onViewGiftBadgeClicked() {
-      eventListener.onViewGiftBadgeClicked(messageRecord);
-    }
-  }
+//  private class GiftMessageViewCallback implements GiftMessageView.Callback {
+//
+//    @Override
+//    public void onViewGiftBadgeClicked() {
+//      eventListener.onViewGiftBadgeClicked(messageRecord);
+//    }
+//  }
 
   private class ClickListener implements View.OnClickListener {
     private OnClickListener parent;

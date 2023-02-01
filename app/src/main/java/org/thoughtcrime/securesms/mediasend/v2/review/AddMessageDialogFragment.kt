@@ -35,7 +35,7 @@ import org.thoughtcrime.securesms.mediasend.v2.HudCommand
 import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionViewModel
 import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientId
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.ViewUtil
 import org.thoughtcrime.securesms.util.views.Stub
 import org.thoughtcrime.securesms.util.visible
@@ -80,9 +80,9 @@ class AddMessageDialogFragment : KeyboardEntryDialogFragment(R.layout.v2_media_a
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     emojiDrawerStub = Stub(binding.content.emojiDrawerStub)
 
-    if (Stories.isFeatureEnabled()) {
-      EditTextUtil.addGraphemeClusterLimitFilter(binding.content.addAMessageInput, Stories.MAX_CAPTION_SIZE)
-    }
+//    if (Stories.isFeatureEnabled()) {
+//      EditTextUtil.addGraphemeClusterLimitFilter(binding.content.addAMessageInput, Stories.MAX_CAPTION_SIZE)
+//    }
 
     binding.content.addAMessageInput.addTextChangedListener(afterTextChanged = {
       viewModel.updateAddAMessageCount(it)
@@ -102,8 +102,8 @@ class AddMessageDialogFragment : KeyboardEntryDialogFragment(R.layout.v2_media_a
     confirm.setOnClickListener { dismissAllowingStateLoss() }
 
     disposables += viewModel.watchAddAMessageCount().subscribe { count ->
-      binding.content.addAMessageLimit.visible = count.shouldDisplayCount()
-      binding.content.addAMessageLimit.text = count.getRemaining().toString()
+//      binding.content.addAMessageLimit.visible = count.shouldDisplayCount()
+//      binding.content.addAMessageLimit.text = count.getRemaining().toString()
     }
 
     disposables.add(

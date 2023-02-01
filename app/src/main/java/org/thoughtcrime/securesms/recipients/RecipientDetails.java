@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.conversation.colors.AvatarColor;
 import org.thoughtcrime.securesms.conversation.colors.ChatColors;
 import org.thoughtcrime.securesms.database.RecipientTable.InsightsBannerTier;
@@ -81,7 +81,7 @@ public class RecipientDetails {
   final ProfileName                  systemProfileName;
   final Optional<Recipient.Extras>   extras;
   final boolean                      hasGroupsInCommon;
-  final List<Badge>                  badges;
+//  final List<Badge>                  badges;
   final boolean                      isReleaseChannel;
   final boolean                      needsPniSignature;
 
@@ -142,12 +142,12 @@ public class RecipientDetails {
     this.systemContactName            = systemContactName;
     this.extras                       = Optional.ofNullable(record.getExtras());
     this.hasGroupsInCommon            = record.hasGroupsInCommon();
-    this.badges                       = record.getBadges();
+//    this.badges                       = record.getBadges();
     this.isReleaseChannel             = isReleaseChannel;
     this.needsPniSignature            = record.needsPniSignature();
   }
 
-  private RecipientDetails() {
+  RecipientDetails() {
     this.groupAvatarId                = null;
     this.systemContactPhoto           = null;
     this.customLabel                  = null;
@@ -195,7 +195,7 @@ public class RecipientDetails {
     this.systemContactName            = null;
     this.extras                       = Optional.empty();
     this.hasGroupsInCommon            = false;
-    this.badges                       = Collections.emptyList();
+//    this.badges                       = Collections.emptyList();
     this.isReleaseChannel             = false;
     this.needsPniSignature            = false;
   }

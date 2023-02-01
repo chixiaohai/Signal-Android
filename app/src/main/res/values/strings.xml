@@ -3428,7 +3428,7 @@ Updated May 25, 2018\n
     <string name="preferences_app_protection__screen_lock">Screen lock</string>
     <string name="preferences_app_protection__lock_signal_access_with_android_screen_lock_or_fingerprint">Lock Signal access with Android screen lock or fingerprint</string>
     <string name="preferences_app_protection__screen_lock_inactivity_timeout">Screen lock inactivity timeout</string>
-    <string name="preferences_app_protection__signal_pin">Signal PIN</string>
+    <string name="preferences_app_protection__signal_pin">Pigeon PIN</string>
     <string name="preferences_app_protection__create_a_pin">Create a PIN</string>
     <string name="preferences_app_protection__change_your_pin">Change your PIN</string>
     <string name="preferences_app_protection__pin_reminders">PIN reminders</string>
@@ -3919,8 +3919,11 @@ Updated May 25, 2018\n
     <!-- ChangeNumberFragment -->
     <string name="ChangeNumberFragment__use_this_to_change_your_current_phone_number_to_a_new_phone_number">Use this to change your current phone number to a new phone number. You can’t undo this change.\n\nBefore continuing, make sure your new number can receive SMS or calls.</string>
     <string name="ChangeNumberFragment__continue">Continue</string>
+    <string name="ChangeNumber__your_phone_number_has_been_changed">Your phone number has been changed.</string>
+
     <!-- Message shown on dialog after your number has been changed successfully. -->
     <string name="ChangeNumber__your_phone_number_has_changed_to_s">Your phone number has been changed to %1$s</string>
+
     <!-- Confirmation button to dismiss number changed dialog -->
     <string name="ChangeNumber__okay">Okay</string>
 
@@ -5558,5 +5561,8 @@ Updated May 25, 2018\n
     <!-- PaypalCompleteOrderBottomSheet -->
     <string name="PaypalCompleteOrderBottomSheet__donate">Donate</string>
     <string name="PaypalCompleteOrderBottomSheet__payment">Payment</string>
+
+    <string name="preferences_notifications__events">Events</string>
+    <string name="preferences_events__contact_joined_signal">Contact available on Pigeon</string>
 
 </resources>

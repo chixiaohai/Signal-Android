@@ -7,7 +7,7 @@ import androidx.annotation.Px
 import androidx.window.layout.WindowMetricsCalculator
 import org.signal.core.util.dp
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 
 /**
  * Description of the Camera Viewport, Controls, and Toggle position information.
@@ -74,25 +74,25 @@ enum class CameraDisplay(
     toggleBottomMargin = 54
   );
 
-  @Px
-  fun getCameraCaptureMarginBottom(resources: Resources): Int {
-    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
-
-    return positionInfo.cameraCaptureMarginBottomDp.dp - getCameraButtonSizeOffset(resources)
-  }
-
-  @Px
-  fun getCameraViewportMarginBottom(): Int {
-    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
-
-    return positionInfo.cameraViewportMarginBottomDp.dp
-  }
-
-  fun getCameraViewportGravity(): CameraViewportGravity {
-    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
-
-    return positionInfo.cameraViewportGravity
-  }
+//  @Px
+//  fun getCameraCaptureMarginBottom(resources: Resources): Int {
+//    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
+//
+//    return positionInfo.cameraCaptureMarginBottomDp.dp - getCameraButtonSizeOffset(resources)
+//  }
+//
+//  @Px
+//  fun getCameraViewportMarginBottom(): Int {
+//    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
+//
+//    return positionInfo.cameraViewportMarginBottomDp.dp
+//  }
+//
+//  fun getCameraViewportGravity(): CameraViewportGravity {
+//    val positionInfo = if (Stories.isFeatureEnabled()) withTogglePositionInfo else withoutTogglePositionInfo
+//
+//    return positionInfo.cameraViewportGravity
+//  }
 
   @Px
   fun getToggleBottomMargin(): Int {

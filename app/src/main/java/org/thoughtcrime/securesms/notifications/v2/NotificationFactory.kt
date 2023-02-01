@@ -26,7 +26,7 @@ import org.thoughtcrime.securesms.keyvalue.SignalStore
 import org.thoughtcrime.securesms.notifications.NotificationChannels
 import org.thoughtcrime.securesms.notifications.NotificationIds
 import org.thoughtcrime.securesms.recipients.Recipient
-import org.thoughtcrime.securesms.stories.my.MyStoriesActivity
+//import org.thoughtcrime.securesms.stories.my.MyStoriesActivity
 import org.thoughtcrime.securesms.util.BubbleUtil
 import org.thoughtcrime.securesms.util.ConversationUtil
 import org.thoughtcrime.securesms.util.ServiceUtil
@@ -305,12 +305,12 @@ object NotificationFactory {
       return
     }
 
-    val intent: Intent = if (recipient.isDistributionList || thread.groupStoryId != null) {
-      Intent(context, MyStoriesActivity::class.java)
-    } else {
-      ConversationIntents.createBuilder(context, recipient.id, thread.threadId)
-        .build()
-    }.makeUniqueToPreventMerging()
+//    val intent: Intent = if (recipient.isDistributionList || thread.groupStoryId != null) {
+//      Intent(context, MyStoriesActivity::class.java)
+//    } else {
+//      ConversationIntents.createBuilder(context, recipient.id, thread.threadId)
+//        .build()
+//    }.makeUniqueToPreventMerging()
 
     val builder: NotificationBuilder = NotificationBuilder.create(context)
 
@@ -320,7 +320,7 @@ object NotificationFactory {
       setContentTitle(context.getString(R.string.MessageNotifier_message_delivery_failed))
       setContentText(context.getString(R.string.MessageNotifier_failed_to_deliver_message))
       setTicker(context.getString(R.string.MessageNotifier_error_delivering_message))
-      setContentIntent(NotificationPendingIntentHelper.getActivity(context, 0, intent, PendingIntentFlags.mutable()))
+//      setContentIntent(NotificationPendingIntentHelper.getActivity(context, 0, intent, PendingIntentFlags.mutable()))
       setAutoCancel(true)
       setAlarms(recipient)
       setChannelId(NotificationChannels.FAILURES)
@@ -335,12 +335,12 @@ object NotificationFactory {
       return
     }
 
-    val intent: Intent = if (recipient.isDistributionList || thread.groupStoryId != null) {
-      Intent(context, MyStoriesActivity::class.java)
-    } else {
-      ConversationIntents.createBuilder(context, recipient.id, thread.threadId)
-        .build()
-    }.makeUniqueToPreventMerging()
+//    val intent: Intent = if (recipient.isDistributionList || thread.groupStoryId != null) {
+//      Intent(context, MyStoriesActivity::class.java)
+//    } else {
+//      ConversationIntents.createBuilder(context, recipient.id, thread.threadId)
+//        .build()
+//    }.makeUniqueToPreventMerging()
 
     val builder: NotificationBuilder = NotificationBuilder.create(context)
 
@@ -349,7 +349,7 @@ object NotificationFactory {
       setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_info_outline))
       setContentTitle(context.getString(R.string.MessageNotifier_message_delivery_paused))
       setContentText(context.getString(R.string.MessageNotifier_verify_to_continue_messaging_on_signal))
-      setContentIntent(NotificationPendingIntentHelper.getActivity(context, 0, intent, PendingIntentFlags.mutable()))
+//      setContentIntent(NotificationPendingIntentHelper.getActivity(context, 0, intent, PendingIntentFlags.mutable()))
       setOnlyAlertOnce(true)
       setAutoCancel(true)
       setAlarms(recipient)

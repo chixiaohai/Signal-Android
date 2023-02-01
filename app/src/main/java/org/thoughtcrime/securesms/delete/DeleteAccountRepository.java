@@ -14,7 +14,7 @@ import org.thoughtcrime.securesms.dependencies.ApplicationDependencies;
 import org.thoughtcrime.securesms.groups.GroupManager;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.pin.KbsEnclaves;
-import org.thoughtcrime.securesms.subscription.Subscriber;
+//import org.thoughtcrime.securesms.subscription.Subscriber;
 import org.thoughtcrime.securesms.util.ServiceUtil;
 import org.whispersystems.signalservice.api.util.PhoneNumberFormatter;
 import org.whispersystems.signalservice.internal.EmptyResponse;
@@ -46,33 +46,33 @@ class DeleteAccountRepository {
 
   void deleteAccount(@NonNull Consumer<DeleteAccountEvent> onDeleteAccountEvent) {
     SignalExecutors.BOUNDED.execute(() -> {
-      if (SignalStore.donationsValues().getSubscriber() != null) {
-        Log.i(TAG, "deleteAccount: attempting to cancel subscription");
-        onDeleteAccountEvent.accept(DeleteAccountEvent.CancelingSubscription.INSTANCE);
-
-        Subscriber                     subscriber                 = SignalStore.donationsValues().requireSubscriber();
-        ServiceResponse<EmptyResponse> cancelSubscriptionResponse = ApplicationDependencies.getDonationsService()
-                                                                                           .cancelSubscription(subscriber.getSubscriberId());
-
-        if (cancelSubscriptionResponse.getExecutionError().isPresent()) {
-          Log.w(TAG, "deleteAccount: failed attempt to cancel subscription");
-          onDeleteAccountEvent.accept(DeleteAccountEvent.CancelSubscriptionFailed.INSTANCE);
-          return;
-        }
-
-        switch (cancelSubscriptionResponse.getStatus()) {
-          case 404:
-            Log.i(TAG, "deleteAccount: subscription does not exist. Continuing deletion...");
-            break;
-          case 200:
-            Log.i(TAG, "deleteAccount: successfully cancelled subscription. Continuing deletion...");
-            break;
-          default:
-            Log.w(TAG, "deleteAccount: an unexpected error occurred. " + cancelSubscriptionResponse.getStatus());
-            onDeleteAccountEvent.accept(DeleteAccountEvent.CancelSubscriptionFailed.INSTANCE);
-            return;
-        }
-      }
+//      if (SignalStore.donationsValues().getSubscriber() != null) {
+//        Log.i(TAG, "deleteAccount: attempting to cancel subscription");
+//        onDeleteAccountEvent.accept(DeleteAccountEvent.CancelingSubscription.INSTANCE);
+//
+//        Subscriber                     subscriber                 = SignalStore.donationsValues().requireSubscriber();
+//        ServiceResponse<EmptyResponse> cancelSubscriptionResponse = ApplicationDependencies.getDonationsService()
+//                                                                                           .cancelSubscription(subscriber.getSubscriberId());
+//
+//        if (cancelSubscriptionResponse.getExecutionError().isPresent()) {
+//          Log.w(TAG, "deleteAccount: failed attempt to cancel subscription");
+//          onDeleteAccountEvent.accept(DeleteAccountEvent.CancelSubscriptionFailed.INSTANCE);
+//          return;
+//        }
+//
+//        switch (cancelSubscriptionResponse.getStatus()) {
+//          case 404:
+//            Log.i(TAG, "deleteAccount: subscription does not exist. Continuing deletion...");
+//            break;
+//          case 200:
+//            Log.i(TAG, "deleteAccount: successfully cancelled subscription. Continuing deletion...");
+//            break;
+//          default:
+//            Log.w(TAG, "deleteAccount: an unexpected error occurred. " + cancelSubscriptionResponse.getStatus());
+//            onDeleteAccountEvent.accept(DeleteAccountEvent.CancelSubscriptionFailed.INSTANCE);
+//            return;
+//        }
+//      }
 
       Log.i(TAG, "deleteAccount: attempting to leave groups...");
 

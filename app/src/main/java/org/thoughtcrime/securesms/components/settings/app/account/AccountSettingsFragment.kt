@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms.components.settings.app.account
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.Typeface
 import android.text.InputType
 import android.util.DisplayMetrics
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.autofill.HintConstants
 import androidx.core.app.DialogCompat
@@ -19,7 +21,9 @@ import androidx.navigation.Navigation
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import org.thoughtcrime.securesms.R
+import org.thoughtcrime.securesms.components.Mp03CustomDialog
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -30,8 +34,10 @@ import org.thoughtcrime.securesms.lock.v2.CreateKbsPinActivity
 import org.thoughtcrime.securesms.lock.v2.KbsConstants
 import org.thoughtcrime.securesms.lock.v2.PinKeyboardType
 import org.thoughtcrime.securesms.pin.RegistrationLockV2Dialog
+import org.thoughtcrime.securesms.recipients.Recipient
+import org.thoughtcrime.securesms.util.FeatureFlags
+import org.thoughtcrime.securesms.util.ServiceUtil
 import org.thoughtcrime.securesms.util.ViewUtil
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter
 import org.thoughtcrime.securesms.util.navigation.safeNavigate
 
 class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFragment__account) {
@@ -40,7 +46,7 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     if (requestCode == CreateKbsPinActivity.REQUEST_NEW_PIN && resultCode == CreateKbsPinActivity.RESULT_OK) {
-      Snackbar.make(requireView(), R.string.ConfirmKbsPinFragment__pin_created, Snackbar.LENGTH_LONG).show()
+      Snackbar.make(requireView(), R.string.ConfirmKbsPinFragment__pin_created, Snackbar.LENGTH_LONG).setTextColor(Color.WHITE).show()
     }
   }
 
@@ -49,7 +55,7 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
     viewModel.refreshState()
   }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     viewModel = ViewModelProvider(this)[AccountSettingsViewModel::class.java]
 
     viewModel.state.observe(viewLifecycleOwner) { state ->
@@ -76,7 +82,7 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences_app_protection__pin_reminders),
-        summary = DSLSettingsText.from(R.string.AccountSettingsFragment__youll_be_asked_less_frequently),
+//        summary = DSLSettingsText.from(R.string.AccountSettingsFragment__youll_be_asked_less_frequently),
         isChecked = state.hasPin && state.pinRemindersEnabled,
         isEnabled = state.hasPin,
         onClick = {
@@ -86,7 +92,7 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences_app_protection__registration_lock),
-        summary = DSLSettingsText.from(R.string.AccountSettingsFragment__require_your_signal_pin),
+//        summary = DSLSettingsText.from(R.string.AccountSettingsFragment__require_your_signal_pin),
         isChecked = state.registrationLockEnabled,
         isEnabled = state.hasPin,
         onClick = {
@@ -101,8 +107,6 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
         }
       )
 
-      dividerPref()
-
       sectionHeaderPref(R.string.AccountSettingsFragment__account)
 
       if (SignalStore.account().isRegistered) {
@@ -114,13 +118,13 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
         )
       }
 
-      clickPref(
+      /*clickPref(
         title = DSLSettingsText.from(R.string.preferences_chats__transfer_account),
         summary = DSLSettingsText.from(R.string.preferences_chats__transfer_account_to_a_new_android_device),
         onClick = {
           Navigation.findNavController(requireView()).safeNavigate(R.id.action_accountSettingsFragment_to_oldDeviceTransferActivity)
         }
-      )
+      )*/
 
       clickPref(
         title = DSLSettingsText.from(R.string.preferences__delete_account, ContextCompat.getColor(requireContext(), R.color.signal_alert_primary)),
@@ -142,69 +146,43 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
   private fun setPinRemindersEnabled(enabled: Boolean) {
     if (!enabled) {
       val context: Context = requireContext()
-      val metrics: DisplayMetrics = resources.displayMetrics
-
-      val dialog: AlertDialog = MaterialAlertDialogBuilder(context)
-        .setView(R.layout.pin_disable_reminders_dialog)
-        .create()
-
-      dialog.show()
-      dialog.window!!.setLayout((metrics.widthPixels * .80).toInt(), ViewGroup.LayoutParams.WRAP_CONTENT)
-
-      val pinEditText = DialogCompat.requireViewById(dialog, R.id.reminder_disable_pin) as EditText
-      val statusText = DialogCompat.requireViewById(dialog, R.id.reminder_disable_status) as TextView
-      val cancelButton = DialogCompat.requireViewById(dialog, R.id.reminder_disable_cancel)
-      val turnOffButton = DialogCompat.requireViewById(dialog, R.id.reminder_disable_turn_off)
-      val changeKeyboard = DialogCompat.requireViewById(dialog, R.id.reminder_change_keyboard) as Button
-
-      changeKeyboard.setOnClickListener {
-        if (pinEditText.inputType and InputType.TYPE_CLASS_NUMBER == 0) {
-          pinEditText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-          changeKeyboard.setText(R.string.PinRestoreEntryFragment_enter_alphanumeric_pin)
-        } else {
-          pinEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-          changeKeyboard.setText(R.string.PinRestoreEntryFragment_enter_numeric_pin)
-        }
-        pinEditText.typeface = Typeface.DEFAULT
-      }
-
-      pinEditText.post {
-        ViewUtil.focusAndShowKeyboard(pinEditText)
-      }
-
-      ViewCompat.setAutofillHints(pinEditText, HintConstants.AUTOFILL_HINT_PASSWORD)
-
-      when (SignalStore.pinValues().keyboardType) {
-        PinKeyboardType.NUMERIC -> {
-          pinEditText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
-          changeKeyboard.setText(R.string.PinRestoreEntryFragment_enter_alphanumeric_pin)
-        }
-        PinKeyboardType.ALPHA_NUMERIC -> {
-          pinEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
-          changeKeyboard.setText(R.string.PinRestoreEntryFragment_enter_numeric_pin)
-        }
-      }
-
-      pinEditText.addTextChangedListener(object : SimpleTextWatcher() {
-        override fun onTextChanged(text: String) {
-          turnOffButton.isEnabled = text.length >= KbsConstants.MINIMUM_PIN_LENGTH
-        }
-      })
-
-      pinEditText.typeface = Typeface.DEFAULT
-      turnOffButton.setOnClickListener {
+      val mp03CustomDialog = Mp03CustomDialog(getContext())
+      mp03CustomDialog.setTitle(context.resources.getString(R.string.preferences_app_protection__confirm_your_signal_pin))
+      mp03CustomDialog.setMessage(context.resources.getString(R.string.preferences_app_protection__make_sure_you_memorize_or_securely_store_your_pin))
+      mp03CustomDialog.setPositiveListener(R.string.preferences_app_protection__turn_off) {
+        val pinEditText = mp03CustomDialog.findViewById<EditText>(R.id.reminder_disable_pin_0)
         val pin = pinEditText.text.toString()
+        if (pin.length < KbsConstants.MINIMUM_PIN_LENGTH) {
+          Toast.makeText(context, context.resources.getString(R.string.preferences_app_protection__incorrect_pin_try_again), Toast.LENGTH_SHORT).show()
+        }
         val correct = PinHashing.verifyLocalPinHash(SignalStore.kbsValues().localPinHash!!, pin)
         if (correct) {
           SignalStore.pinValues().setPinRemindersEnabled(false)
           viewModel.refreshState()
-          dialog.dismiss()
+          mp03CustomDialog.dismiss()
+          1
         } else {
-          statusText.setText(R.string.preferences_app_protection__incorrect_pin_try_again)
+          Toast.makeText(context, requireActivity().resources.getString(R.string.preferences_app_protection__incorrect_pin_try_again), Toast.LENGTH_SHORT).show()
+          0
         }
       }
-
-      cancelButton.setOnClickListener { dialog.dismiss() }
+      mp03CustomDialog.setNegativeListener(android.R.string.cancel) { 1 }
+      mp03CustomDialog.setBackKeyListener { requireActivity().finish()}
+      mp03CustomDialog.show()
+      val pinEditText = mp03CustomDialog.findViewById<EditText>(R.id.reminder_disable_pin_0)
+      if (pinEditText.requestFocus()) {
+        ServiceUtil.getInputMethodManager(pinEditText.context).showSoftInput(pinEditText, 0)
+      }
+      when (SignalStore.pinValues().keyboardType) {
+        PinKeyboardType.NUMERIC -> pinEditText.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_VARIATION_PASSWORD
+        PinKeyboardType.ALPHA_NUMERIC -> pinEditText.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD
+        else -> throw AssertionError("Unexpected type!")
+      }
+      pinEditText.addTextChangedListener(object : SimpleTextWatcher() {
+        override fun onTextChanged(text: String) {
+          //mp03CustomDialog.findViewById(R.id.reminder_disable_turn_off).setEnabled(text.length() >= KbsConstants.MINIMUM_PIN_LENGTH);
+        }
+      })
     } else {
       SignalStore.pinValues().setPinRemindersEnabled(true)
       viewModel.refreshState()

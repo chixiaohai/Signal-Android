@@ -80,11 +80,11 @@ import org.signal.core.util.concurrent.SimpleTask;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.badges.gifts.OpenableGift;
-import org.thoughtcrime.securesms.badges.gifts.OpenableGiftItemDecoration;
-import org.thoughtcrime.securesms.badges.gifts.flow.GiftFlowActivity;
-import org.thoughtcrime.securesms.badges.gifts.viewgift.received.ViewReceivedGiftBottomSheet;
-import org.thoughtcrime.securesms.badges.gifts.viewgift.sent.ViewSentGiftBottomSheet;
+//import org.thoughtcrime.securesms.badges.gifts.OpenableGift;
+//import org.thoughtcrime.securesms.badges.gifts.OpenableGiftItemDecoration;
+//import org.thoughtcrime.securesms.badges.gifts.flow.GiftFlowActivity;
+//import org.thoughtcrime.securesms.badges.gifts.viewgift.received.ViewReceivedGiftBottomSheet;
+//import org.thoughtcrime.securesms.badges.gifts.viewgift.sent.ViewSentGiftBottomSheet;
 import org.thoughtcrime.securesms.components.ConversationScrollToView;
 import org.thoughtcrime.securesms.components.ConversationTypingView;
 import org.thoughtcrime.securesms.components.TypingStatusRepository;
@@ -92,8 +92,8 @@ import org.thoughtcrime.securesms.components.menu.ActionItem;
 import org.thoughtcrime.securesms.components.menu.SignalBottomActionBar;
 import org.thoughtcrime.securesms.components.recyclerview.SmoothScrollingLinearLayoutManager;
 import org.thoughtcrime.securesms.components.settings.app.AppSettingsActivity;
-import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalFragment;
-import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalType;
+//import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalFragment;
+//import org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalType;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteMediaControllerOwner;
 import org.thoughtcrime.securesms.components.voice.VoiceNotePlaybackState;
 import org.thoughtcrime.securesms.contactshare.Contact;
@@ -140,7 +140,7 @@ import org.thoughtcrime.securesms.jobs.MultiDeviceViewOnceOpenJob;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.linkpreview.LinkPreview;
 import org.thoughtcrime.securesms.longmessage.LongMessageFragment;
-import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
+//import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
 import org.thoughtcrime.securesms.messagedetails.MessageDetailsFragment;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestState;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestViewModel;
@@ -170,9 +170,9 @@ import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
 import org.thoughtcrime.securesms.stickers.StickerLocator;
 import org.thoughtcrime.securesms.stickers.StickerPackPreviewActivity;
-import org.thoughtcrime.securesms.stories.Stories;
-import org.thoughtcrime.securesms.stories.StoryViewerArgs;
-import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
+//import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.StoryViewerArgs;
+//import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
 import org.thoughtcrime.securesms.util.CachedInflater;
 import org.thoughtcrime.securesms.util.CommunicationActions;
 import org.thoughtcrime.securesms.util.HtmlUtil;
@@ -260,7 +260,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   private TransitionListener          transitionListener;
   private View                        reactionsShade;
   private SignalBottomActionBar       bottomActionBar;
-  private OpenableGiftItemDecoration  openableGiftItemDecoration;
+//  private OpenableGiftItemDecoration  openableGiftItemDecoration;
 
   private GiphyMp4ProjectionRecycler giphyMp4ProjectionRecycler;
   private Colorizer                  colorizer;
@@ -329,10 +329,10 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
     RecyclerViewColorizer recyclerViewColorizer = new RecyclerViewColorizer(list);
 
-    openableGiftItemDecoration = new OpenableGiftItemDecoration(requireContext());
-    getViewLifecycleOwner().getLifecycle().addObserver(openableGiftItemDecoration);
+//    openableGiftItemDecoration = new OpenableGiftItemDecoration(requireContext());
+//    getViewLifecycleOwner().getLifecycle().addObserver(openableGiftItemDecoration);
 
-    list.addItemDecoration(openableGiftItemDecoration);
+//    list.addItemDecoration(openableGiftItemDecoration);
     list.addItemDecoration(multiselectItemDecoration);
     list.setItemAnimator(conversationItemAnimator);
 
@@ -434,7 +434,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       ViewUtil.setTopMargin(scrollDateHeader, topMargin + ViewUtil.dpToPx(8));
     });
 
-    conversationViewModel.getActiveNotificationProfile().observe(getViewLifecycleOwner(), this::updateNotificationProfileStatus);
+//    conversationViewModel.getActiveNotificationProfile().observe(getViewLifecycleOwner(), this::updateNotificationProfileStatus);
 
     initializeScrollButtonAnimations();
     initializeResources();
@@ -451,13 +451,13 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    getChildFragmentManager().setFragmentResultListener(ViewReceivedGiftBottomSheet.REQUEST_KEY, getViewLifecycleOwner(), (key, bundle) -> {
-      if (bundle.getBoolean(ViewReceivedGiftBottomSheet.RESULT_NOT_NOW, false)) {
+//    getChildFragmentManager().setFragmentResultListener(ViewReceivedGiftBottomSheet.REQUEST_KEY, getViewLifecycleOwner(), (key, bundle) -> {
+//      if (bundle.getBoolean(ViewReceivedGiftBottomSheet.RESULT_NOT_NOW, false)) {
         Snackbar.make(view.getRootView(), R.string.ConversationFragment__you_can_redeem_your_badge_later, Snackbar.LENGTH_SHORT)
                 .show();
-      }
-    });
-  }
+//      }
+    }
+
 
   private @NonNull GiphyMp4ProjectionRecycler initializeGiphyMp4() {
     int                                            maxPlayback = GiphyMp4PlaybackPolicy.maxSimultaneousPlaybackInConversation();
@@ -672,7 +672,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     int          pendingMemberCount = recipientInfo.getGroupPendingMemberCount();
     List<String> groups             = recipientInfo.getSharedGroups();
 
-    conversationBanner.setBadge(recipient);
+//    conversationBanner.setBadge(recipient);
 
     if (recipient != null) {
       conversationBanner.setAvatar(GlideApp.with(context), recipient);
@@ -1511,10 +1511,10 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   public void onDismissForwardSheet() {
   }
 
-  @Override
-  public @Nullable Stories.MediaTransform.SendRequirements getStorySendRequirements() {
-    return null;
-  }
+//  @Override
+//  public @Nullable Stories.MediaTransform.SendRequirements getStorySendRequirements() {
+//    return null;
+//  }
 
   @Override
   public @NonNull ItemClickListener getConversationAdapterListener() {
@@ -1648,9 +1648,9 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
       MessageRecord messageRecord = item.getConversationMessage().getMessageRecord();
 
-      if (isUnopenedGift(itemView, messageRecord)) {
-        return;
-      }
+//      if (isUnopenedGift(itemView, messageRecord)) {
+//        return;
+//      }
 
       if (messageRecord.isSecure()                                        &&
           !messageRecord.isRemoteDelete()                                 &&
@@ -1791,12 +1791,12 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       }
 
       if (messageRecord.getParentStoryId() != null) {
-        startActivity(StoryViewerActivity.createIntent(
-            requireContext(),
-            new StoryViewerArgs.Builder(messageRecord.getQuote().getAuthor(), Recipient.resolved(messageRecord.getQuote().getAuthor()).shouldHideStory())
-                               .withStoryId(messageRecord.getParentStoryId().asMessageId().getId())
-                               .isFromQuote(true)
-                               .build()));
+//        startActivity(StoryViewerActivity.createIntent(
+//            requireContext(),
+//            new StoryViewerArgs.Builder(messageRecord.getQuote().getAuthor(), Recipient.resolved(messageRecord.getQuote().getAuthor()).shouldHideStory())
+//                               .withStoryId(messageRecord.getParentStoryId().asMessageId().getId())
+//                               .isFromQuote(true)
+//                               .build()));
         return;
       }
 
@@ -2111,20 +2111,28 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       startActivity(RecipientExporter.export(recipient).asAddContactIntent());
     }
 
-    @Override
-    public void onCallToAction(@NonNull String action) {
-      if ("gift_badge".equals(action)) {
-        startActivity(new Intent(requireContext(), GiftFlowActivity.class));
-      }
+    @Override public void onCallToAction(@NonNull String action) {
+
     }
 
-    @Override
-    public void onDonateClicked() {
-      requireActivity().getSupportFragmentManager()
-                       .beginTransaction()
-                       .add(DonateToSignalFragment.Dialog.create(DonateToSignalType.ONE_TIME), "one_time_nav")
-                       .commitNow();
+    @Override public void onDonateClicked() {
+
     }
+
+//    @Override
+//    public void onCallToAction(@NonNull String action) {
+//      if ("gift_badge".equals(action)) {
+//        startActivity(new Intent(requireContext(), GiftFlowActivity.class));
+//      }
+//    }
+//
+//    @Override
+//    public void onDonateClicked() {
+//      requireActivity().getSupportFragmentManager()
+//                       .beginTransaction()
+//                       .add(DonateToSignalFragment.Dialog.create(DonateToSignalType.ONE_TIME), "one_time_nav")
+//                       .commitNow();
+//    }
 
     @Override
     public void onBlockJoinRequest(@NonNull Recipient recipient) {
@@ -2153,11 +2161,11 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
         return;
       }
 
-      if (messageRecord.isOutgoing()) {
-        ViewSentGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
-      } else {
-        ViewReceivedGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
-      }
+//      if (messageRecord.isOutgoing()) {
+//        ViewSentGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
+//      } else {
+//        ViewReceivedGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
+//      }
     }
 
     @Override
@@ -2179,17 +2187,17 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     }
   }
 
-  private boolean isUnopenedGift(View itemView, MessageRecord messageRecord) {
-    if (itemView instanceof OpenableGift) {
-      Projection projection = ((OpenableGift) itemView).getOpenableGiftProjection(false);
-      if (projection != null) {
-        projection.release();
-        return !openableGiftItemDecoration.hasOpenedGiftThisSession(messageRecord.getId());
-      }
-    }
-
-    return false;
-  }
+//  private boolean isUnopenedGift(View itemView, MessageRecord messageRecord) {
+//    if (itemView instanceof OpenableGift) {
+//      Projection projection = ((OpenableGift) itemView).getOpenableGiftProjection(false);
+//      if (projection != null) {
+//        projection.release();
+//        return !openableGiftItemDecoration.hasOpenedGiftThisSession(messageRecord.getId());
+//      }
+//    }
+//
+//    return false;
+//  }
 
   public void refreshList() {
     ConversationAdapter listAdapter = getListAdapter();

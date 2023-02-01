@@ -12,9 +12,9 @@ import io.reactivex.rxjava3.core.Observable
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.groups.SelectionLimits
 import org.thoughtcrime.securesms.keyvalue.SignalStore
-import org.thoughtcrime.securesms.stories.settings.custom.PrivateStorySettingsFragment
-import org.thoughtcrime.securesms.stories.settings.my.MyStorySettingsFragment
-import org.thoughtcrime.securesms.stories.settings.privacy.ChooseInitialMyStoryMembershipBottomSheetDialogFragment
+//import org.thoughtcrime.securesms.stories.settings.custom.PrivateStorySettingsFragment
+//import org.thoughtcrime.securesms.stories.settings.my.MyStorySettingsFragment
+//import org.thoughtcrime.securesms.stories.settings.privacy.ChooseInitialMyStoryMembershipBottomSheetDialogFragment
 import org.thoughtcrime.securesms.util.SpanUtil
 import org.thoughtcrime.securesms.util.adapter.mapping.PagingMappingAdapter
 import org.thoughtcrime.securesms.util.livedata.LiveDataUtil
@@ -100,7 +100,7 @@ class ContactSearchMediator(
 
   private fun toggleStorySelection(view: View, contactSearchData: ContactSearchData.Story, isSelected: Boolean) {
     if (contactSearchData.recipient.isMyStory && !SignalStore.storyValues().userHasBeenNotifiedAboutStories) {
-      ChooseInitialMyStoryMembershipBottomSheetDialogFragment.show(fragment.childFragmentManager)
+//      ChooseInitialMyStoryMembershipBottomSheetDialogFragment.show(fragment.childFragmentManager)
     } else {
       toggleSelection(view, contactSearchData, isSelected)
     }
@@ -116,13 +116,13 @@ class ContactSearchMediator(
 
   private inner class StoryContextMenuCallbacks : ContactSearchItems.StoryContextMenuCallbacks {
     override fun onOpenStorySettings(story: ContactSearchData.Story) {
-      if (story.recipient.isMyStory) {
-        MyStorySettingsFragment.createAsDialog()
-          .show(fragment.childFragmentManager, null)
-      } else {
-        PrivateStorySettingsFragment.createAsDialog(story.recipient.requireDistributionListId())
-          .show(fragment.childFragmentManager, null)
-      }
+//      if (story.recipient.isMyStory) {
+//        MyStorySettingsFragment.createAsDialog()
+//          .show(fragment.childFragmentManager, null)
+//      } else {
+//        PrivateStorySettingsFragment.createAsDialog(story.recipient.requireDistributionListId())
+//          .show(fragment.childFragmentManager, null)
+//      }
     }
 
     override fun onRemoveGroupStory(story: ContactSearchData.Story, isSelected: Boolean) {

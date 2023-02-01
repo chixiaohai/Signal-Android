@@ -15,7 +15,7 @@ import org.signal.paging.LivePagedData;
 import org.signal.paging.PagedData;
 import org.signal.paging.PagingConfig;
 import org.signal.paging.PagingController;
-import org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfilesRepository;
+//import org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfilesRepository;
 import org.thoughtcrime.securesms.conversationlist.model.Conversation;
 import org.thoughtcrime.securesms.conversationlist.model.ConversationFilter;
 import org.thoughtcrime.securesms.conversationlist.model.ConversationSet;
@@ -78,7 +78,7 @@ class ConversationListViewModel extends ViewModel {
   private final CompositeDisposable                         disposables;
   private final UnreadPaymentsLiveData                      unreadPaymentsLiveData;
   private final UnreadPaymentsRepository                    unreadPaymentsRepository;
-  private final NotificationProfilesRepository              notificationProfilesRepository;
+//  private final NotificationProfilesRepository              notificationProfilesRepository;
 
   private String                  activeQuery;
   private SearchResult            activeSearchResult;
@@ -93,7 +93,7 @@ class ConversationListViewModel extends ViewModel {
     this.searchRepository               = searchRepository;
     this.megaphoneRepository            = ApplicationDependencies.getMegaphoneRepository();
     this.unreadPaymentsRepository       = new UnreadPaymentsRepository();
-    this.notificationProfilesRepository = new NotificationProfilesRepository();
+//    this.notificationProfilesRepository = new NotificationProfilesRepository();
     this.messageSearchDebouncer         = new Debouncer(500);
     this.contactSearchDebouncer         = new Debouncer(100);
     this.updateDebouncer                = new ThrottledDebouncer(500);
@@ -157,11 +157,11 @@ class ConversationListViewModel extends ViewModel {
     return Transformations.map(pagedData, LivePagedData::getController);
   }
 
-  @NonNull LiveData<List<NotificationProfile>> getNotificationProfiles() {
-    final Observable<List<NotificationProfile>> activeProfile = Observable.combineLatest(Observable.interval(0, 30, TimeUnit.SECONDS), notificationProfilesRepository.getProfiles(), (interval, profiles) -> profiles);
-
-    return LiveDataReactiveStreams.fromPublisher(activeProfile.toFlowable(BackpressureStrategy.LATEST));
-  }
+//  @NonNull LiveData<List<NotificationProfile>> getNotificationProfiles() {
+//    final Observable<List<NotificationProfile>> activeProfile = Observable.combineLatest(Observable.interval(0, 30, TimeUnit.SECONDS), notificationProfilesRepository.getProfiles(), (interval, profiles) -> profiles);
+//
+//    return LiveDataReactiveStreams.fromPublisher(activeProfile.toFlowable(BackpressureStrategy.LATEST));
+//  }
 
   @NonNull LiveData<WebSocketConnectionState> getPipeState() {
     return LiveDataReactiveStreams.fromPublisher(ApplicationDependencies.getSignalWebSocket().getWebSocketState().toFlowable(BackpressureStrategy.LATEST));

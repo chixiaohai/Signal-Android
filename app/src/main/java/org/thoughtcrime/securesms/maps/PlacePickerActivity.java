@@ -72,7 +72,7 @@ public final class PlacePickerActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_place_picker);
 
-    bottomSheet      = findViewById(R.id.bottom_sheet);
+//    bottomSheet      = findViewById(R.id.bottom_sheet);
     View markerImage = findViewById(R.id.marker_image_view);
     View fab         = findViewById(R.id.place_chosen_button);
 

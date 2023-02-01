@@ -26,9 +26,9 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.view.AvatarView;
-import org.thoughtcrime.securesms.badges.BadgeImageView;
-import org.thoughtcrime.securesms.badges.view.ViewBadgeBottomSheetDialogFragment;
+//import org.thoughtcrime.securesms.avatar.view.AvatarView;
+//import org.thoughtcrime.securesms.badges.BadgeImageView;
+//import org.thoughtcrime.securesms.badges.view.ViewBadgeBottomSheetDialogFragment;
 import org.thoughtcrime.securesms.components.settings.DSLSettingsIcon;
 import org.thoughtcrime.securesms.components.settings.conversation.preferences.ButtonStripPreference;
 import org.thoughtcrime.securesms.contacts.avatars.FallbackContactPhoto;
@@ -66,7 +66,7 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
   private static final String ARGS_GROUP_ID     = "GROUP_ID";
 
   private RecipientDialogViewModel viewModel;
-  private AvatarView               avatar;
+//  private AvatarView               avatar;
   private TextView                 fullName;
   private TextView                 about;
   private TextView                 usernameNumber;
@@ -83,7 +83,7 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
   private View                     noteToSelfDescription;
   private View                     buttonStrip;
   private View                     interactionsContainer;
-  private BadgeImageView           badgeImageView;
+//  private BadgeImageView           badgeImageView;
   private Callback                 callback;
 
   public static BottomSheetDialogFragment create(@NonNull RecipientId recipientId,
@@ -115,7 +115,7 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
   public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.recipient_bottom_sheet, container, false);
 
-    avatar                 = view.findViewById(R.id.rbs_recipient_avatar);
+//    avatar                 = view.findViewById(R.id.rbs_recipient_avatar);
     fullName               = view.findViewById(R.id.rbs_full_name);
     about                  = view.findViewById(R.id.rbs_about);
     usernameNumber         = view.findViewById(R.id.rbs_username_number);
@@ -132,7 +132,7 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
     noteToSelfDescription  = view.findViewById(R.id.rbs_note_to_self_description);
     buttonStrip            = view.findViewById(R.id.button_strip);
     interactionsContainer  = view.findViewById(R.id.interactions_container);
-    badgeImageView         = view.findViewById(R.id.rbs_badge);
+//    badgeImageView         = view.findViewById(R.id.rbs_badge);
 
     return view;
   }
@@ -150,30 +150,30 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
     viewModel = new ViewModelProvider(this, factory).get(RecipientDialogViewModel.class);
 
     viewModel.getStoryViewState().observe(getViewLifecycleOwner(), state -> {
-      avatar.setStoryRingFromState(state);
+//      avatar.setStoryRingFromState(state);
     });
 
     viewModel.getRecipient().observe(getViewLifecycleOwner(), recipient -> {
       interactionsContainer.setVisibility(recipient.isSelf() ? View.GONE : View.VISIBLE);
 
-      avatar.setFallbackPhotoProvider(new Recipient.FallbackPhotoProvider() {
-        @Override
-        public @NonNull FallbackContactPhoto getPhotoForLocalNumber() {
-          return new FallbackPhoto80dp(R.drawable.ic_note_80, recipient.getAvatarColor());
-        }
-      });
-      avatar.displayChatAvatar(recipient);
+//      avatar.setFallbackPhotoProvider(new Recipient.FallbackPhotoProvider() {
+//        @Override
+//        public @NonNull FallbackContactPhoto getPhotoForLocalNumber() {
+//          return new FallbackPhoto80dp(R.drawable.ic_note_80, recipient.getAvatarColor());
+//        }
+//      });
+//      avatar.displayChatAvatar(recipient);
 
-      if (!recipient.isSelf()) {
-        badgeImageView.setBadgeFromRecipient(recipient);
-      }
+//      if (!recipient.isSelf()) {
+//        badgeImageView.setBadgeFromRecipient(recipient);
+//      }
 
-      if (recipient.isSelf()) {
-        avatar.setOnClickListener(v -> {
-          dismiss();
-          viewModel.onNoteToSelfClicked(requireActivity());
-        });
-      }
+//      if (recipient.isSelf()) {
+//        avatar.setOnClickListener(v -> {
+//          dismiss();
+//          viewModel.onNoteToSelfClicked(requireActivity());
+//        });
+//      }
 
       String name = recipient.isSelf() ? requireContext().getString(R.string.note_to_self)
                                        : recipient.getDisplayName(requireContext());
@@ -317,15 +317,15 @@ public final class RecipientBottomSheetDialogFragment extends BottomSheetDialogF
       }
     });
 
-    avatar.setOnClickListener(view -> {
-      dismiss();
-      viewModel.onAvatarClicked(requireActivity());
-    });
+//    avatar.setOnClickListener(view -> {
+//      dismiss();
+//      viewModel.onAvatarClicked(requireActivity());
+//    });
 
-    badgeImageView.setOnClickListener(view -> {
-      dismiss();
-      ViewBadgeBottomSheetDialogFragment.show(getParentFragmentManager(), recipientId, null);
-    });
+//    badgeImageView.setOnClickListener(view -> {
+//      dismiss();
+//      ViewBadgeBottomSheetDialogFragment.show(getParentFragmentManager(), recipientId, null);
+//    });
 
     blockButton.setOnClickListener(view -> viewModel.onBlockClicked(requireActivity()));
     unblockButton.setOnClickListener(view -> viewModel.onUnblockClicked(requireActivity()));

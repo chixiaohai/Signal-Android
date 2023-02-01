@@ -5,6 +5,7 @@ import androidx.navigation.Navigation
 import androidx.preference.PreferenceManager
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -31,7 +32,7 @@ class DataAndStorageSettingsFragment : DSLSettingsFragment(R.string.preferences_
     viewModel.refresh()
   }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
     val repository = DataAndStorageSettingsRepository()
     val factory = DataAndStorageSettingsViewModel.Factory(preferences, repository)
@@ -44,15 +45,15 @@ class DataAndStorageSettingsFragment : DSLSettingsFragment(R.string.preferences_
 
   fun getConfiguration(state: DataAndStorageSettingsState): DSLConfiguration {
     return configure {
-      clickPref(
-        title = DSLSettingsText.from(R.string.preferences_data_and_storage__manage_storage),
-        summary = DSLSettingsText.from(Util.getPrettyFileSize(state.totalStorageUse)),
-        onClick = {
-          Navigation.findNavController(requireView()).safeNavigate(R.id.action_dataAndStorageSettingsFragment_to_storagePreferenceFragment)
-        }
-      )
+//      clickPref(
+//        title = DSLSettingsText.from(R.string.preferences_data_and_storage__manage_storage),
+//        summary = DSLSettingsText.from(Util.getPrettyFileSize(state.totalStorageUse)),
+//        onClick = {
+//          Navigation.findNavController(requireView()).safeNavigate(R.id.action_dataAndStorageSettingsFragment_to_storagePreferenceFragment)
+//        }
+//      )
 
-      dividerPref()
+//      dividerPref()
 
       sectionHeaderPref(R.string.preferences_chats__media_auto_download)
 
@@ -101,7 +102,7 @@ class DataAndStorageSettingsFragment : DSLSettingsFragment(R.string.preferences_
         summary = DSLSettingsText.from(R.string.DataAndStorageSettingsFragment__sending_high_quality_media_will_use_more_data)
       )
 
-      dividerPref()
+//      dividerPref()
 
       sectionHeaderPref(R.string.DataAndStorageSettingsFragment__calls)
 
@@ -114,11 +115,11 @@ class DataAndStorageSettingsFragment : DSLSettingsFragment(R.string.preferences_
         }
       )
 
-      textPref(
-        summary = DSLSettingsText.from(R.string.preference_data_and_storage__using_less_data_may_improve_calls_on_bad_networks)
-      )
+//      textPref(
+//        summary = DSLSettingsText.from(R.string.preference_data_and_storage__using_less_data_may_improve_calls_on_bad_networks)
+//      )
 
-      dividerPref()
+//      dividerPref()
 
       sectionHeaderPref(R.string.preferences_proxy)
 

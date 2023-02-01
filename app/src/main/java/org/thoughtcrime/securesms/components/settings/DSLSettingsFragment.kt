@@ -1,6 +1,5 @@
 package org.thoughtcrime.securesms.components.settings
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -12,104 +11,83 @@ import androidx.annotation.StringRes
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.util.Material3OnScrollHelper
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter
-import java.lang.UnsupportedOperationException
+import org.thoughtcrime.securesms.components.recyclerview.OnScrollAnimationHelper
+import org.thoughtcrime.securesms.components.recyclerview.ToolbarShadowAnimationHelper
 
 abstract class DSLSettingsFragment(
   @StringRes private val titleId: Int = -1,
   @MenuRes private val menuId: Int = -1,
   @LayoutRes layoutId: Int = R.layout.dsl_settings_fragment,
-  protected var layoutManagerProducer: (Context) -> RecyclerView.LayoutManager = { context -> LinearLayoutManager(context) }
 ) : Fragment(layoutId) {
 
-  protected var recyclerView: RecyclerView? = null
-    private set
-
-  private var toolbar: Toolbar? = null
+  lateinit var recyclerView: RecyclerView
+  private lateinit var scrollAnimationHelper: OnScrollAnimationHelper
+  private var index: Int = 0
+  private lateinit var adapter: DSLSettingsAdapter
 
   @CallSuper
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    toolbar = view.findViewById(R.id.toolbar)
+    val toolbar: Toolbar = view.findViewById(R.id.toolbar)
+    val toolbarShadow: View = view.findViewById(R.id.toolbar_shadow)
 
     if (titleId != -1) {
-      toolbar?.setTitle(titleId)
+      toolbar.setTitle(titleId)
     }
 
-    toolbar?.setNavigationOnClickListener {
-      onToolbarNavigationClicked()
+    toolbar.setNavigationOnClickListener {
+      requireActivity().onBackPressed()
     }
 
     if (menuId != -1) {
-      toolbar?.inflateMenu(menuId)
-      toolbar?.setOnMenuItemClickListener { onOptionsItemSelected(it) }
+      toolbar.inflateMenu(menuId)
+      toolbar.setOnMenuItemClickListener { onOptionsItemSelected(it) }
     }
 
-    val config = ConcatAdapter.Config.Builder().setIsolateViewTypes(false).build()
-    val settingsAdapters = createAdapters()
-    val settingsAdapter: RecyclerView.Adapter<out RecyclerView.ViewHolder> = when {
-      settingsAdapters.size > 1 -> ConcatAdapter(config, *settingsAdapters)
-      settingsAdapters.size == 1 -> settingsAdapters.first()
-      else -> error("Require one or more settings adapters.")
-    }
+    recyclerView = view.findViewById(R.id.recycler)
+    recyclerView.edgeEffectFactory = EdgeEffectFactory()
+    scrollAnimationHelper = getOnScrollAnimationHelper(toolbarShadow)
+    adapter = DSLSettingsAdapter()
 
-    recyclerView = view.findViewById<RecyclerView>(R.id.recycler).apply {
-      edgeEffectFactory = EdgeEffectFactory()
-      layoutManager = layoutManagerProducer(requireContext())
-      adapter = settingsAdapter
+    recyclerView.adapter = adapter
+    recyclerView.itemAnimator = null
+    recyclerView.clipToPadding = false
+    recyclerView.clipChildren = false
+    recyclerView.setPadding(0, 76, 0, 200)
 
-      getMaterial3OnScrollHelper(toolbar)?.let {
-        it.attach(this)
+    recyclerView.addOnScrollListener(scrollAnimationHelper)
+
+    bindAdapter(adapter)
+  }
+
+  override fun onResume() {
+    super.onResume()
+    scrollAnimationHelper.onScrolled(recyclerView, 0, 0)
+    recyclerView.post {
+//      recyclerView.scrollToPosition(index)
+      if (recyclerView.getChildAt(index) != null) {
+        recyclerView.getChildAt(index).requestFocus()
       }
     }
+  }
 
-    when (settingsAdapter) {
-      is ConcatAdapter -> bindAdapters(settingsAdapter)
-      is MappingAdapter -> bindAdapter(settingsAdapter)
-      else -> error("Illegal adapter subtype: ${settingsAdapter.javaClass.simpleName}")
+  override fun onStop() {
+    super.onStop()
+    val childCount = recyclerView.childCount
+    for (i in 0..childCount) {
+      val childAt = recyclerView.getChildAt(i)
+      if (childAt != null && childAt.hasFocus()) {
+        index = i
+      }
     }
   }
 
-  open fun getMaterial3OnScrollHelper(toolbar: Toolbar?): Material3OnScrollHelper? {
-    if (toolbar == null) {
-      return null
-    }
-
-    return Material3OnScrollHelper(requireActivity(), toolbar)
+  protected open fun getOnScrollAnimationHelper(toolbarShadow: View): OnScrollAnimationHelper {
+    return ToolbarShadowAnimationHelper(toolbarShadow)
   }
 
-  open fun onToolbarNavigationClicked() {
-    requireActivity().onBackPressed()
-  }
-
-  override fun onDestroyView() {
-    super.onDestroyView()
-    recyclerView = null
-  }
-
-  fun setTitle(@StringRes resId: Int) {
-    toolbar?.setTitle(resId)
-  }
-
-  fun setTitle(title: CharSequence) {
-    toolbar?.title = title
-  }
-
-  open fun createAdapters(): Array<MappingAdapter> {
-    return arrayOf(DSLSettingsAdapter())
-  }
-
-  open fun bindAdapter(adapter: MappingAdapter) {
-    throw UnsupportedOperationException("This method is not implemented.")
-  }
-
-  open fun bindAdapters(adapter: ConcatAdapter) {
-    throw UnsupportedOperationException("This method is not implemented.")
-  }
+  abstract fun bindAdapter(adapter: DSLSettingsAdapter)
 
   private class EdgeEffectFactory : RecyclerView.EdgeEffectFactory() {
     override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {

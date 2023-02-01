@@ -1,6 +1,6 @@
 package org.thoughtcrime.securesms.mediasend.v2.review
 
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import kotlin.math.max
 
 /**
@@ -11,9 +11,9 @@ import kotlin.math.max
  */
 @JvmInline
 value class AddMessageCharacterCount(private val count: Int) {
-  fun getRemaining(): Int = max(Stories.MAX_CAPTION_SIZE - count, 0)
+//  fun getRemaining(): Int = max(Stories.MAX_CAPTION_SIZE - count, 0)
 
-  fun shouldDisplayCount(): Boolean = getRemaining() <= DISPLAY_COUNT_THRESHOLD
+//  fun shouldDisplayCount(): Boolean = getRemaining() <= DISPLAY_COUNT_THRESHOLD
 
   companion object {
     private const val DISPLAY_COUNT_THRESHOLD = 50

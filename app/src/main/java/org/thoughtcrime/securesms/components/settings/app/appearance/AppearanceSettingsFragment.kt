@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
 import org.thoughtcrime.securesms.keyvalue.SettingsValues
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter
 import org.thoughtcrime.securesms.util.navigation.safeNavigate
 
-class AppearanceSettingsFragment : DSLSettingsFragment(R.string.preferences__appearance) {
+abstract class AppearanceSettingsFragment : DSLSettingsFragment(R.string.preferences__appearance) {
 
   private lateinit var viewModel: AppearanceSettingsViewModel
 
@@ -24,7 +24,7 @@ class AppearanceSettingsFragment : DSLSettingsFragment(R.string.preferences__app
   private val languageLabels by lazy { resources.getStringArray(R.array.language_entries) }
   private val languageValues by lazy { resources.getStringArray(R.array.language_values) }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     viewModel = ViewModelProvider(this)[AppearanceSettingsViewModel::class.java]
 
     viewModel.state.observe(viewLifecycleOwner) { state ->

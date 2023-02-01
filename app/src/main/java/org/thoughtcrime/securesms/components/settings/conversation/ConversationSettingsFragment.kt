@@ -31,14 +31,15 @@ import org.thoughtcrime.securesms.InviteActivity
 import org.thoughtcrime.securesms.MuteDialog
 import org.thoughtcrime.securesms.PushContactSelectionActivity
 import org.thoughtcrime.securesms.R
-import org.thoughtcrime.securesms.badges.BadgeImageView
-import org.thoughtcrime.securesms.badges.Badges
-import org.thoughtcrime.securesms.badges.Badges.displayBadges
-import org.thoughtcrime.securesms.badges.models.Badge
-import org.thoughtcrime.securesms.badges.view.ViewBadgeBottomSheetDialogFragment
+//import org.thoughtcrime.securesms.badges.BadgeImageView
+//import org.thoughtcrime.securesms.badges.Badges
+//import org.thoughtcrime.securesms.badges.Badges.displayBadges
+//import org.thoughtcrime.securesms.badges.models.Badge
+//import org.thoughtcrime.securesms.badges.view.ViewBadgeBottomSheetDialogFragment
 import org.thoughtcrime.securesms.components.AvatarImageView
 import org.thoughtcrime.securesms.components.recyclerview.OnScrollAnimationHelper
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsIcon
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
@@ -74,11 +75,11 @@ import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientExporter
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.recipients.ui.bottomsheet.RecipientBottomSheetDialogFragment
-import org.thoughtcrime.securesms.stories.Stories
-import org.thoughtcrime.securesms.stories.StoryViewerArgs
-import org.thoughtcrime.securesms.stories.dialogs.StoryDialogs
-import org.thoughtcrime.securesms.stories.viewer.AddToGroupStoryDelegate
-import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity
+//import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.StoryViewerArgs
+//import org.thoughtcrime.securesms.stories.dialogs.StoryDialogs
+//import org.thoughtcrime.securesms.stories.viewer.AddToGroupStoryDelegate
+//import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity
 import org.thoughtcrime.securesms.util.CommunicationActions
 import org.thoughtcrime.securesms.util.ContextUtil
 import org.thoughtcrime.securesms.util.ExpirationUtil
@@ -135,10 +136,10 @@ class ConversationSettingsFragment : DSLSettingsFragment(
   private lateinit var toolbar: Toolbar
   private lateinit var toolbarAvatarContainer: FrameLayout
   private lateinit var toolbarAvatar: AvatarImageView
-  private lateinit var toolbarBadge: BadgeImageView
+//  private lateinit var toolbarBadge: BadgeImageView
   private lateinit var toolbarTitle: TextView
   private lateinit var toolbarBackground: View
-  private lateinit var addToGroupStoryDelegate: AddToGroupStoryDelegate
+//  private lateinit var addToGroupStoryDelegate: AddToGroupStoryDelegate
 
   private val navController get() = Navigation.findNavController(requireView())
 
@@ -152,13 +153,13 @@ class ConversationSettingsFragment : DSLSettingsFragment(
     toolbar = view.findViewById(R.id.toolbar)
     toolbarAvatarContainer = view.findViewById(R.id.toolbar_avatar_container)
     toolbarAvatar = view.findViewById(R.id.toolbar_avatar)
-    toolbarBadge = view.findViewById(R.id.toolbar_badge)
+//    toolbarBadge = view.findViewById(R.id.toolbar_badge)
     toolbarTitle = view.findViewById(R.id.toolbar_title)
     toolbarBackground = view.findViewById(R.id.toolbar_background)
 
     val args: ConversationSettingsFragmentArgs = ConversationSettingsFragmentArgs.fromBundle(requireArguments())
     if (args.recipientId != null) {
-      layoutManagerProducer = Badges::createLayoutManagerForGridWithBadges
+//      layoutManagerProducer = Badges::createLayoutManagerForGridWithBadges
     }
 
     super.onViewCreated(view, savedInstanceState)
@@ -194,16 +195,16 @@ class ConversationSettingsFragment : DSLSettingsFragment(
     }
   }
 
-  override fun getMaterial3OnScrollHelper(toolbar: Toolbar?): Material3OnScrollHelper {
-    return object : Material3OnScrollHelper(requireActivity(), toolbar!!) {
-      override val inactiveColorSet = ColorSet(
-        toolbarColorRes = R.color.signal_colorBackground_0,
-        statusBarColorRes = R.color.signal_colorBackground
-      )
-    }
-  }
+//  override fun getMaterial3OnScrollHelper(toolbar: Toolbar?): Material3OnScrollHelper {
+//    return object : Material3OnScrollHelper(requireActivity(), toolbar!!) {
+//      override val inactiveColorSet = ColorSet(
+//        toolbarColorRes = R.color.signal_colorBackground_0,
+//        statusBarColorRes = R.color.signal_colorBackground
+//      )
+//    }
+//  }
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     val args = ConversationSettingsFragmentArgs.fromBundle(requireArguments())
 
     BioTextPreference.register(adapter)
@@ -217,13 +218,13 @@ class ConversationSettingsFragment : DSLSettingsFragment(
     LegacyGroupPreference.register(adapter)
 
     val recipientId = args.recipientId
-    if (recipientId != null) {
-      Badge.register(adapter) { badge, _, _ ->
-        ViewBadgeBottomSheetDialogFragment.show(parentFragmentManager, recipientId, badge)
-      }
-    }
-
-    addToGroupStoryDelegate = AddToGroupStoryDelegate(this)
+//    if (recipientId != null) {
+//      Badge.register(adapter) { badge, _, _ ->
+//        ViewBadgeBottomSheetDialogFragment.show(parentFragmentManager, recipientId, badge)
+//      }
+//    }
+//
+//    addToGroupStoryDelegate = AddToGroupStoryDelegate(this)
     viewModel.state.observe(viewLifecycleOwner) { state ->
 
       if (state.recipient != Recipient.UNKNOWN) {
@@ -233,9 +234,9 @@ class ConversationSettingsFragment : DSLSettingsFragment(
           .withFixedSize(ViewUtil.dpToPx(80))
           .load(state.recipient)
 
-        if (!state.recipient.isSelf) {
-          toolbarBadge.setBadgeFromRecipient(state.recipient)
-        }
+//        if (!state.recipient.isSelf) {
+//          toolbarBadge.setBadgeFromRecipient(state.recipient)
+//        }
 
         state.withRecipientSettingsState {
           toolbarTitle.text = if (state.recipient.isSelf) getString(R.string.note_to_self) else state.recipient.getDisplayName(requireContext())
@@ -276,37 +277,37 @@ class ConversationSettingsFragment : DSLSettingsFragment(
         return@configure
       }
 
-      customPref(
-        AvatarPreference.Model(
-          recipient = state.recipient,
-          storyViewState = state.storyViewState,
-          onAvatarClick = { avatar ->
-            val viewAvatarIntent = AvatarPreviewActivity.intentFromRecipientId(requireContext(), state.recipient.id)
-            val viewAvatarTransitionBundle = AvatarPreviewActivity.createTransitionBundle(requireActivity(), avatar)
-
-            if (Stories.isFeatureEnabled() && avatar.hasStory()) {
-              val viewStoryIntent = StoryViewerActivity.createIntent(
-                requireContext(),
-                StoryViewerArgs(
-                  recipientId = state.recipient.id,
-                  isInHiddenStoryMode = state.recipient.shouldHideStory(),
-                  isFromQuote = true
-                )
-              )
-              StoryDialogs.displayStoryOrProfileImage(
-                context = requireContext(),
-                onViewStory = { startActivity(viewStoryIntent) },
-                onViewAvatar = { startActivity(viewAvatarIntent, viewAvatarTransitionBundle) }
-              )
-            } else if (!state.recipient.isSelf) {
-              startActivity(viewAvatarIntent, viewAvatarTransitionBundle)
-            }
-          },
-          onBadgeClick = { badge ->
-            ViewBadgeBottomSheetDialogFragment.show(parentFragmentManager, state.recipient.id, badge)
-          }
-        )
-      )
+//      customPref(
+//        AvatarPreference.Model(
+//          recipient = state.recipient,
+//          storyViewState = state.storyViewState,
+//          onAvatarClick = { avatar ->
+//            val viewAvatarIntent = AvatarPreviewActivity.intentFromRecipientId(requireContext(), state.recipient.id)
+//            val viewAvatarTransitionBundle = AvatarPreviewActivity.createTransitionBundle(requireActivity(), avatar)
+//
+//            if (Stories.isFeatureEnabled() && avatar.hasStory()) {
+//              val viewStoryIntent = StoryViewerActivity.createIntent(
+//                requireContext(),
+//                StoryViewerArgs(
+//                  recipientId = state.recipient.id,
+//                  isInHiddenStoryMode = state.recipient.shouldHideStory(),
+//                  isFromQuote = true
+//                )
+//              )
+//              StoryDialogs.displayStoryOrProfileImage(
+//                context = requireContext(),
+//                onViewStory = { startActivity(viewStoryIntent) },
+//                onViewAvatar = { startActivity(viewAvatarIntent, viewAvatarTransitionBundle) }
+//              )
+//            } else if (!state.recipient.isSelf) {
+//              startActivity(viewAvatarIntent, viewAvatarTransitionBundle)
+//            }
+//          },
+//          onBadgeClick = { badge ->
+//            ViewBadgeBottomSheetDialogFragment.show(parentFragmentManager, state.recipient.id, badge)
+//          }
+//        )
+//      )
 
       state.withRecipientSettingsState {
         customPref(BioTextPreference.RecipientModel(recipient = state.recipient))
@@ -379,7 +380,7 @@ class ConversationSettingsFragment : DSLSettingsFragment(
                 .setPositiveButton(android.R.string.ok) { d, _ -> d.dismiss() }
                 .show()
             } else {
-              addToGroupStoryDelegate.addToStory(state.recipient.id)
+//              addToGroupStoryDelegate.addToStory(state.recipient.id)
             }
           },
           onVideoClick = {
@@ -542,77 +543,77 @@ class ConversationSettingsFragment : DSLSettingsFragment(
         )
       }
 
-      state.withRecipientSettingsState { recipientSettingsState ->
-        if (state.recipient.badges.isNotEmpty()) {
-          dividerPref()
-
-          sectionHeaderPref(R.string.ManageProfileFragment_badges)
-
-          displayBadges(requireContext(), state.recipient.badges)
-
-          textPref(
-            summary = DSLSettingsText.from(
-              R.string.ConversationSettingsFragment__get_badges
-            )
-          )
-        }
-
-        if (recipientSettingsState.selfHasGroups && !state.recipient.isReleaseNotes) {
-
-          dividerPref()
-
-          val groupsInCommonCount = recipientSettingsState.allGroupsInCommon.size
-          sectionHeaderPref(
-            DSLSettingsText.from(
-              if (groupsInCommonCount == 0) {
-                getString(R.string.ManageRecipientActivity_no_groups_in_common)
-              } else {
-                resources.getQuantityString(
-                  R.plurals.ManageRecipientActivity_d_groups_in_common,
-                  groupsInCommonCount,
-                  groupsInCommonCount
-                )
-              }
-            )
-          )
-
-          if (!state.recipient.isBlocked) {
-            customPref(
-              LargeIconClickPreference.Model(
-                title = DSLSettingsText.from(R.string.ConversationSettingsFragment__add_to_a_group),
-                icon = DSLSettingsIcon.from(R.drawable.add_to_a_group, NO_TINT),
-                onClick = {
-                  viewModel.onAddToGroup()
-                }
-              )
-            )
-          }
-
-          for (group in recipientSettingsState.groupsInCommon) {
-            customPref(
-              RecipientPreference.Model(
-                recipient = group,
-                onClick = {
-                  CommunicationActions.startConversation(requireActivity(), group, null)
-                  requireActivity().finish()
-                }
-              )
-            )
-          }
-
-          if (recipientSettingsState.canShowMoreGroupsInCommon) {
-            customPref(
-              LargeIconClickPreference.Model(
-                title = DSLSettingsText.from(R.string.ConversationSettingsFragment__see_all),
-                icon = DSLSettingsIcon.from(R.drawable.show_more, NO_TINT),
-                onClick = {
-                  viewModel.revealAllMembers()
-                }
-              )
-            )
-          }
-        }
-      }
+//      state.withRecipientSettingsState { recipientSettingsState ->
+//        if (state.recipient.badges.isNotEmpty()) {
+//          dividerPref()
+//
+//          sectionHeaderPref(R.string.ManageProfileFragment_badges)
+//
+////          displayBadges(requireContext(), state.recipient.badges)
+//
+//          textPref(
+//            summary = DSLSettingsText.from(
+//              R.string.ConversationSettingsFragment__get_badges
+//            )
+//          )
+//        }
+//
+//        if (recipientSettingsState.selfHasGroups && !state.recipient.isReleaseNotes) {
+//
+//          dividerPref()
+//
+//          val groupsInCommonCount = recipientSettingsState.allGroupsInCommon.size
+//          sectionHeaderPref(
+//            DSLSettingsText.from(
+//              if (groupsInCommonCount == 0) {
+//                getString(R.string.ManageRecipientActivity_no_groups_in_common)
+//              } else {
+//                resources.getQuantityString(
+//                  R.plurals.ManageRecipientActivity_d_groups_in_common,
+//                  groupsInCommonCount,
+//                  groupsInCommonCount
+//                )
+//              }
+//            )
+//          )
+//
+//          if (!state.recipient.isBlocked) {
+//            customPref(
+//              LargeIconClickPreference.Model(
+//                title = DSLSettingsText.from(R.string.ConversationSettingsFragment__add_to_a_group),
+//                icon = DSLSettingsIcon.from(R.drawable.add_to_a_group, NO_TINT),
+//                onClick = {
+//                  viewModel.onAddToGroup()
+//                }
+//              )
+//            )
+//          }
+//
+//          for (group in recipientSettingsState.groupsInCommon) {
+//            customPref(
+//              RecipientPreference.Model(
+//                recipient = group,
+//                onClick = {
+//                  CommunicationActions.startConversation(requireActivity(), group, null)
+//                  requireActivity().finish()
+//                }
+//              )
+//            )
+//          }
+//
+//          if (recipientSettingsState.canShowMoreGroupsInCommon) {
+//            customPref(
+//              LargeIconClickPreference.Model(
+//                title = DSLSettingsText.from(R.string.ConversationSettingsFragment__see_all),
+//                icon = DSLSettingsIcon.from(R.drawable.show_more, NO_TINT),
+//                onClick = {
+//                  viewModel.revealAllMembers()
+//                }
+//              )
+//            )
+//          }
+//        }
+//      }
 
       state.withGroupSettingsState { groupState ->
         val memberCount = groupState.allMembers.size

@@ -89,7 +89,7 @@ import org.thoughtcrime.securesms.components.reminder.Reminder;
 import org.thoughtcrime.securesms.components.reminder.ReminderView;
 import org.thoughtcrime.securesms.components.reminder.ServiceOutageReminder;
 import org.thoughtcrime.securesms.components.reminder.UnauthorizedReminder;
-import org.thoughtcrime.securesms.components.settings.app.notifications.manual.NotificationProfileSelectionFragment;
+//import org.thoughtcrime.securesms.components.settings.app.notifications.manual.NotificationProfileSelectionFragment;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteMediaControllerOwner;
 import org.thoughtcrime.securesms.components.voice.VoiceNotePlayerView;
 import org.thoughtcrime.securesms.contacts.sync.CdsPermanentErrorBottomSheet;
@@ -105,8 +105,8 @@ import org.thoughtcrime.securesms.events.ReminderUpdateEvent;
 import org.thoughtcrime.securesms.insights.InsightsLauncher;
 import org.thoughtcrime.securesms.jobs.ServiceOutageDetectionJob;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
-import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
-import org.thoughtcrime.securesms.main.SearchBinder;
+//import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
+//import org.thoughtcrime.securesms.main.SearchBinder;
 import org.thoughtcrime.securesms.megaphone.Megaphones;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.notifications.MarkReadReceiver;
@@ -118,7 +118,7 @@ import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.service.KeyCachingService;
 import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.storage.StorageSyncHelper;
-import org.thoughtcrime.securesms.stories.tabs.ConversationListTabsViewModel;
+//import org.thoughtcrime.securesms.stories.tabs.ConversationListTabsViewModel;
 import org.thoughtcrime.securesms.util.AppForegroundObserver;
 import org.thoughtcrime.securesms.util.AppStartup;
 import org.thoughtcrime.securesms.util.CommunicationActions;
@@ -372,8 +372,8 @@ public class ConversationListFragment extends MainFragment implements Conversati
         handleInvite(); return true;
       case R.id.menu_insights:
         handleInsights(); return true;
-      case R.id.menu_notification_profile:
-        handleNotificationProfile(); return true;
+//      case R.id.menu_notification_profile:
+//        handleNotificationProfile(); return true;
       case R.id.menu_filter_unread_chats:
         handleFilterUnreadChats(); return true;
     }
@@ -511,9 +511,9 @@ public class ConversationListFragment extends MainFragment implements Conversati
     getNavigator().goToInsights();
   }
 
-  private void handleNotificationProfile() {
-    NotificationProfileSelectionFragment.show(getParentFragmentManager());
-  }
+//  private void handleNotificationProfile() {
+//    NotificationProfileSelectionFragment.show(getParentFragmentManager());
+//  }
 
   private void handleFilterUnreadChats() {
     viewModel.toggleUnreadChatsFilter();
@@ -591,13 +591,13 @@ public class ConversationListFragment extends MainFragment implements Conversati
     closeSearchIfOpen();
   }
 
-  protected Callback requireCallback() {
-    return ((Callback) getParentFragment());
-  }
+//  protected Callback requireCallback() {
+//    return ((Callback) getParentFragment());
+//  }
 
-  protected Toolbar getToolbar(@NonNull View rootView) {
-    return requireCallback().getToolbar();
-  }
+//  protected Toolbar getToolbar(@NonNull View rootView) {
+//    return requireCallback().getToolbar();
+//  }
 
   protected @PluralsRes int getArchivedSnackbarTitleRes() {
     return R.plurals.ConversationListFragment_conversations_archived;
@@ -856,21 +856,21 @@ public class ConversationListFragment extends MainFragment implements Conversati
     }
   }
 
-  public interface Callback extends Material3OnScrollHelperBinder, SearchBinder {
-    @NonNull Toolbar getToolbar();
-
-    @NonNull View getUnreadPaymentsDot();
-
-    @NonNull Stub<Toolbar> getBasicToolbar();
-
-    void updateNotificationProfileStatus(@NonNull List<NotificationProfile> notificationProfiles);
-
-    void updateProxyStatus(@NonNull WebSocketConnectionState state);
-
-    void onMultiSelectStarted();
-
-    void onMultiSelectFinished();
-  }
+//  public interface Callback extends Material3OnScrollHelperBinder, SearchBinder {
+//    @NonNull Toolbar getToolbar();
+//
+//    @NonNull View getUnreadPaymentsDot();
+//
+//    @NonNull Stub<Toolbar> getBasicToolbar();
+//
+//    void updateNotificationProfileStatus(@NonNull List<NotificationProfile> notificationProfiles);
+//
+//    void updateProxyStatus(@NonNull WebSocketConnectionState state);
+//
+//    void onMultiSelectStarted();
+//
+//    void onMultiSelectFinished();
+//  }
 }
 
 

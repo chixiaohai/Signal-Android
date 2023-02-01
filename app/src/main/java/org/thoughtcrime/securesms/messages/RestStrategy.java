@@ -11,7 +11,7 @@ import org.thoughtcrime.securesms.jobs.MarkerJob;
 import org.thoughtcrime.securesms.jobs.PushDecryptMessageJob;
 import org.thoughtcrime.securesms.jobs.PushProcessMessageJob;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
-import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.Stories;
 import org.whispersystems.signalservice.api.SignalServiceMessageReceiver;
 
 import java.io.IOException;
@@ -84,15 +84,15 @@ public class RestStrategy extends MessageRetrievalStrategy {
 
     receiver.setSoTimeoutMillis(timeout);
 
-    receiver.retrieveMessages(Stories.isFeatureEnabled(), envelope -> {
-      Log.i(TAG, "Retrieved an envelope." + timeSuffix(startTime));
-      String jobId = processor.processEnvelope(envelope);
-
-      if (jobId != null) {
-        jobCount.incrementAndGet();
-      }
-      Log.i(TAG, "Successfully processed an envelope." + timeSuffix(startTime));
-    });
+//    receiver.retrieveMessages(Stories.isFeatureEnabled(), envelope -> {
+//      Log.i(TAG, "Retrieved an envelope." + timeSuffix(startTime));
+//      String jobId = processor.processEnvelope(envelope);
+//
+//      if (jobId != null) {
+//        jobCount.incrementAndGet();
+//      }
+//      Log.i(TAG, "Successfully processed an envelope." + timeSuffix(startTime));
+//    });
 
     return jobCount.get();
   }

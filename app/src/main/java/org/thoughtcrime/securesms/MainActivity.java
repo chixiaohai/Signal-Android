@@ -16,9 +16,9 @@ import org.thoughtcrime.securesms.components.voice.VoiceNoteMediaController;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteMediaControllerOwner;
 import org.thoughtcrime.securesms.devicetransfer.olddevice.OldDeviceTransferLockedDialog;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
-import org.thoughtcrime.securesms.stories.Stories;
-import org.thoughtcrime.securesms.stories.tabs.ConversationListTabRepository;
-import org.thoughtcrime.securesms.stories.tabs.ConversationListTabsViewModel;
+//import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.tabs.ConversationListTabRepository;
+//import org.thoughtcrime.securesms.stories.tabs.ConversationListTabsViewModel;
 import org.thoughtcrime.securesms.util.AppStartup;
 import org.thoughtcrime.securesms.util.CachedInflater;
 import org.thoughtcrime.securesms.util.CommunicationActions;
@@ -35,7 +35,7 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
   private final MainNavigator navigator    = new MainNavigator(this);
 
   private VoiceNoteMediaController      mediaController;
-  private ConversationListTabsViewModel conversationListTabsViewModel;
+//  private ConversationListTabsViewModel conversationListTabsViewModel;
 
   public static @NonNull Intent clearTop(@NonNull Context context) {
     Intent intent = new Intent(context, MainActivity.class);
@@ -58,8 +58,8 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
 
     mediaController = new VoiceNoteMediaController(this);
 
-    ConversationListTabRepository         repository = new ConversationListTabRepository();
-    ConversationListTabsViewModel.Factory factory    = new ConversationListTabsViewModel.Factory(repository);
+//    ConversationListTabRepository         repository = new ConversationListTabRepository();
+//    ConversationListTabsViewModel.Factory factory    = new ConversationListTabsViewModel.Factory(repository);
 
     handleGroupLinkInIntent(getIntent());
     handleProxyInIntent(getIntent());
@@ -67,8 +67,8 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
 
     CachedInflater.from(this).clear();
 
-    conversationListTabsViewModel = new ViewModelProvider(this, factory).get(ConversationListTabsViewModel.class);
-    updateTabVisibility();
+//    conversationListTabsViewModel = new ViewModelProvider(this, factory).get(ConversationListTabsViewModel.class);
+//    updateTabVisibility();
   }
 
   @Override
@@ -100,7 +100,7 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
       OldDeviceTransferLockedDialog.show(getSupportFragmentManager());
     }
 
-    updateTabVisibility();
+//    updateTabVisibility();
   }
 
   @Override
@@ -126,16 +126,16 @@ public class MainActivity extends PassphraseRequiredActivity implements VoiceNot
     }
   }
 
-  private void updateTabVisibility() {
-    if (Stories.isFeatureEnabled()) {
-//      findViewById(R.id.conversation_list_tabs).setVisibility(View.VISIBLE);
-      WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorSurface2));
-    } else {
-//      findViewById(R.id.conversation_list_tabs).setVisibility(View.GONE);
-      WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorBackground));
-      conversationListTabsViewModel.onChatsSelected();
-    }
-  }
+//  private void updateTabVisibility() {
+//    if (Stories.isFeatureEnabled()) {
+////      findViewById(R.id.conversation_list_tabs).setVisibility(View.VISIBLE);
+//      WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorSurface2));
+//    } else {
+////      findViewById(R.id.conversation_list_tabs).setVisibility(View.GONE);
+//      WindowUtil.setNavigationBarColor(this, ContextCompat.getColor(this, R.color.signal_colorBackground));
+//      conversationListTabsViewModel.onChatsSelected();
+//    }
+//  }
 
   public @NonNull MainNavigator getNavigator() {
     return navigator;

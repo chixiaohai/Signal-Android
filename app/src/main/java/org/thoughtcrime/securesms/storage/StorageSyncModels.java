@@ -16,7 +16,7 @@ import org.thoughtcrime.securesms.database.model.RecipientRecord;
 import org.thoughtcrime.securesms.groups.GroupId;
 import org.thoughtcrime.securesms.keyvalue.PhoneNumberPrivacyValues;
 import org.thoughtcrime.securesms.recipients.Recipient;
-import org.thoughtcrime.securesms.subscription.Subscriber;
+//import org.thoughtcrime.securesms.subscription.Subscriber;
 import org.whispersystems.signalservice.api.push.ServiceId;
 import org.whispersystems.signalservice.api.push.SignalServiceAddress;
 import org.whispersystems.signalservice.api.storage.SignalAccountRecord;
@@ -241,19 +241,19 @@ public final class StorageSyncModels {
     }
   }
 
-  public static @NonNull SignalAccountRecord.Subscriber localToRemoteSubscriber(@Nullable Subscriber subscriber) {
-    if (subscriber == null) {
-      return new SignalAccountRecord.Subscriber(null, null);
-    } else {
-      return new SignalAccountRecord.Subscriber(subscriber.getCurrencyCode(), subscriber.getSubscriberId().getBytes());
-    }
-  }
+//  public static @NonNull SignalAccountRecord.Subscriber localToRemoteSubscriber(@Nullable Subscriber subscriber) {
+//    if (subscriber == null) {
+//      return new SignalAccountRecord.Subscriber(null, null);
+//    } else {
+//      return new SignalAccountRecord.Subscriber(subscriber.getCurrencyCode(), subscriber.getSubscriberId().getBytes());
+//    }
+//  }
 
-  public static @Nullable Subscriber remoteToLocalSubscriber(@NonNull SignalAccountRecord.Subscriber subscriber) {
-    if (subscriber.getId().isPresent()) {
-      return new Subscriber(SubscriberId.fromBytes(subscriber.getId().get()), subscriber.getCurrencyCode().get());
-    } else {
-      return null;
-    }
-  }
+//  public static @Nullable Subscriber remoteToLocalSubscriber(@NonNull SignalAccountRecord.Subscriber subscriber) {
+//    if (subscriber.getId().isPresent()) {
+//      return new Subscriber(SubscriberId.fromBytes(subscriber.getId().get()), subscriber.getCurrencyCode().get());
+//    } else {
+//      return null;
+//    }
+//  }
 }

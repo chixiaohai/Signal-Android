@@ -39,7 +39,7 @@ import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionNavigator.Companion
 import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionState
 import org.thoughtcrime.securesms.mediasend.v2.MediaSelectionViewModel
 import org.thoughtcrime.securesms.mediasend.v2.MediaValidator
-import org.thoughtcrime.securesms.mediasend.v2.stories.StoriesMultiselectForwardActivity
+//import org.thoughtcrime.securesms.mediasend.v2.stories.StoriesMultiselectForwardActivity
 import org.thoughtcrime.securesms.mms.SentMediaQuality
 import org.thoughtcrime.securesms.permissions.Permissions
 import org.thoughtcrime.securesms.recipients.Recipient
@@ -146,7 +146,7 @@ class MediaReviewFragment : Fragment(R.layout.v2_media_review_fragment) {
     }
 
     val multiselectContract = MultiselectForwardActivity.SelectionContract()
-    val storiesContract = StoriesMultiselectForwardActivity.SelectionContract()
+//    val storiesContract = StoriesMultiselectForwardActivity.SelectionContract()
 
     val multiselectLauncher = registerForActivityResult(multiselectContract) { keys ->
       if (keys.isNotEmpty()) {
@@ -154,62 +154,62 @@ class MediaReviewFragment : Fragment(R.layout.v2_media_review_fragment) {
       }
     }
 
-    val storiesLauncher = registerForActivityResult(storiesContract) { keys ->
-      if (keys.isNotEmpty()) {
-        performSend(keys)
-      }
-    }
+//    val storiesLauncher = registerForActivityResult(storiesContract) { keys ->
+//      if (keys.isNotEmpty()) {
+//        performSend(keys)
+//      }
+//    }
 
     sendButton.setOnClickListener {
       val viewOnce: Boolean = sharedViewModel.state.value?.viewOnceToggleState == MediaSelectionState.ViewOnceToggleState.ONCE
 
-      if (sharedViewModel.isContactSelectionRequired) {
-        val args = MultiselectForwardFragmentArgs(
-          false,
-          title = R.string.MediaReviewFragment__send_to,
-          storySendRequirements = sharedViewModel.getStorySendRequirements(),
-          isSearchEnabled = !sharedViewModel.isStory(),
-          isViewOnce = viewOnce
-        )
-
-        if (sharedViewModel.isStory()) {
-          val snapshot = sharedViewModel.state.value
-
-          if (snapshot != null) {
-            sendButton.isEnabled = false
-            SimpleTask.run(viewLifecycleOwner.lifecycle, {
-              snapshot.selectedMedia.take(2).map { media ->
-                val editorData = snapshot.editorStateMap[media.uri]
-                if (MediaUtil.isImageType(media.mimeType) && editorData != null && editorData is ImageEditorFragment.Data) {
-                  val model = editorData.readModel()
-                  if (model != null) {
-                    ImageEditorFragment.renderToSingleUseBlob(requireContext(), model)
-                  } else {
-                    media.uri
-                  }
-                } else {
-                  media.uri
-                }
-              }
-            }, {
-              sendButton.isEnabled = true
-              storiesLauncher.launch(StoriesMultiselectForwardActivity.Args(args, it))
-            })
-          } else {
-            storiesLauncher.launch(StoriesMultiselectForwardActivity.Args(args, emptyList()))
-          }
-        } else {
-          multiselectLauncher.launch(args)
-        }
-      } else if (sharedViewModel.isAddToGroupStoryFlow) {
-        MaterialAlertDialogBuilder(requireContext())
-          .setMessage(getString(R.string.MediaReviewFragment__add_to_the_group_story, sharedViewModel.state.value!!.recipient!!.getDisplayName(requireContext())))
-          .setPositiveButton(R.string.MediaReviewFragment__add_to_story) { _, _ -> performSend() }
-          .setNegativeButton(android.R.string.cancel) { _, _ -> }
-          .show()
-      } else {
-        performSend()
-      }
+//      if (sharedViewModel.isContactSelectionRequired) {
+//        val args = MultiselectForwardFragmentArgs(
+//          false,
+//          title = R.string.MediaReviewFragment__send_to,
+//          storySendRequirements = sharedViewModel.getStorySendRequirements(),
+//          isSearchEnabled = !sharedViewModel.isStory(),
+//          isViewOnce = viewOnce
+//        )
+//
+//        if (sharedViewModel.isStory()) {
+//          val snapshot = sharedViewModel.state.value
+//
+//          if (snapshot != null) {
+//            sendButton.isEnabled = false
+//            SimpleTask.run(viewLifecycleOwner.lifecycle, {
+//              snapshot.selectedMedia.take(2).map { media ->
+//                val editorData = snapshot.editorStateMap[media.uri]
+//                if (MediaUtil.isImageType(media.mimeType) && editorData != null && editorData is ImageEditorFragment.Data) {
+//                  val model = editorData.readModel()
+//                  if (model != null) {
+//                    ImageEditorFragment.renderToSingleUseBlob(requireContext(), model)
+//                  } else {
+//                    media.uri
+//                  }
+//                } else {
+//                  media.uri
+//                }
+//              }
+//            }, {
+//              sendButton.isEnabled = true
+//              storiesLauncher.launch(StoriesMultiselectForwardActivity.Args(args, it))
+//            })
+//          } else {
+//            storiesLauncher.launch(StoriesMultiselectForwardActivity.Args(args, emptyList()))
+//          }
+//        } else {
+//          multiselectLauncher.launch(args)
+//        }
+//      } else if (sharedViewModel.isAddToGroupStoryFlow) {
+//        MaterialAlertDialogBuilder(requireContext())
+//          .setMessage(getString(R.string.MediaReviewFragment__add_to_the_group_story, sharedViewModel.state.value!!.recipient!!.getDisplayName(requireContext())))
+//          .setPositiveButton(R.string.MediaReviewFragment__add_to_story) { _, _ -> performSend() }
+//          .setNegativeButton(android.R.string.cancel) { _, _ -> }
+//          .show()
+//      } else {
+//        performSend()
+//      }
     }
 
     addMediaButton.setOnClickListener {

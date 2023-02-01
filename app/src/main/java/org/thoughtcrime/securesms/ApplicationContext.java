@@ -41,7 +41,8 @@ import org.signal.donations.StripeApi;
 import org.signal.glide.SignalGlideCodecs;
 import org.signal.libsignal.protocol.logging.SignalProtocolLoggerProvider;
 import org.signal.ringrtc.CallManager;
-import org.thoughtcrime.securesms.avatar.AvatarPickerStorage;
+//import org.thoughtcrime.securesms.avatar.AvatarPickerStorage;
+import org.thoughtcrime.securesms.components.TypingStatusRepository;
 import org.thoughtcrime.securesms.crypto.AttachmentSecretProvider;
 import org.thoughtcrime.securesms.crypto.DatabaseSecretProvider;
 import org.thoughtcrime.securesms.database.LogDatabase;
@@ -66,7 +67,6 @@ import org.thoughtcrime.securesms.jobs.PushNotificationReceiveJob;
 import org.thoughtcrime.securesms.jobs.RetrieveProfileJob;
 import org.thoughtcrime.securesms.jobs.RetrieveRemoteAnnouncementsJob;
 import org.thoughtcrime.securesms.jobs.StoryOnboardingDownloadJob;
-import org.thoughtcrime.securesms.jobs.SubscriptionKeepAliveJob;
 import org.thoughtcrime.securesms.keyvalue.KeepMessagesDuration;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.logging.CustomSignalProtocolLogger;
@@ -75,7 +75,6 @@ import org.thoughtcrime.securesms.messageprocessingalarm.MessageProcessReceiver;
 import org.thoughtcrime.securesms.migrations.ApplicationMigrations;
 import org.thoughtcrime.securesms.mms.SignalGlideComponents;
 import org.thoughtcrime.securesms.mms.SignalGlideModule;
-import org.thoughtcrime.securesms.notifications.NotificationChannels;
 import org.thoughtcrime.securesms.providers.BlobProvider;
 import org.thoughtcrime.securesms.ratelimit.RateLimitUtil;
 import org.thoughtcrime.securesms.recipients.Recipient;
@@ -126,7 +125,8 @@ public class ApplicationContext extends MultiDexApplication implements AppForegr
 
   private static final String TAG = Log.tag(ApplicationContext.class);
 
-  private PersistentLogger persistentLogger;
+  private PersistentLogger       persistentLogger;
+  private TypingStatusRepository typingStatusRepository;
 
   public static ApplicationContext getInstance(Context context) {
     return (ApplicationContext)context.getApplicationContext();
@@ -182,8 +182,8 @@ public class ApplicationContext extends MultiDexApplication implements AppForegr
                             .addBlocking("blob-provider", this::initializeBlobProvider)
                             .addBlocking("feature-flags", FeatureFlags::init)
                             .addBlocking("glide", () -> SignalGlideModule.setRegisterGlideComponents(new SignalGlideComponents()))
-                            .addNonBlocking(this::checkIsGooglePayReady)
-                            .addNonBlocking(this::cleanAvatarStorage)
+//                            .addNonBlocking(this::checkIsGooglePayReady)
+//                            .addNonBlocking(this::cleanAvatarStorage)
                             .addNonBlocking(this::initializeRevealableMessageManager)
                             .addNonBlocking(this::initializePendingRetryReceiptManager)
                             .addNonBlocking(this::initializeFcmCheck)
@@ -219,6 +219,8 @@ public class ApplicationContext extends MultiDexApplication implements AppForegr
     Log.d(TAG, "onCreate() took " + (System.currentTimeMillis() - startTime) + " ms");
     SignalLocalMetrics.ColdStart.onApplicationCreateFinished();
     Tracer.getInstance().end("Application#onCreate()");
+
+
   }
 
   @Override
@@ -229,7 +231,7 @@ public class ApplicationContext extends MultiDexApplication implements AppForegr
     ApplicationDependencies.getFrameRateTracker().start();
     ApplicationDependencies.getMegaphoneRepository().onAppForegrounded();
     ApplicationDependencies.getDeadlockDetector().start();
-    SubscriptionKeepAliveJob.enqueueAndTrackTimeIfNecessary();
+//    SubscriptionKeepAliveJob.enqueueAndTrackTimeIfNecessary();
 
     SignalExecutors.BOUNDED.execute(() -> {
       FeatureFlags.refreshIfNecessary();
@@ -461,22 +463,22 @@ public class ApplicationContext extends MultiDexApplication implements AppForegr
     BlobProvider.getInstance().initialize(this);
   }
 
-  @WorkerThread
-  private void cleanAvatarStorage() {
-    AvatarPickerStorage.cleanOrphans(this);
-  }
+//  @WorkerThread
+//  private void cleanAvatarStorage() {
+//    AvatarPickerStorage.cleanOrphans(this);
+//  }
 
-  @SuppressLint("CheckResult")
-  private void checkIsGooglePayReady() {
-    GooglePayApi.queryIsReadyToPay(
-        this,
-        new StripeApi.Gateway(Environment.Donations.getStripeConfiguration()),
-        Environment.Donations.getGooglePayConfiguration()
-    ).subscribe(
-        /* onComplete = */ () -> SignalStore.donationsValues().setGooglePayReady(true),
-        /* onError    = */ t -> SignalStore.donationsValues().setGooglePayReady(false)
-    );
-  }
+//  @SuppressLint("CheckResult")
+//  private void checkIsGooglePayReady() {
+//    GooglePayApi.queryIsReadyToPay(
+//        this,
+//        new StripeApi.Gateway(Environment.Donations.getStripeConfiguration()),
+//        Environment.Donations.getGooglePayConfiguration()
+//    ).subscribe(
+//        /* onComplete = */ () -> SignalStore.donationsValues().setGooglePayReady(true),
+//        /* onError    = */ t -> SignalStore.donationsValues().setGooglePayReady(false)
+//    );
+//  }
 
   @WorkerThread
   private void initializeCleanup() {

@@ -7,7 +7,7 @@
     </item>
     <item>
         <shape android:shape="oval">
-            <stroke android:color="@color/signal_inverse_transparent_25" android:width="1.5dp" />
+<!--            <stroke android:color="@color/signal_inverse_transparent_25" android:width="1.5dp" />-->
         </shape>
     </item>
 </selector>

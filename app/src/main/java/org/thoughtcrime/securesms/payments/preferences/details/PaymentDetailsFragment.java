@@ -23,7 +23,7 @@ import androidx.navigation.Navigation;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.badges.BadgeImageView;
+//import org.thoughtcrime.securesms.badges.BadgeImageView;
 import org.thoughtcrime.securesms.components.AvatarImageView;
 import org.thoughtcrime.securesms.database.PaymentTable;
 import org.thoughtcrime.securesms.payments.Direction;
@@ -58,7 +58,7 @@ public final class PaymentDetailsFragment extends LoggingFragment {
     PaymentDetailsParcelable details = PaymentDetailsFragmentArgs.fromBundle(requireArguments()).getPaymentDetails();
 
     AvatarImageView   avatar          = view.findViewById(R.id.payments_details_avatar);
-    BadgeImageView    badge           = view.findViewById(R.id.payments_details_badge);
+//    BadgeImageView    badge           = view.findViewById(R.id.payments_details_badge);
     TextView          contactFromTo   = view.findViewById(R.id.payments_details_contact_to_from);
     MoneyView         amount          = view.findViewById(R.id.payments_details_amount);
     TextView          note            = view.findViewById(R.id.payments_details_note);
@@ -108,7 +108,7 @@ public final class PaymentDetailsFragment extends LoggingFragment {
                             avatar.setImageResource(R.drawable.ic_mobilecoin_avatar_24);
                           } else {
                             avatar.setRecipient(state.getRecipient(), true);
-                            badge.setBadgeFromRecipient(state.getRecipient());
+//                            badge.setBadgeFromRecipient(state.getRecipient());
                           }
                           contactFromTo.setText(describeToOrFrom(state));
 

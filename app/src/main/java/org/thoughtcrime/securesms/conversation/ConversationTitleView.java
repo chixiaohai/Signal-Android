@@ -19,8 +19,8 @@ import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.view.AvatarView;
-import org.thoughtcrime.securesms.badges.BadgeImageView;
+//import org.thoughtcrime.securesms.avatar.view.AvatarView;
+//import org.thoughtcrime.securesms.badges.BadgeImageView;
 import org.thoughtcrime.securesms.database.model.StoryViewState;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.recipients.LiveRecipient;
@@ -39,8 +39,8 @@ public class ConversationTitleView extends RelativeLayout {
   private static final String STATE_ROOT = "root";
   private static final String STATE_IS_SELF = "is_self";
 
-  private AvatarView      avatar;
-  private BadgeImageView  badge;
+//  private AvatarView      avatar;
+//  private BadgeImageView  badge;
   private TextView        title;
   private TextView        subtitle;
   private ImageView       verified;
@@ -64,12 +64,12 @@ public class ConversationTitleView extends RelativeLayout {
     super.onFinishInflate();
 
     this.title                    = findViewById(R.id.title);
-    this.badge                    = findViewById(R.id.badge);
+//    this.badge                    = findViewById(R.id.badge);
     this.subtitle                 = findViewById(R.id.subtitle);
     this.verified                 = findViewById(R.id.verified_indicator);
     this.subtitleContainer        = findViewById(R.id.subtitle_container);
     this.verifiedSubtitle         = findViewById(R.id.verified_subtitle);
-    this.avatar                   = findViewById(R.id.contact_photo_image);
+//    this.avatar                   = findViewById(R.id.contact_photo_image);
     this.expirationBadgeContainer = findViewById(R.id.expiration_badge_container);
     this.expirationBadgeTime      = findViewById(R.id.expiration_badge);
 
@@ -154,32 +154,32 @@ public class ConversationTitleView extends RelativeLayout {
 
     title.setCompoundDrawablesRelativeWithIntrinsicBounds(startDrawable, null, endDrawable, null);
 
-    if (recipient != null) {
-      this.avatar.displayChatAvatar(glideRequests, recipient, false);
-    }
-
-    if (recipient == null || recipient.isSelf()) {
-      badge.setBadgeFromRecipient(null);
-    } else {
-      badge.setBadgeFromRecipient(recipient);
-    }
+//    if (recipient != null) {
+//      this.avatar.displayChatAvatar(glideRequests, recipient, false);
+//    }
+//
+//    if (recipient == null || recipient.isSelf()) {
+//      badge.setBadgeFromRecipient(null);
+//    } else {
+//      badge.setBadgeFromRecipient(recipient);
+//    }
 
     updateVerifiedSubtitleVisibility();
   }
 
-  public void setStoryRingFromState(@NonNull StoryViewState storyViewState) {
-    avatar.setStoryRingFromState(storyViewState);
-  }
+//  public void setStoryRingFromState(@NonNull StoryViewState storyViewState) {
+//    avatar.setStoryRingFromState(storyViewState);
+//  }
 
-  public void setOnStoryRingClickListener(@NonNull OnClickListener onStoryRingClickListener) {
-    avatar.setOnClickListener(v -> {
-      if (avatar.hasStory()) {
-        onStoryRingClickListener.onClick(v);
-      } else {
-        performClick();
-      }
-    });
-  }
+//  public void setOnStoryRingClickListener(@NonNull OnClickListener onStoryRingClickListener) {
+//    avatar.setOnClickListener(v -> {
+//      if (avatar.hasStory()) {
+//        onStoryRingClickListener.onClick(v);
+//      } else {
+//        performClick();
+//      }
+//    });
+//  }
 
   public void setVerified(boolean verified) {
     this.verified.setVisibility(verified ? View.VISIBLE : View.GONE);

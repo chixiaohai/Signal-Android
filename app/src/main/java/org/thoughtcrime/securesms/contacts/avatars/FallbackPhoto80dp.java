@@ -11,7 +11,7 @@ import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.Avatars;
+//import org.thoughtcrime.securesms.avatar.Avatars;
 import org.thoughtcrime.securesms.conversation.colors.AvatarColor;
 import org.thoughtcrime.securesms.util.ViewUtil;
 
@@ -49,7 +49,7 @@ public final class FallbackPhoto80dp implements FallbackContactPhoto {
     LayerDrawable drawable        = new LayerDrawable(new Drawable[]{background, foreground});
     int           foregroundInset = ViewUtil.dpToPx(24);
 
-    DrawableCompat.setTint(foreground, Avatars.getForegroundColor(color).getColorInt());
+//    DrawableCompat.setTint(foreground, Avatars.getForegroundColor(color).getColorInt());
     drawable.setLayerInset(1, foregroundInset, foregroundInset, foregroundInset, foregroundInset);
 
     return drawable;
@@ -62,7 +62,7 @@ public final class FallbackPhoto80dp implements FallbackContactPhoto {
     int           foregroundInset = ViewUtil.dpToPx(24);
 
     DrawableCompat.setTint(background, color.colorInt());
-    DrawableCompat.setTint(foreground, Avatars.getForegroundColor(color).getColorInt());
+//    DrawableCompat.setTint(foreground, Avatars.getForegroundColor(color).getColorInt());
 
     drawable.setLayerInset(1, foregroundInset, foregroundInset, foregroundInset, foregroundInset);
 

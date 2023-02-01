@@ -51,13 +51,13 @@ public class VideoEditorFragment extends Fragment implements VideoEditorHud.Even
             private boolean wasPlayingBeforeEdit;
             private long    maxVideoDurationUs;
 
-  public static VideoEditorFragment newInstance(@NonNull Uri uri, long maxCompressedVideoSize, long maxAttachmentSize, boolean isVideoGif, long maxVideoDuration) {
+  public static VideoEditorFragment newInstance(@NonNull Uri uri, long maxCompressedVideoSize, long maxAttachmentSize, boolean isVideoGif) {
     Bundle args = new Bundle();
     args.putParcelable(KEY_URI, uri);
     args.putLong(KEY_MAX_OUTPUT, maxCompressedVideoSize);
     args.putLong(KEY_MAX_SEND, maxAttachmentSize);
     args.putBoolean(KEY_IS_VIDEO_GIF, isVideoGif);
-    args.putLong(KEY_MAX_DURATION, maxVideoDuration);
+//    args.putLong(KEY_MAX_DURATION, maxVideoDuration);
 
     VideoEditorFragment fragment = new VideoEditorFragment();
     fragment.setArguments(args);

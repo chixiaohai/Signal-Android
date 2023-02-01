@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsIcon
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
@@ -36,7 +37,7 @@ class ShareableGroupLinkFragment : DSLSettingsFragment(
     }
   )
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     LiveDataUtil.combineLatest(viewModel.groupLink, viewModel.canEdit) { groupLink, canEdit ->
       Pair(groupLink, canEdit)
     }.observe(viewLifecycleOwner) { (groupLink, canEdit) ->

@@ -23,7 +23,7 @@ import org.signal.paging.PagedData;
 import org.signal.paging.PagingConfig;
 import org.signal.paging.PagingController;
 import org.signal.paging.ProxyPagingController;
-import org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfilesRepository;
+//import org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfilesRepository;
 import org.thoughtcrime.securesms.conversation.colors.ChatColors;
 import org.thoughtcrime.securesms.conversation.colors.GroupAuthorNameColorHelper;
 import org.thoughtcrime.securesms.conversation.colors.NameColor;
@@ -92,7 +92,7 @@ public class ConversationViewModel extends ViewModel {
   private final LiveData<Integer>                     conversationTopMargin;
   private final Store<ThreadAnimationState>           threadAnimationStateStore;
   private final Observer<ThreadAnimationState>        threadAnimationStateStoreDriver;
-  private final NotificationProfilesRepository        notificationProfilesRepository;
+//  private final NotificationProfilesRepository        notificationProfilesRepository;
   private final MutableLiveData<String>               searchQuery;
   private final GroupAuthorNameColorHelper            groupAuthorNameColorHelper;
   private final RxStore<ConversationState>            conversationStateStore;
@@ -119,7 +119,7 @@ public class ConversationViewModel extends ViewModel {
     this.inlinePlayerHeight             = new MutableLiveData<>();
     this.conversationTopMargin          = Transformations.distinctUntilChanged(LiveDataUtil.combineLatest(toolbarBottom, inlinePlayerHeight, Integer::sum));
     this.threadAnimationStateStore      = new Store<>(new ThreadAnimationState(-1L, null, false));
-    this.notificationProfilesRepository = new NotificationProfilesRepository();
+//    this.notificationProfilesRepository = new NotificationProfilesRepository();
     this.searchQuery                    = new MutableLiveData<>();
     this.recipientId                    = BehaviorSubject.create();
     this.threadId                       = BehaviorSubject.create();
@@ -411,12 +411,12 @@ public class ConversationViewModel extends ViewModel {
         .observeOn(AndroidSchedulers.mainThread());
   }
 
-  @NonNull LiveData<Optional<NotificationProfile>> getActiveNotificationProfile() {
-    final Observable<Optional<NotificationProfile>> activeProfile = Observable.combineLatest(Observable.interval(0, 30, TimeUnit.SECONDS), notificationProfilesRepository.getProfiles(), (interval, profiles) -> profiles)
-                                                                              .map(profiles -> Optional.ofNullable(NotificationProfiles.getActiveProfile(profiles)));
-
-    return LiveDataReactiveStreams.fromPublisher(activeProfile.toFlowable(BackpressureStrategy.LATEST));
-  }
+//  @NonNull LiveData<Optional<NotificationProfile>> getActiveNotificationProfile() {
+//    final Observable<Optional<NotificationProfile>> activeProfile = Observable.combineLatest(Observable.interval(0, 30, TimeUnit.SECONDS), notificationProfilesRepository.getProfiles(), (interval, profiles) -> profiles)
+//                                                                              .map(profiles -> Optional.ofNullable(NotificationProfiles.getActiveProfile(profiles)));
+//
+//    return LiveDataReactiveStreams.fromPublisher(activeProfile.toFlowable(BackpressureStrategy.LATEST));
+//  }
 
   void setArgs(@NonNull ConversationIntents.Args args) {
     this.args = args;

@@ -32,8 +32,8 @@ import org.thoughtcrime.securesms.groups.ui.addtogroup.AddToGroupsActivity;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.recipients.RecipientUtil;
-import org.thoughtcrime.securesms.stories.StoryViewerArgs;
-import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
+//import org.thoughtcrime.securesms.stories.StoryViewerArgs;
+//import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
 import org.thoughtcrime.securesms.util.CommunicationActions;
 import org.thoughtcrime.securesms.util.livedata.LiveDataUtil;
 import org.thoughtcrime.securesms.verify.VerifyIdentityActivity;
@@ -137,17 +137,17 @@ final class RecipientDialogViewModel extends ViewModel {
     return adminActionBusy;
   }
 
-  void onNoteToSelfClicked(@NonNull Activity activity) {
-    if (storyViewState.getValue() == null || storyViewState.getValue() == StoryViewState.NONE) {
-      onMessageClicked(activity);
-    } else {
-      activity.startActivity(StoryViewerActivity.createIntent(
-          activity,
-          new StoryViewerArgs.Builder(recipientDialogRepository.getRecipientId(), recipient.getValue().shouldHideStory())
-                             .isFromQuote(true)
-                             .build()));
-    }
-  }
+//  void onNoteToSelfClicked(@NonNull Activity activity) {
+//    if (storyViewState.getValue() == null || storyViewState.getValue() == StoryViewState.NONE) {
+//      onMessageClicked(activity);
+//    } else {
+//      activity.startActivity(StoryViewerActivity.createIntent(
+//          activity,
+//          new StoryViewerArgs.Builder(recipientDialogRepository.getRecipientId(), recipient.getValue().shouldHideStory())
+//                             .isFromQuote(true)
+//                             .build()));
+//    }
+//  }
 
   void onMessageClicked(@NonNull Activity activity) {
     recipientDialogRepository.getRecipient(recipient -> CommunicationActions.startConversation(activity, recipient, null));
@@ -177,17 +177,17 @@ final class RecipientDialogViewModel extends ViewModel {
     activity.startActivity(VerifyIdentityActivity.newIntent(activity, identityRecord));
   }
 
-  void onAvatarClicked(@NonNull Activity activity) {
-    if (storyViewState.getValue() == null || storyViewState.getValue() == StoryViewState.NONE) {
-      activity.startActivity(ConversationSettingsActivity.forRecipient(activity, recipientDialogRepository.getRecipientId()));
-    } else {
-      activity.startActivity(StoryViewerActivity.createIntent(
-          activity,
-          new StoryViewerArgs.Builder(recipientDialogRepository.getRecipientId(), recipient.getValue().shouldHideStory())
-                             .isFromQuote(true)
-                             .build()));
-    }
-  }
+//  void onAvatarClicked(@NonNull Activity activity) {
+//    if (storyViewState.getValue() == null || storyViewState.getValue() == StoryViewState.NONE) {
+//      activity.startActivity(ConversationSettingsActivity.forRecipient(activity, recipientDialogRepository.getRecipientId()));
+//    } else {
+//      activity.startActivity(StoryViewerActivity.createIntent(
+//          activity,
+//          new StoryViewerArgs.Builder(recipientDialogRepository.getRecipientId(), recipient.getValue().shouldHideStory())
+//                             .isFromQuote(true)
+//                             .build()));
+//    }
+//  }
 
   void onMakeGroupAdminClicked(@NonNull Activity activity) {
     new MaterialAlertDialogBuilder(activity)

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:viewBindingIgnore="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -185,9 +183,9 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/help_fragment_debug_info" />
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/help_fragment_debug_info"
-                style="@style/Signal.Widget.Button.Large.Secondary"
+                style="@style/Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
@@ -207,9 +205,9 @@
 
     </ScrollView>
 
-    <com.google.android.material.button.MaterialButton
+    <Button
         android:id="@+id/help_fragment_faq"
-        style="@style/Signal.Widget.Button.Large.Secondary"
+        style="@style/Button.Borderless"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:gravity="start|center_vertical"
@@ -228,7 +226,12 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:enabled="false"
-        app:circularProgressMaterialButton__label="@string/HelpFragment__next"
+        android:textColor="@color/white"
+        app:cpb_colorIndicator="@color/white"
+        app:cpb_colorProgress="@color/core_ultramarine"
+        app:cpb_cornerRadius="4dp"
+        app:cpb_selectorIdle="@color/help_fragment_next"
+        app:cpb_textIdle="@string/HelpFragment__next"
         app:layout_constraintBottom_toBottomOf="@id/help_fragment_faq"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/help_fragment_faq"

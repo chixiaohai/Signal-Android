@@ -1,28 +1,19 @@
 package org.thoughtcrime.securesms.components.settings.app.chats
 
-import android.app.Activity
-import android.content.Intent
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
-import org.thoughtcrime.securesms.components.settings.app.chats.sms.SmsExportState
 import org.thoughtcrime.securesms.components.settings.configure
-import org.thoughtcrime.securesms.exporter.flow.SmsExportActivity
-import org.thoughtcrime.securesms.exporter.flow.SmsExportDialogs
-import org.thoughtcrime.securesms.keyvalue.SignalStore
-import org.thoughtcrime.securesms.util.FeatureFlags
-import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter
 import org.thoughtcrime.securesms.util.navigation.safeNavigate
 
 class ChatsSettingsFragment : DSLSettingsFragment(R.string.preferences_chats__chats) {
 
   private lateinit var viewModel: ChatsSettingsViewModel
-  private lateinit var smsExportLauncher: ActivityResultLauncher<Intent>
+//  private lateinit var smsExportLauncher: ActivityResultLauncher<Intent>
 
   override fun onResume() {
     super.onResume()
@@ -30,12 +21,12 @@ class ChatsSettingsFragment : DSLSettingsFragment(R.string.preferences_chats__ch
   }
 
   @Suppress("ReplaceGetOrSet")
-  override fun bindAdapter(adapter: MappingAdapter) {
-    smsExportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-      if (it.resultCode == Activity.RESULT_OK) {
-        SmsExportDialogs.showSmsRemovalDialog(requireContext(), requireView())
-      }
-    }
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
+//    smsExportLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+//      if (it.resultCode == Activity.RESULT_OK) {
+//        SmsExportDialogs.showSmsRemovalDialog(requireContext(), requireView())
+//      }
+//    }
 
     viewModel = ViewModelProvider(this).get(ChatsSettingsViewModel::class.java)
 
@@ -47,54 +38,55 @@ class ChatsSettingsFragment : DSLSettingsFragment(R.string.preferences_chats__ch
   private fun getConfiguration(state: ChatsSettingsState): DSLConfiguration {
     return configure {
 
-      if (!state.useAsDefaultSmsApp && SignalStore.misc().smsExportPhase.isAtLeastPhase1()) {
-        when (state.smsExportState) {
-          SmsExportState.FETCHING -> Unit
-          SmsExportState.HAS_UNEXPORTED_MESSAGES -> {
-            clickPref(
-              title = DSLSettingsText.from(R.string.SmsSettingsFragment__export_sms_messages),
-              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__you_can_export_your_sms_messages_to_your_phones_sms_database),
-              onClick = {
-                smsExportLauncher.launch(SmsExportActivity.createIntent(requireContext()))
-              }
-            )
-
-            dividerPref()
-          }
-          SmsExportState.ALL_MESSAGES_EXPORTED -> {
-            clickPref(
-              title = DSLSettingsText.from(R.string.SmsSettingsFragment__remove_sms_messages),
-              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__remove_sms_messages_from_signal_to_clear_up_storage_space),
-              onClick = {
-                SmsExportDialogs.showSmsRemovalDialog(requireContext(), requireView())
-              }
-            )
-
-            clickPref(
-              title = DSLSettingsText.from(R.string.SmsSettingsFragment__export_sms_messages_again),
-              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__exporting_again_can_result_in_duplicate_messages),
-              onClick = {
-                SmsExportDialogs.showSmsReExportDialog(requireContext()) {
-                  smsExportLauncher.launch(SmsExportActivity.createIntent(requireContext(), isReExport = true))
-                }
-              }
-            )
-
-            dividerPref()
-          }
-          SmsExportState.NO_SMS_MESSAGES_IN_DATABASE -> Unit
-          SmsExportState.NOT_AVAILABLE -> Unit
+//      if (!state.useAsDefaultSmsApp && SignalStore.misc().smsExportPhase.isAtLeastPhase1()) {
+//        when (state.smsExportState) {
+//          SmsExportState.FETCHING -> Unit
+//          SmsExportState.HAS_UNEXPORTED_MESSAGES -> {
+//
+//            clickPref(
+//              title = DSLSettingsText.from(R.string.SmsSettingsFragment__export_sms_messages),
+//              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__you_can_export_your_sms_messages_to_your_phones_sms_database),
+//              onClick = {
+//                smsExportLauncher.launch(SmsExportActivity.createIntent(requireContext()))
+//              }
+//            )
+//
+//            dividerPref()
+//
+//          SmsExportState.ALL_MESSAGES_EXPORTED -> {
+//            clickPref(
+//              title = DSLSettingsText.from(R.string.SmsSettingsFragment__remove_sms_messages),
+//              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__remove_sms_messages_from_signal_to_clear_up_storage_space),
+//              onClick = {
+//                SmsExportDialogs.showSmsRemovalDialog(requireContext(), requireView())
+//              }
+//            )
+//
+//            clickPref(
+//              title = DSLSettingsText.from(R.string.SmsSettingsFragment__export_sms_messages_again),
+//              summary = DSLSettingsText.from(R.string.SmsSettingsFragment__exporting_again_can_result_in_duplicate_messages),
+//              onClick = {
+//                SmsExportDialogs.showSmsReExportDialog(requireContext()) {
+//                  smsExportLauncher.launch(SmsExportActivity.createIntent(requireContext(), isReExport = true))
+//                }
+//              }
+//            )
+//
+//            dividerPref()
+//          }
+//          SmsExportState.NO_SMS_MESSAGES_IN_DATABASE -> Unit
+//          SmsExportState.NOT_AVAILABLE -> Unit
+//        }
+//      } else {
+      clickPref(
+        title = DSLSettingsText.from(R.string.preferences__sms_mms),
+        onClick = {
+          Navigation.findNavController(requireView()).safeNavigate(R.id.action_chatsSettingsFragment_to_smsSettingsFragment)
         }
-      } else {
-        clickPref(
-          title = DSLSettingsText.from(R.string.preferences__sms_mms),
-          onClick = {
-            Navigation.findNavController(requireView()).safeNavigate(R.id.action_chatsSettingsFragment_to_smsSettingsFragment)
-          }
-        )
+      )
 
-        dividerPref()
-      }
+//        dividerPref()
+//      }
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences__generate_link_previews),
@@ -114,16 +106,16 @@ class ChatsSettingsFragment : DSLSettingsFragment(R.string.preferences_chats__ch
         }
       )
 
-      if (FeatureFlags.keepMutedChatsArchived() || FeatureFlags.internalUser()) {
-        switchPref(
-          title = DSLSettingsText.from(R.string.preferences__pref_keep_muted_chats_archived),
-          summary = DSLSettingsText.from(R.string.preferences__muted_chats_that_are_archived_will_remain_archived),
-          isChecked = state.keepMutedChatsArchived,
-          onClick = {
-            viewModel.setKeepMutedChatsArchived(!state.keepMutedChatsArchived)
-          }
-        )
-      }
+//      if (FeatureFlags.keepMutedChatsArchived() || FeatureFlags.internalUser()) {
+//        switchPref(
+//          title = DSLSettingsText.from(R.string.preferences__pref_keep_muted_chats_archived),
+//          summary = DSLSettingsText.from(R.string.preferences__muted_chats_that_are_archived_will_remain_archived),
+//          isChecked = state.keepMutedChatsArchived,
+//          onClick = {
+//            viewModel.setKeepMutedChatsArchived(!state.keepMutedChatsArchived)
+//          }
+//        )
+//      }
 
       dividerPref()
 

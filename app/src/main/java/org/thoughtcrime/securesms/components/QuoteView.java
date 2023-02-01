@@ -38,7 +38,7 @@ import org.thoughtcrime.securesms.mms.SlideDeck;
 import org.thoughtcrime.securesms.recipients.LiveRecipient;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientForeverObserver;
-import org.thoughtcrime.securesms.stories.StoryTextPostModel;
+//import org.thoughtcrime.securesms.stories.StoryTextPostModel;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Projection;
 import org.thoughtcrime.securesms.util.Util;
@@ -305,23 +305,23 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
       missingStoryReaction.setVisibility(View.GONE);
     }
 
-    StoryTextPostModel textPostModel = isStoryReply() ? getStoryTextPost(body) : null;
-    if (!TextUtils.isEmpty(body) || !attachments.containsMediaSlide()) {
-      if (textPostModel != null) {
-        try {
-          bodyView.setText(textPostModel.getText());
-        } catch (Exception e) {
-          Log.w(TAG, "Could not parse body of text post.", e);
-          bodyView.setText("");
-        }
-      } else {
-        bodyView.setText(body == null ? "" : body);
-      }
-
-      bodyView.setVisibility(VISIBLE);
-      mediaDescriptionText.setVisibility(GONE);
-      return;
-    }
+//    StoryTextPostModel textPostModel = isStoryReply() ? getStoryTextPost(body) : null;
+//    if (!TextUtils.isEmpty(body) || !attachments.containsMediaSlide()) {
+//      if (textPostModel != null) {
+//        try {
+//          bodyView.setText(textPostModel.getText());
+//        } catch (Exception e) {
+//          Log.w(TAG, "Could not parse body of text post.", e);
+//          bodyView.setText("");
+//        }
+//      } else {
+//        bodyView.setText(body == null ? "" : body);
+//      }
+//
+//      bodyView.setVisibility(VISIBLE);
+//      mediaDescriptionText.setVisibility(GONE);
+//      return;
+//    }
 
     bodyView.setVisibility(GONE);
     mediaDescriptionText.setVisibility(VISIBLE);
@@ -364,18 +364,18 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     mainView.setMinimumHeight(isStoryReply() && originalMissing ? 0 : thumbHeight);
     thumbnailView.setPadding(0, 0, 0, 0);
 
-    StoryTextPostModel model = isStoryReply() ? getStoryTextPost(body) : null;
-    if (model != null) {
-      attachmentVideoOverlayView.setVisibility(GONE);
-      attachmentContainerView.setVisibility(GONE);
-      thumbnailView.setVisibility(VISIBLE);
-      glideRequests.load(model)
-                   .centerCrop()
-                   .override(thumbWidth, thumbHeight)
-                   .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                   .into(thumbnailView);
-      return;
-    }
+//    StoryTextPostModel model = isStoryReply() ? getStoryTextPost(body) : null;
+//    if (model != null) {
+//      attachmentVideoOverlayView.setVisibility(GONE);
+//      attachmentContainerView.setVisibility(GONE);
+//      thumbnailView.setVisibility(VISIBLE);
+//      glideRequests.load(model)
+//                   .centerCrop()
+//                   .override(thumbWidth, thumbHeight)
+//                   .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+//                   .into(thumbnailView);
+//      return;
+//    }
 
     if (quoteType == QuoteModel.Type.GIFT_BADGE) {
       if (outgoing && !preview) {
@@ -431,17 +431,17 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     footerView.setVisibility(missing && !isStoryReply() ? VISIBLE : GONE);
   }
 
-  private @Nullable StoryTextPostModel getStoryTextPost(@Nullable CharSequence body) {
-    if (Util.isEmpty(body)) {
-      return null;
-    }
-
-    try {
-      return StoryTextPostModel.parseFrom(body.toString(), id, author.getId());
-    } catch (IOException ioException) {
-      return null;
-    }
-  }
+//  private @Nullable StoryTextPostModel getStoryTextPost(@Nullable CharSequence body) {
+//    if (Util.isEmpty(body)) {
+//      return null;
+//    }
+//
+//    try {
+//      return StoryTextPostModel.parseFrom(body.toString(), id, author.getId());
+//    } catch (IOException ioException) {
+//      return null;
+//    }
+//  }
 
   public void setTextSize(int unit, float size) {
     bodyView.setTextSize(unit, size);

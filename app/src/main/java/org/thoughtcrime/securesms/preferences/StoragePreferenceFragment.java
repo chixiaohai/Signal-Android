@@ -1,12 +1,15 @@
 package org.thoughtcrime.securesms.preferences;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 
 import androidx.annotation.NonNull;
@@ -16,12 +19,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.Preference;
+import androidx.preference.PreferenceGroup;
 
 import com.annimon.stream.Stream;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.signal.core.util.concurrent.SignalExecutors;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.components.mp02anim.ItemAnimViewController;
 import org.thoughtcrime.securesms.components.settings.BaseSettingsAdapter;
 import org.thoughtcrime.securesms.components.settings.BaseSettingsFragment;
 import org.thoughtcrime.securesms.components.settings.CustomizableSingleSelectSetting;
@@ -35,16 +40,25 @@ import org.thoughtcrime.securesms.keyvalue.SettingsValues;
 import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.mediaoverview.MediaOverviewActivity;
 import org.thoughtcrime.securesms.permissions.Permissions;
+import org.thoughtcrime.securesms.preferences.widgets.Mp02CommonPreference;
 import org.thoughtcrime.securesms.preferences.widgets.StoragePreferenceCategory;
 import org.signal.core.util.StringUtil;
+import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.adapter.mapping.MappingModelList;
 
 import java.text.NumberFormat;
 
-public class StoragePreferenceFragment extends ListSummaryPreferenceFragment {
+public class StoragePreferenceFragment extends ListSummaryPreferenceFragment implements Preference.OnPreferenceClickListener{
 
-  private Preference keepMessages;
-  private Preference trimLength;
+  private Mp02CommonPreference keepMessages;
+  private Mp02CommonPreference trimLength;
+  private Mp02CommonPreference mTrimLimitPref;
+
+  private        PreferenceGroup        mPrefGroup;
+  private        int                    mPrefCount;
+  private        int                    mCurPoi = 1;
+  private        ItemAnimViewController mParentViewController;
+  private static Context                mContext;
 
   @Override
   public void onCreate(@Nullable Bundle paramBundle) {
@@ -53,27 +67,111 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment {
     findPreference("pref_storage_clear_message_history")
             .setOnPreferenceClickListener(new ClearMessageHistoryClickListener());
 
-    trimLength = findPreference(SettingsValues.THREAD_TRIM_LENGTH);
-    trimLength.setOnPreferenceClickListener(p -> {
-      updateToolbarTitle(R.string.preferences__conversation_length_limit);
-      pushFragment(BaseSettingsFragment.create(new ConversationLengthLimitConfiguration()));
-      return true;
-    });
+//    trimLength = findPreference(SettingsValues.THREAD_TRIM_LENGTH);
+//    trimLength.setOnPreferenceClickListener(p -> {
+//      updateToolbarTitle(R.string.preferences__conversation_length_limit);
+//      pushFragment(BaseSettingsFragment.create(new ConversationLengthLimitConfiguration()));
+//      return true;
+//    });
+//
+//    keepMessages = findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
+//    keepMessages.setOnPreferenceClickListener(p -> {
+//      updateToolbarTitle(R.string.preferences__keep_messages);
+//      pushFragment(BaseSettingsFragment.create(new KeepMessagesConfiguration()));
+//      return true;
+//    });
+//
+//    StoragePreferenceCategory       storageCategory = (StoragePreferenceCategory) findPreference("pref_storage_category");
+//    FragmentActivity                activity        = requireActivity();
+//    ApplicationPreferencesViewModel viewModel       = ApplicationPreferencesViewModel.getApplicationPreferencesViewModel(activity);
+//
+//    storageCategory.setOnFreeUpSpace(() -> activity.startActivity(MediaOverviewActivity.forAll(activity)));
+//
+//    viewModel.getStorageBreakdown().observe(activity, storageCategory::setStorage);
 
-    keepMessages = findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
-    keepMessages.setOnPreferenceClickListener(p -> {
-      updateToolbarTitle(R.string.preferences__keep_messages);
-      pushFragment(BaseSettingsFragment.create(new KeepMessagesConfiguration()));
-      return true;
-    });
+    trimLength = (Mp02CommonPreference)findPreference(SettingsValues.THREAD_TRIM_LENGTH);
+    trimLength.setOnPreferenceClickListener(this);
+    keepMessages = (Mp02CommonPreference)findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
+    keepMessages.setOnPreferenceClickListener(this);
+    mTrimLimitPref = (Mp02CommonPreference) findPreference(TextSecurePreferences.THREAD_TRIM_LENGTH);
+    mTrimLimitPref.setOnPreferenceClickListener(this);
 
-    StoragePreferenceCategory       storageCategory = (StoragePreferenceCategory) findPreference("pref_storage_category");
-    FragmentActivity                activity        = requireActivity();
-    ApplicationPreferencesViewModel viewModel       = ApplicationPreferencesViewModel.getApplicationPreferencesViewModel(activity);
+    mPrefGroup = getPreferenceGroup();
+    mPrefCount = mPrefGroup.getPreferenceCount();
+  }
 
-    storageCategory.setOnFreeUpSpace(() -> activity.startActivity(MediaOverviewActivity.forAll(activity)));
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View view = super.onCreateView(inflater, container, savedInstanceState);
+//    mParentViewController = getParentAnimViewController();
+//    changeView(mCurPoi, false);
+    mContext = getActivity();
+    return view;
+  }
 
-    viewModel.getStorageBreakdown().observe(activity, storageCategory::setStorage);
+  @Override
+  public boolean onPreferenceClick(Preference preference) {
+    String key = preference.getKey();
+    switch (key) {
+      case SettingsValues.THREAD_TRIM_LENGTH:
+        pushFragment(BaseSettingsFragment.create(new ConversationLengthLimitConfiguration()));
+        break;
+      case SettingsValues.KEEP_MESSAGES_DURATION:
+        pushFragment(BaseSettingsFragment.create(new KeepMessagesConfiguration()));
+        break;
+    }
+    return true;
+  }
+
+  @Override
+  public boolean onKeyDown(KeyEvent event) {
+    View v = getListView().getFocusedChild();
+    if (v != null) {
+      mCurPoi = (int) v.getTag();
+    }
+    switch (event.getKeyCode()) {
+      case KeyEvent.KEYCODE_DPAD_DOWN:
+        if (mCurPoi < mPrefCount - 1) {
+          mCurPoi++;
+          changeView(mCurPoi, true);
+        }
+        break;
+      case KeyEvent.KEYCODE_DPAD_UP:
+        if (mCurPoi > 1) {
+          mCurPoi--;
+          changeView(mCurPoi, false);
+        }
+        break;
+    }
+    return super.onKeyDown(event);
+  }
+
+  private void changeView(int currentPosition, boolean b) {
+    Preference preference = mPrefGroup.getPreference(currentPosition);
+    Preference preference1 = null;
+    Preference preference2 = null;
+    if (currentPosition > 0) {
+      preference1 = mPrefGroup.getPreference(currentPosition - 1);
+    }
+    if (currentPosition < mPrefCount - 1) {
+      preference2 = mPrefGroup.getPreference(currentPosition + 1);
+    }
+
+    String curTitle = "";
+    String title1 = "";
+    String title2 = "";
+    curTitle = preference.getTitle().toString();
+    if (preference1 != null) {
+      title1 = preference1.getTitle().toString();
+    }
+    if (preference2 != null) {
+      title2 = preference2.getTitle().toString();
+    }
+    if (b) {
+      mParentViewController.actionUpIn(title1, curTitle);
+    } else {
+      mParentViewController.actionDownIn(title2, curTitle);
+    }
   }
 
   @Override
@@ -84,13 +182,6 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment {
   @Override
   public void onResume() {
     super.onResume();
-    updateToolbarTitle(R.string.preferences__storage);
-
-    FragmentActivity                activity  = requireActivity();
-    ApplicationPreferencesViewModel viewModel = ApplicationPreferencesViewModel.getApplicationPreferencesViewModel(activity);
-
-    viewModel.refreshStorageBreakdown(activity.getApplicationContext());
-
     keepMessages.setSummary(SignalStore.settings().getKeepMessagesDuration().getStringResource());
 
     trimLength.setSummary(SignalStore.settings().isTrimByLengthEnabled() ? getString(R.string.preferences_storage__s_messages, NumberFormat.getInstance().format(SignalStore.settings().getThreadTrimLength()))
@@ -114,6 +205,7 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment {
         .addToBackStack(null)
         .commit();
   }
+
 
   private class ClearMessageHistoryClickListener implements Preference.OnPreferenceClickListener {
     @Override

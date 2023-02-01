@@ -17,7 +17,7 @@ import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.load.resource.gif.StreamGifDecoder;
 
 import org.signal.glide.apng.decode.APNGDecoder;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.blurhash.BlurHash;
 import org.thoughtcrime.securesms.blurhash.BlurHashModelLoader;
 import org.thoughtcrime.securesms.blurhash.BlurHashResourceDecoder;
@@ -25,7 +25,6 @@ import org.thoughtcrime.securesms.contacts.avatars.ContactPhoto;
 import org.thoughtcrime.securesms.crypto.AttachmentSecret;
 import org.thoughtcrime.securesms.crypto.AttachmentSecretProvider;
 import org.thoughtcrime.securesms.giph.model.ChunkedImageUrl;
-import org.thoughtcrime.securesms.glide.BadgeLoader;
 import org.thoughtcrime.securesms.glide.ChunkedImageUrlLoader;
 import org.thoughtcrime.securesms.glide.ContactPhotoLoader;
 import org.thoughtcrime.securesms.glide.GiftBadgeModel;
@@ -42,7 +41,7 @@ import org.thoughtcrime.securesms.mms.AttachmentStreamUriLoader.AttachmentModel;
 import org.thoughtcrime.securesms.mms.DecryptableStreamUriLoader.DecryptableUri;
 import org.thoughtcrime.securesms.stickers.StickerRemoteUri;
 import org.thoughtcrime.securesms.stickers.StickerRemoteUriLoader;
-import org.thoughtcrime.securesms.stories.StoryTextPostModel;
+//import org.thoughtcrime.securesms.stories.StoryTextPostModel;
 import org.thoughtcrime.securesms.util.ConversationShortcutPhoto;
 
 import java.io.File;
@@ -80,9 +79,9 @@ public class SignalGlideComponents implements RegisterGlideComponents {
     registry.register(APNGDecoder.class, Drawable.class, new ApngFrameDrawableTranscoder());
 
     registry.prepend(BlurHash.class, Bitmap.class, new BlurHashResourceDecoder());
-    registry.prepend(StoryTextPostModel.class, Bitmap.class, new StoryTextPostModel.Decoder());
+//    registry.prepend(StoryTextPostModel.class, Bitmap.class, new StoryTextPostModel.Decoder());
 
-    registry.append(StoryTextPostModel.class, StoryTextPostModel.class, UnitModelLoader.Factory.getInstance());
+//    registry.append(StoryTextPostModel.class, StoryTextPostModel.class, UnitModelLoader.Factory.getInstance());
     registry.append(ConversationShortcutPhoto.class, Bitmap.class, new ConversationShortcutPhoto.Loader.Factory(context));
     registry.append(ContactPhoto.class, InputStream.class, new ContactPhotoLoader.Factory(context));
     registry.append(DecryptableUri.class, InputStream.class, new DecryptableStreamUriLoader.Factory(context));
@@ -90,7 +89,7 @@ public class SignalGlideComponents implements RegisterGlideComponents {
     registry.append(ChunkedImageUrl.class, InputStream.class, new ChunkedImageUrlLoader.Factory());
     registry.append(StickerRemoteUri.class, InputStream.class, new StickerRemoteUriLoader.Factory());
     registry.append(BlurHash.class, BlurHash.class, new BlurHashModelLoader.Factory());
-    registry.append(Badge.class, InputStream.class, BadgeLoader.createFactory());
+//    registry.append(Badge.class, InputStream.class, BadgeLoader.createFactory());
     registry.append(GiftBadgeModel.class, InputStream.class, GiftBadgeModel.createFactory());
     registry.replace(GlideUrl.class, InputStream.class, new OkHttpUrlLoader.Factory());
   }

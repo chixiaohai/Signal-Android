@@ -70,15 +70,15 @@
             app:layout_constraintStart_toStartOf="@+id/manage_profile_avatar_background"
             app:layout_constraintTop_toTopOf="@+id/manage_profile_avatar_background" />
 
-        <org.thoughtcrime.securesms.badges.BadgeImageView
-            android:id="@+id/manage_profile_badge"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginTop="52dp"
-            app:badge_size="large"
-            app:layout_constraintStart_toStartOf="@+id/manage_profile_avatar_background"
-            app:layout_constraintTop_toTopOf="@+id/manage_profile_avatar_background" />
+<!--        <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--            android:id="@+id/manage_profile_badge"-->
+<!--            android:layout_width="36dp"-->
+<!--            android:layout_height="36dp"-->
+<!--            android:layout_marginStart="44dp"-->
+<!--            android:layout_marginTop="52dp"-->
+<!--            app:badge_size="large"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/manage_profile_avatar_background"-->
+<!--            app:layout_constraintTop_toTopOf="@+id/manage_profile_avatar_background" />-->
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/manage_profile_edit_photo"

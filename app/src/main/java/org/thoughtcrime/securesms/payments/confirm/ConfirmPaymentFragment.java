@@ -219,23 +219,23 @@ public class ConfirmPaymentFragment extends BottomSheetDialogFragment {
     @Override
     public void onConfirmPayment() {
       setCancelable(false);
-      if (isPaymentLockEnabled(requireContext())) {
-        boolean success = biometricAuth.authenticate(requireContext(), true, this::showConfirmDeviceCredentialIntent);
-        if (!success) {
-          setCancelable(true);
-          new MaterialAlertDialogBuilder(requireContext())
-              .setTitle(R.string.ConfirmPaymentFragment__failed_to_show_payment_lock)
-              .setMessage(R.string.ConfirmPaymentFragment__you_enabled_payment_lock_in_the_settings)
-              .setNeutralButton(android.R.string.ok, (d, i) -> d.dismiss())
-              .setNegativeButton(R.string.ConfirmPaymentFragment__go_to_settings, (d, i) -> {
-                startActivity(AppSettingsActivity.privacy(requireContext()));
-                d.dismiss();
-              })
-              .show();
-        }
-      } else {
+//      if (isPaymentLockEnabled(requireContext())) {
+//        boolean success = biometricAuth.authenticate(requireContext(), true, this::showConfirmDeviceCredentialIntent);
+//        if (!success) {
+//          setCancelable(true);
+//          new MaterialAlertDialogBuilder(requireContext())
+//              .setTitle(R.string.ConfirmPaymentFragment__failed_to_show_payment_lock)
+//              .setMessage(R.string.ConfirmPaymentFragment__you_enabled_payment_lock_in_the_settings)
+//              .setNeutralButton(android.R.string.ok, (d, i) -> d.dismiss())
+//              .setNegativeButton(R.string.ConfirmPaymentFragment__go_to_settings, (d, i) -> {
+//                startActivity(AppSettingsActivity.privacy(requireContext()));
+//                d.dismiss();
+//              })
+//              .show();
+//        }
+//      } else {
         viewModel.confirmPayment();
-      }
+//      }
     }
 
     public Unit showConfirmDeviceCredentialIntent() {

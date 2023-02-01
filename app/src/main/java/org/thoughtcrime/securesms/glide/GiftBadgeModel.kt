@@ -11,7 +11,7 @@ import com.bumptech.glide.load.model.ModelLoaderFactory
 import com.bumptech.glide.load.model.MultiModelLoaderFactory
 import okhttp3.OkHttpClient
 import org.signal.libsignal.zkgroup.receipts.ReceiptCredentialPresentation
-import org.thoughtcrime.securesms.components.settings.app.subscription.getBadge
+//import org.thoughtcrime.securesms.components.settings.app.subscription.getBadge
 import org.thoughtcrime.securesms.database.model.databaseprotos.GiftBadge
 import org.thoughtcrime.securesms.dependencies.ApplicationDependencies
 import java.io.InputStream
@@ -49,8 +49,8 @@ data class GiftBadgeModel(val giftBadge: GiftBadge) : Key {
         val receiptCredentialPresentation = ReceiptCredentialPresentation(giftBadge.giftBadge.redemptionToken.toByteArray())
         val giftBadgeResponse = ApplicationDependencies.getDonationsService().getDonationsConfiguration(Locale.getDefault())
         if (giftBadgeResponse.result.isPresent) {
-          val badge = giftBadgeResponse.result.get().getBadge(receiptCredentialPresentation.receiptLevel.toInt())
-          okHttpStreamFetcher = OkHttpStreamFetcher(client, GlideUrl(badge.imageUrl.toString()))
+//          val badge = giftBadgeResponse.result.get().getBadge(receiptCredentialPresentation.receiptLevel.toInt())
+//          okHttpStreamFetcher = OkHttpStreamFetcher(client, GlideUrl(badge.imageUrl.toString()))
           okHttpStreamFetcher?.loadData(priority, callback)
         } else if (giftBadgeResponse.applicationError.isPresent) {
           callback.onLoadFailed(Exception(giftBadgeResponse.applicationError.get()))

@@ -7,7 +7,7 @@ import org.thoughtcrime.securesms.jobmanager.Data
 import org.thoughtcrime.securesms.jobmanager.Job
 import org.thoughtcrime.securesms.jobmanager.impl.NetworkConstraint
 import org.thoughtcrime.securesms.keyvalue.SignalStore
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.whispersystems.signalservice.api.websocket.WebSocketConnectionState
 import org.whispersystems.signalservice.internal.util.StaticCredentialsProvider
 import org.whispersystems.signalservice.internal.websocket.WebSocketConnection
@@ -65,44 +65,44 @@ class CheckServiceReachabilityJob private constructor(params: Parameters) : Base
 
     SignalStore.misc().lastCensorshipServiceReachabilityCheckTime = System.currentTimeMillis()
 
-    val uncensoredWebsocket = WebSocketConnection(
-      "uncensored-test",
-      ApplicationDependencies.getSignalServiceNetworkAccess().uncensoredConfiguration,
-      Optional.of(
-        StaticCredentialsProvider(
-          SignalStore.account().aci,
-          SignalStore.account().pni,
-          SignalStore.account().e164,
-          SignalStore.account().deviceId,
-          SignalStore.account().servicePassword
-        )
-      ),
-      BuildConfig.SIGNAL_AGENT,
-      null,
-      "",
-      Stories.isFeatureEnabled()
-    )
+//    val uncensoredWebsocket = WebSocketConnection(
+//      "uncensored-test",
+//      ApplicationDependencies.getSignalServiceNetworkAccess().uncensoredConfiguration,
+//      Optional.of(
+//        StaticCredentialsProvider(
+//          SignalStore.account().aci,
+//          SignalStore.account().pni,
+//          SignalStore.account().e164,
+//          SignalStore.account().deviceId,
+//          SignalStore.account().servicePassword
+//        )
+//      ),
+//      BuildConfig.SIGNAL_AGENT,
+//      null,
+//      "",
+//      Stories.isFeatureEnabled()
+//    )
 
     try {
       val startTime = System.currentTimeMillis()
 
-      val state: WebSocketConnectionState = uncensoredWebsocket.connect()
-        .filter { it == WebSocketConnectionState.CONNECTED || it == WebSocketConnectionState.FAILED }
-        .timeout(30, TimeUnit.SECONDS)
-        .blockingFirst(WebSocketConnectionState.FAILED)
+//      val state: WebSocketConnectionState = uncensoredWebsocket.connect()
+//        .filter { it == WebSocketConnectionState.CONNECTED || it == WebSocketConnectionState.FAILED }
+//        .timeout(30, TimeUnit.SECONDS)
+//        .blockingFirst(WebSocketConnectionState.FAILED)
 
-      if (state == WebSocketConnectionState.CONNECTED) {
-        Log.i(TAG, "Established connection in ${System.currentTimeMillis() - startTime} ms! Service is reachable!")
-        SignalStore.misc().isServiceReachableWithoutCircumvention = true
-      } else {
-        Log.w(TAG, "Failed to establish a connection in ${System.currentTimeMillis() - startTime} ms.")
-        SignalStore.misc().isServiceReachableWithoutCircumvention = false
-      }
+//      if (state == WebSocketConnectionState.CONNECTED) {
+//        Log.i(TAG, "Established connection in ${System.currentTimeMillis() - startTime} ms! Service is reachable!")
+//        SignalStore.misc().isServiceReachableWithoutCircumvention = true
+//      } else {
+//        Log.w(TAG, "Failed to establish a connection in ${System.currentTimeMillis() - startTime} ms.")
+//        SignalStore.misc().isServiceReachableWithoutCircumvention = false
+//      }
     } catch (exception: Exception) {
       Log.w(TAG, "Failed to connect to the websocket.", exception)
       SignalStore.misc().isServiceReachableWithoutCircumvention = false
     } finally {
-      uncensoredWebsocket.disconnect()
+//      uncensoredWebsocket.disconnect()
     }
   }
 

@@ -7,11 +7,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import io.reactivex.rxjava3.internal.util.NotificationLite.subscription
 import org.signal.core.util.Hex
 import org.signal.core.util.concurrent.SignalExecutors
 import org.thoughtcrime.securesms.MainActivity
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -24,7 +26,7 @@ import org.thoughtcrime.securesms.recipients.Recipient
 import org.thoughtcrime.securesms.recipients.RecipientForeverObserver
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.sms.OutgoingEncryptedMessage
-import org.thoughtcrime.securesms.subscription.Subscriber
+//import org.thoughtcrime.securesms.subscription.Subscriber
 import org.thoughtcrime.securesms.util.Base64
 import org.thoughtcrime.securesms.util.FeatureFlags
 import org.thoughtcrime.securesms.util.SpanUtil
@@ -47,7 +49,7 @@ class InternalConversationSettingsFragment : DSLSettingsFragment(
     }
   )
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     viewModel.state.observe(viewLifecycleOwner) { state ->
       adapter.submitList(getConfiguration(state).toMappingModelList())
     }
@@ -194,28 +196,28 @@ class InternalConversationSettingsFragment : DSLSettingsFragment(
         }
       )
 
-      if (recipient.isSelf) {
-        sectionHeaderPref(DSLSettingsText.from("Donations"))
-
-        val subscriber: Subscriber? = SignalStore.donationsValues().getSubscriber()
-        val summary = if (subscriber != null) {
-          """currency code: ${subscriber.currencyCode}
-            |subscriber id: ${subscriber.subscriberId.serialize()}
-          """.trimMargin()
-        } else {
-          "None"
-        }
-
-        longClickPref(
-          title = DSLSettingsText.from("Subscriber ID"),
-          summary = DSLSettingsText.from(summary),
-          onLongClick = {
-            if (subscriber != null) {
-              copyToClipboard(subscriber.subscriberId.serialize())
-            }
-          }
-        )
-      }
+//      if (recipient.isSelf) {
+//        sectionHeaderPref(DSLSettingsText.from("Donations"))
+//
+//        val subscriber: Subscriber? = SignalStore.donationsValues().getSubscriber()
+//        val summary = if (subscriber != null) {
+//          """currency code: ${subscriber.currencyCode}
+//            |subscriber id: ${subscriber.subscriberId.serialize()}
+//          """.trimMargin()
+//        } else {
+//          "None"
+//        }
+//
+//        longClickPref(
+//          title = DSLSettingsText.from("Subscriber ID"),
+//          summary = DSLSettingsText.from(summary),
+//          onLongClick = {
+//            if (subscriber != null) {
+//              copyToClipboard(subscriber.subscriberId.serialize())
+//            }
+//          }
+//        )
+//      }
 
       sectionHeaderPref(DSLSettingsText.from("PNP"))
 

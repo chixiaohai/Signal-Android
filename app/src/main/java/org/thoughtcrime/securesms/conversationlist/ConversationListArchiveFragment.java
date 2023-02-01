@@ -63,7 +63,7 @@ public class ConversationListArchiveFragment extends ConversationListFragment
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    toolbar = requireCallback().getBasicToolbar();
+//    toolbar = requireCallback().getBasicToolbar();
 
     super.onViewCreated(view, savedInstanceState);
 
@@ -93,10 +93,10 @@ public class ConversationListArchiveFragment extends ConversationListFragment
     return true;
   }
 
-  @Override
-  protected @NonNull Toolbar getToolbar(@NonNull View rootView) {
-    return toolbar.get();
-  }
+//  @Override
+//  protected @NonNull Toolbar getToolbar(@NonNull View rootView) {
+//    return toolbar.get();
+//  }
 
   @Override
   protected @StringRes int getArchivedSnackbarTitleRes() {

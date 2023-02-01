@@ -3,7 +3,7 @@ package org.thoughtcrime.securesms.database.model
 import android.net.Uri
 import org.signal.libsignal.zkgroup.groups.GroupMasterKey
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential
-import org.thoughtcrime.securesms.badges.models.Badge
+//import org.thoughtcrime.securesms.badges.models.Badge
 import org.thoughtcrime.securesms.conversation.colors.AvatarColor
 import org.thoughtcrime.securesms.conversation.colors.ChatColors
 import org.thoughtcrime.securesms.database.IdentityTable.VerifiedStatus
@@ -76,7 +76,7 @@ data class RecipientRecord(
   val extras: Recipient.Extras?,
   @get:JvmName("hasGroupsInCommon")
   val hasGroupsInCommon: Boolean,
-  val badges: List<Badge>,
+//  val badges: List<Badge>,
   @get:JvmName("needsPniSignature")
   val needsPniSignature: Boolean,
   val isHidden: Boolean

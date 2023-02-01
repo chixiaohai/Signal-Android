@@ -119,7 +119,7 @@ import org.thoughtcrime.securesms.ShortcutLauncherActivity;
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.attachments.TombstoneAttachment;
 import org.thoughtcrime.securesms.audio.AudioRecorder;
-import org.thoughtcrime.securesms.badges.gifts.thanks.GiftThanksSheet;
+//import org.thoughtcrime.securesms.badges.gifts.thanks.GiftThanksSheet;
 import org.thoughtcrime.securesms.components.AnimatingToggle;
 import org.thoughtcrime.securesms.components.ComposeText;
 import org.thoughtcrime.securesms.components.ConversationSearchBottomBar;
@@ -219,7 +219,7 @@ import org.thoughtcrime.securesms.keyvalue.SmsExportPhase;
 import org.thoughtcrime.securesms.linkpreview.LinkPreview;
 import org.thoughtcrime.securesms.linkpreview.LinkPreviewRepository;
 import org.thoughtcrime.securesms.linkpreview.LinkPreviewViewModel;
-import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
+//import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
 import org.thoughtcrime.securesms.maps.PlacePickerActivity;
 import org.thoughtcrime.securesms.mediaoverview.MediaOverviewActivity;
 import org.thoughtcrime.securesms.mediasend.Media;
@@ -274,8 +274,8 @@ import org.thoughtcrime.securesms.stickers.StickerLocator;
 import org.thoughtcrime.securesms.stickers.StickerManagementActivity;
 import org.thoughtcrime.securesms.stickers.StickerPackInstallEvent;
 import org.thoughtcrime.securesms.stickers.StickerSearchRepository;
-import org.thoughtcrime.securesms.stories.StoryViewerArgs;
-import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
+//import org.thoughtcrime.securesms.stories.StoryViewerArgs;
+//import org.thoughtcrime.securesms.stories.viewer.StoryViewerActivity;
 import org.thoughtcrime.securesms.util.AsynchronousCallback;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.BubbleUtil;
@@ -361,7 +361,6 @@ public class ConversationParentFragment extends Fragment
                EmojiKeyboardPageFragment.Callback,
                EmojiSearchFragment.Callback,
                StickerKeyboardPageFragment.Callback,
-               Material3OnScrollHelperBinder,
                MessageDetailsFragment.Callback
 {
 
@@ -511,9 +510,9 @@ public class ConversationParentFragment extends Fragment
     new FullscreenHelper(requireActivity()).showSystemUI();
 
     ConversationIntents.Args args = ConversationIntents.Args.from(requireArguments());
-    if (savedInstanceState == null && args.getGiftBadge() != null) {
-      GiftThanksSheet.show(getChildFragmentManager(), args.getRecipientId(), args.getGiftBadge());
-    }
+//    if (savedInstanceState == null && args.getGiftBadge() != null) {
+//      GiftThanksSheet.show(getChildFragmentManager(), args.getRecipientId(), args.getGiftBadge());
+//    }
 
     isSearchRequested = args.isWithSearchOpen();
 
@@ -553,7 +552,7 @@ public class ConversationParentFragment extends Fragment
     initializeInsightObserver();
     initializeActionBar();
 
-    disposables.add(viewModel.getStoryViewState().subscribe(titleView::setStoryRingFromState));
+//    disposables.add(viewModel.getStoryViewState().subscribe(titleView::setStoryRingFromState));
 
     backPressedCallback = new OnBackPressedCallback(true) {
       @Override
@@ -1255,13 +1254,13 @@ public class ConversationParentFragment extends Fragment
     });
   }
 
-  private void handleStoryRingClick() {
-    startActivity(StoryViewerActivity.createIntent(
-                  requireContext(),
-                  new StoryViewerArgs.Builder(recipient.getId(), recipient.get().shouldHideStory())
-                                     .isFromQuote(true)
-                                     .build()));
-  }
+//  private void handleStoryRingClick() {
+//    startActivity(StoryViewerActivity.createIntent(
+//                  requireContext(),
+//                  new StoryViewerArgs.Builder(recipient.getId(), recipient.get().shouldHideStory())
+//                                     .isFromQuote(true)
+//                                     .build()));
+//  }
 
   private void handleConversationSettings() {
     if (isGroupConversation()) {
@@ -2081,7 +2080,7 @@ public class ConversationParentFragment extends Fragment
       if (manuallySelected) recordTransportPreference(newMessageSendType);
     });
 
-    titleView.setOnStoryRingClickListener(v -> handleStoryRingClick());
+//    titleView.setOnStoryRingClickListener(v -> handleStoryRingClick());
     titleView.setOnClickListener(v -> handleConversationSettings());
     titleView.setOnLongClickListener(v -> handleDisplayQuickContact());
     unblockButton.setOnClickListener(v -> handleUnblock());
@@ -3499,10 +3498,10 @@ public class ConversationParentFragment extends Fragment
     StickerSearchDialogFragment.show(getChildFragmentManager());
   }
 
-  @Override
-  public void bindScrollHelper(@NonNull RecyclerView recyclerView) {
-    material3OnScrollHelper.attach(recyclerView);
-  }
+//  @Override
+//  public void bindScrollHelper(@NonNull RecyclerView recyclerView) {
+//    material3OnScrollHelper.attach(recyclerView);
+//  }
 
   @Override
   public void onMessageDetailsFragmentDismissed() {

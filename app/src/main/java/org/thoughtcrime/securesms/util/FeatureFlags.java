@@ -107,6 +107,7 @@ public final class FeatureFlags {
   private static final String CHAT_FILTERS                      = "android.chat.filters";
   private static final String PAYPAL_ONE_TIME_DONATIONS         = "android.oneTimePayPalDonations.2";
   private static final String PAYPAL_RECURRING_DONATIONS        = "android.recurringPayPalDonations";
+  private static final String CHANGE_NUMBER_ENABLED             = "android.changeNumber";
 
   /**
    * We will only store remote values for flags in this set. If you want a flag to be controllable
@@ -896,5 +897,12 @@ public final class FeatureFlags {
 
   enum Change {
     ENABLED, DISABLED, CHANGED, REMOVED
+  }
+
+  /**
+   * Whether or not to show change number in the UI.
+   */
+  public static boolean changeNumber() {
+    return getBoolean(CHANGE_NUMBER_ENABLED, false);
   }
 }

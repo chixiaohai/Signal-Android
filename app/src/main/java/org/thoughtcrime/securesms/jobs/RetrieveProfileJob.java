@@ -21,8 +21,8 @@ import org.signal.libsignal.protocol.InvalidKeyException;
 import org.signal.libsignal.protocol.util.Pair;
 import org.signal.libsignal.zkgroup.profiles.ExpiringProfileKeyCredential;
 import org.signal.libsignal.zkgroup.profiles.ProfileKey;
-import org.thoughtcrime.securesms.badges.Badges;
-import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.Badges;
+//import org.thoughtcrime.securesms.badges.models.Badge;
 import org.thoughtcrime.securesms.crypto.ProfileKeyUtil;
 import org.thoughtcrime.securesms.database.GroupTable;
 import org.thoughtcrime.securesms.database.RecipientTable;
@@ -345,7 +345,7 @@ public class RetrieveProfileJob extends BaseJob {
 
     setProfileAbout(recipient, profile.getAbout(), profile.getAboutEmoji());
     setProfileAvatar(recipient, profile.getAvatar());
-    setProfileBadges(recipient, profile.getBadges());
+//    setProfileBadges(recipient, profile.getBadges());
     setProfileCapabilities(recipient, profile.getCapabilities());
     setUnidentifiedAccessMode(recipient, profile.getUnidentifiedAccess(), profile.isUnrestrictedUnidentifiedAccess());
 
@@ -359,19 +359,19 @@ public class RetrieveProfileJob extends BaseJob {
     }
   }
 
-  private void setProfileBadges(@NonNull Recipient recipient, @Nullable List<SignalServiceProfile.Badge> serviceBadges) {
-    if (serviceBadges == null) {
-      return;
-    }
-
-    List<Badge> badges = serviceBadges.stream().map(Badges::fromServiceBadge).collect(java.util.stream.Collectors.toList());
-
-    if (badges.size() != recipient.getBadges().size()) {
-      Log.i(TAG, "Likely change in badges for " + recipient.getId() + ". Going from " + recipient.getBadges().size() + " badge(s) to " + badges.size() + ".");
-    }
-
-    SignalDatabase.recipients().setBadges(recipient.getId(), badges);
-  }
+//  private void setProfileBadges(@NonNull Recipient recipient, @Nullable List<SignalServiceProfile.Badge> serviceBadges) {
+//    if (serviceBadges == null) {
+//      return;
+//    }
+//
+////    List<Badge> badges = serviceBadges.stream().map(Badges::fromServiceBadge).collect(java.util.stream.Collectors.toList());
+//
+////    if (badges.size() != recipient.getBadges().size()) {
+////      Log.i(TAG, "Likely change in badges for " + recipient.getId() + ". Going from " + recipient.getBadges().size() + " badge(s) to " + badges.size() + ".");
+////    }
+//
+//    SignalDatabase.recipients().setBadges(recipient.getId(), badges);
+//  }
 
   private void setExpiringProfileKeyCredential(@NonNull Recipient recipient,
                                                @NonNull ProfileKey recipientProfileKey,

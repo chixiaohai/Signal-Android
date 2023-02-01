@@ -26,10 +26,10 @@ import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.AvatarPreviewActivity;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.avatar.Avatars;
-import org.thoughtcrime.securesms.avatar.picker.AvatarPickerFragment;
-import org.thoughtcrime.securesms.badges.models.Badge;
-import org.thoughtcrime.securesms.badges.self.none.BecomeASustainerFragment;
+//import org.thoughtcrime.securesms.avatar.Avatars;
+//import org.thoughtcrime.securesms.avatar.picker.AvatarPickerFragment;
+//import org.thoughtcrime.securesms.badges.models.Badge;
+//import org.thoughtcrime.securesms.badges.self.none.BecomeASustainerFragment;
 import org.thoughtcrime.securesms.components.emoji.EmojiTextView;
 import org.thoughtcrime.securesms.components.emoji.EmojiUtil;
 import org.thoughtcrime.securesms.databinding.ManageProfileFragmentBinding;
@@ -78,7 +78,7 @@ public class ManageProfileFragment extends LoggingFragment {
 
     binding.toolbar.setNavigationOnClickListener(v -> requireActivity().finish());
 
-    binding.manageProfileEditPhoto.setOnClickListener(v -> onEditAvatarClicked());
+//    binding.manageProfileEditPhoto.setOnClickListener(v -> onEditAvatarClicked());
 
     binding.manageProfileNameContainer.setOnClickListener(v -> {
       SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileName());
@@ -92,29 +92,29 @@ public class ManageProfileFragment extends LoggingFragment {
       SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageAbout());
     });
 
-    getParentFragmentManager().setFragmentResultListener(AvatarPickerFragment.REQUEST_KEY_SELECT_AVATAR, getViewLifecycleOwner(), (key, bundle) -> {
-      if (bundle.getBoolean(AvatarPickerFragment.SELECT_AVATAR_CLEAR)) {
-        viewModel.onAvatarSelected(requireContext(), null);
-      } else {
-        Media result = bundle.getParcelable(AvatarPickerFragment.SELECT_AVATAR_MEDIA);
-        viewModel.onAvatarSelected(requireContext(), result);
-      }
-    });
+//    getParentFragmentManager().setFragmentResultListener(AvatarPickerFragment.REQUEST_KEY_SELECT_AVATAR, getViewLifecycleOwner(), (key, bundle) -> {
+//      if (bundle.getBoolean(AvatarPickerFragment.SELECT_AVATAR_CLEAR)) {
+//        viewModel.onAvatarSelected(requireContext(), null);
+//      } else {
+//        Media result = bundle.getParcelable(AvatarPickerFragment.SELECT_AVATAR_MEDIA);
+//        viewModel.onAvatarSelected(requireContext(), result);
+//      }
+//    });
 
     EmojiTextView avatarInitials = binding.manageProfileAvatarInitials;
     avatarInitials.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
       if (avatarInitials.length() > 0) {
-        updateInitials(avatarInitials.getText().toString());
+//        updateInitials(avatarInitials.getText().toString());
       }
     });
 
-    binding.manageProfileBadgesContainer.setOnClickListener(v -> {
-      if (Recipient.self().getBadges().isEmpty()) {
-        BecomeASustainerFragment.show(getParentFragmentManager());
-      } else {
-        SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToBadgeManageFragment());
-      }
-    });
+//    binding.manageProfileBadgesContainer.setOnClickListener(v -> {
+//      if (Recipient.self().getBadges().isEmpty()) {
+//        BecomeASustainerFragment.show(getParentFragmentManager());
+//      } else {
+//        SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToBadgeManageFragment());
+//      }
+//    });
 
     binding.manageProfileAvatar.setOnClickListener(v -> {
       startActivity(AvatarPreviewActivity.intentFromRecipientId(requireContext(), Recipient.self().getId()),
@@ -139,12 +139,12 @@ public class ManageProfileFragment extends LoggingFragment {
                                                                  b -> Optional.ofNullable(b.getAvatar()));
     avatarImage.observe(getViewLifecycleOwner(), this::presentAvatarImage);
 
-    viewModel.getAvatar().observe(getViewLifecycleOwner(), this::presentAvatarPlaceholder);
+//    viewModel.getAvatar().observe(getViewLifecycleOwner(), this::presentAvatarPlaceholder);
     viewModel.getProfileName().observe(getViewLifecycleOwner(), this::presentProfileName);
     viewModel.getEvents().observe(getViewLifecycleOwner(), this::presentEvent);
     viewModel.getAbout().observe(getViewLifecycleOwner(), this::presentAbout);
     viewModel.getAboutEmoji().observe(getViewLifecycleOwner(), this::presentAboutEmoji);
-    viewModel.getBadge().observe(getViewLifecycleOwner(), this::presentBadge);
+//    viewModel.getBadge().observe(getViewLifecycleOwner(), this::presentBadge);
 
     if (viewModel.shouldShowUsername()) {
       viewModel.getUsername().observe(getViewLifecycleOwner(), this::presentUsername);
@@ -164,43 +164,43 @@ public class ManageProfileFragment extends LoggingFragment {
     }
   }
 
-  private void presentAvatarPlaceholder(@NonNull AvatarState avatarState) {
-    if (avatarState.getAvatar() == null) {
-      CharSequence            initials        = NameUtil.getAbbreviation(avatarState.getSelf().getDisplayName(requireContext()));
-      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(avatarState.getSelf().getAvatarColor());
+//  private void presentAvatarPlaceholder(@NonNull AvatarState avatarState) {
+//    if (avatarState.getAvatar() == null) {
+//      CharSequence            initials        = NameUtil.getAbbreviation(avatarState.getSelf().getDisplayName(requireContext()));
+//      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(avatarState.getSelf().getAvatarColor());
+//
+//      binding.manageProfileAvatarBackground.setColorFilter(new SimpleColorFilter(avatarState.getSelf().getAvatarColor().colorInt()));
+//      binding.manageProfileAvatarPlaceholder.setColorFilter(new SimpleColorFilter(foregroundColor.getColorInt()));
+//      binding.manageProfileAvatarInitials.setTextColor(foregroundColor.getColorInt());
+//
+//      if (TextUtils.isEmpty(initials)) {
+//        binding.manageProfileAvatarPlaceholder.setVisibility(View.VISIBLE);
+//        binding.manageProfileAvatarInitials.setVisibility(View.GONE);
+//      } else {
+//        updateInitials(initials.toString());
+//        binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
+//        binding.manageProfileAvatarInitials.setVisibility(View.VISIBLE);
+//      }
+//    } else {
+//      binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
+//      binding.manageProfileAvatarInitials.setVisibility(View.GONE);
+//    }
+//
+//    if (avatarProgress == null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADING) {
+//      avatarProgress = SimpleProgressDialog.show(requireContext());
+//    } else if (avatarProgress != null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADED) {
+//      avatarProgress.dismiss();
+//    }
+//  }
 
-      binding.manageProfileAvatarBackground.setColorFilter(new SimpleColorFilter(avatarState.getSelf().getAvatarColor().colorInt()));
-      binding.manageProfileAvatarPlaceholder.setColorFilter(new SimpleColorFilter(foregroundColor.getColorInt()));
-      binding.manageProfileAvatarInitials.setTextColor(foregroundColor.getColorInt());
-
-      if (TextUtils.isEmpty(initials)) {
-        binding.manageProfileAvatarPlaceholder.setVisibility(View.VISIBLE);
-        binding.manageProfileAvatarInitials.setVisibility(View.GONE);
-      } else {
-        updateInitials(initials.toString());
-        binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
-        binding.manageProfileAvatarInitials.setVisibility(View.VISIBLE);
-      }
-    } else {
-      binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
-      binding.manageProfileAvatarInitials.setVisibility(View.GONE);
-    }
-
-    if (avatarProgress == null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADING) {
-      avatarProgress = SimpleProgressDialog.show(requireContext());
-    } else if (avatarProgress != null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADED) {
-      avatarProgress.dismiss();
-    }
-  }
-
-  private void updateInitials(String initials) {
-    binding.manageProfileAvatarInitials.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-                                                    Avatars.getTextSizeForLength(requireContext(),
-                                                                                 initials,
-                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.8f,
-                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.45f));
-    binding.manageProfileAvatarInitials.setText(initials);
-  }
+//  private void updateInitials(String initials) {
+//    binding.manageProfileAvatarInitials.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+//                                                    Avatars.getTextSizeForLength(requireContext(),
+//                                                                                 initials,
+//                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.8f,
+//                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.45f));
+//    binding.manageProfileAvatarInitials.setText(initials);
+//  }
 
   private void presentProfileName(@Nullable ProfileName profileName) {
     if (profileName == null || profileName.isEmpty()) {
@@ -250,13 +250,13 @@ public class ManageProfileFragment extends LoggingFragment {
     }
   }
 
-  private void presentBadge(@NonNull Optional<Badge> badge) {
-    if (badge.isPresent() && badge.get().getVisible() && !badge.get().isExpired()) {
-      binding.manageProfileBadge.setBadge(badge.orElse(null));
-    } else {
-      binding.manageProfileBadge.setBadge(null);
-    }
-  }
+//  private void presentBadge(@NonNull Optional<Badge> badge) {
+//    if (badge.isPresent() && badge.get().getVisible() && !badge.get().isExpired()) {
+//      binding.manageProfileBadge.setBadge(badge.orElse(null));
+//    } else {
+//      binding.manageProfileBadge.setBadge(null);
+//    }
+//  }
 
   private void presentEvent(@NonNull ManageProfileViewModel.Event event) {
     switch (event) {
@@ -269,7 +269,7 @@ public class ManageProfileFragment extends LoggingFragment {
     }
   }
 
-  private void onEditAvatarClicked() {
-    SafeNavigation.safeNavigate(Navigation.findNavController(requireView()), ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null));
-  }
+//  private void onEditAvatarClicked() {
+//    SafeNavigation.safeNavigate(Navigation.findNavController(requireView()), ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null));
+//  }
 }

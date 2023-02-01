@@ -9,6 +9,7 @@ import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.WrapperDialogFragment
 import org.thoughtcrime.securesms.components.menu.ActionItem
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -38,7 +39,7 @@ class SafetyNumberReviewConnectionsFragment : DSLSettingsFragment(
 
   private val lifecycleDisposable = LifecycleDisposable()
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     SafetyNumberBucketRowItem.register(adapter)
     SafetyNumberRecipientRowItem.register(adapter)
     lifecycleDisposable.bindTo(viewLifecycleOwner)
@@ -56,13 +57,13 @@ class SafetyNumberReviewConnectionsFragment : DSLSettingsFragment(
   private fun getConfiguration(state: SafetyNumberBottomSheetState): DSLConfiguration {
     return configure {
       val recipientCount = state.destinationToRecipientMap.values.flatten().size
-      textPref(
-        title = DSLSettingsText.from(
-          resources.getQuantityString(R.plurals.SafetyNumberReviewConnectionsFragment__d_recipients_may_have, recipientCount, recipientCount),
-          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyMedium),
-          DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
-        )
-      )
+//      textPref(
+//        title = DSLSettingsText.from(
+//          resources.getQuantityString(R.plurals.SafetyNumberReviewConnectionsFragment__d_recipients_may_have, recipientCount, recipientCount),
+//          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyMedium),
+//          DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
+//        )
+//      )
 
       state.destinationToRecipientMap.forEach { (bucket, recipients) ->
         customPref(SafetyNumberBucketRowItem.createModel(bucket, this@SafetyNumberReviewConnectionsFragment::getActionItemsForBucket))

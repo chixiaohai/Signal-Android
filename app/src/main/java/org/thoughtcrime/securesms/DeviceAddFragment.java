@@ -77,18 +77,18 @@ public class DeviceAddFragment extends LoggingFragment {
     return container;
   }
 
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    MenuItem switchCamera = ((DeviceActivity) requireActivity()).getCameraSwitchItem();
-
-    if (switchCamera != null) {
-      switchCamera.setVisible(true);
-      switchCamera.setOnMenuItemClickListener(v -> {
-        scannerView.toggleCamera();
-        return true;
-      });
-    }
-  }
+//  @Override
+//  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//    MenuItem switchCamera = ((DeviceActivity) requireActivity()).getCameraSwitchItem();
+//
+//    if (switchCamera != null) {
+//      switchCamera.setVisible(true);
+//      switchCamera.setOnMenuItemClickListener(v -> {
+//        scannerView.toggleCamera();
+//        return true;
+//      });
+//    }
+//  }
 
   public ImageView getDevicesImage() {
     return devicesImage;

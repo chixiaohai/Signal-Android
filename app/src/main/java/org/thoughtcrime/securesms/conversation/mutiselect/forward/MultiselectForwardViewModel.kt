@@ -9,11 +9,11 @@ import org.thoughtcrime.securesms.contacts.paged.ContactSearchKey
 import org.thoughtcrime.securesms.keyvalue.SignalStore
 import org.thoughtcrime.securesms.mediasend.v2.UntrustedRecords
 import org.thoughtcrime.securesms.sharing.MultiShareArgs
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.livedata.Store
 
 class MultiselectForwardViewModel(
-  private val storySendRequirements: Stories.MediaTransform.SendRequirements,
+//  private val storySendRequirements: Stories.MediaTransform.SendRequirements,
   private val records: List<MultiShareArgs>,
   private val isSelectionOnly: Boolean,
   private val repository: MultiselectForwardRepository,
@@ -22,7 +22,7 @@ class MultiselectForwardViewModel(
 
   private val store = Store(
     MultiselectForwardState(
-      storySendRequirements = storySendRequirements
+//      storySendRequirements = storySendRequirements
     )
   )
 
@@ -31,13 +31,13 @@ class MultiselectForwardViewModel(
 
   private val disposables = CompositeDisposable()
 
-  init {
-    if (records.isNotEmpty()) {
-      disposables += repository.checkAllSelectedMediaCanBeSentToStories(records).subscribe { sendRequirements ->
-        store.update { it.copy(storySendRequirements = sendRequirements) }
-      }
-    }
-  }
+//  init {
+//    if (records.isNotEmpty()) {
+//      disposables += repository.checkAllSelectedMediaCanBeSentToStories(records).subscribe { sendRequirements ->
+//        store.update { it.copy(storySendRequirements = sendRequirements) }
+//      }
+//    }
+//  }
 
   override fun onCleared() {
     disposables.clear()
@@ -97,13 +97,13 @@ class MultiselectForwardViewModel(
   }
 
   class Factory(
-    private val storySendRequirements: Stories.MediaTransform.SendRequirements,
-    private val records: List<MultiShareArgs>,
-    private val isSelectionOnly: Boolean,
-    private val repository: MultiselectForwardRepository,
+//    private val storySendRequirements: Stories.MediaTransform.SendRequirements,
+//    private val records: List<MultiShareArgs>,
+//    private val isSelectionOnly: Boolean,
+//    private val repository: MultiselectForwardRepository,
   ) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return requireNotNull(modelClass.cast(MultiselectForwardViewModel(storySendRequirements, records, isSelectionOnly, repository)))
-    }
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+//      return requireNotNull(modelClass.cast(MultiselectForwardViewModel(storySendRequirements, records, isSelectionOnly, repository)))
+//    }
   }
 }

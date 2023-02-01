@@ -112,41 +112,41 @@ class SafetyNumberBottomSheetFragment : DSLSettingsBottomSheetFragment(layoutId 
         )
       )
 
-      textPref(
-        title = DSLSettingsText.from(
-          when {
-            state.isCheckupComplete() && state.hasLargeNumberOfUntrustedRecipients -> R.string.SafetyNumberBottomSheetFragment__safety_number_checkup_complete
-            state.hasLargeNumberOfUntrustedRecipients -> R.string.SafetyNumberBottomSheetFragment__safety_number_checkup
-            else -> R.string.SafetyNumberBottomSheetFragment__safety_number_changes
-          },
-          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_TitleLarge),
-          DSLSettingsText.CenterModifier
-        )
-      )
+//      textPref(
+//        title = DSLSettingsText.from(
+//          when {
+//            state.isCheckupComplete() && state.hasLargeNumberOfUntrustedRecipients -> R.string.SafetyNumberBottomSheetFragment__safety_number_checkup_complete
+//            state.hasLargeNumberOfUntrustedRecipients -> R.string.SafetyNumberBottomSheetFragment__safety_number_checkup
+//            else -> R.string.SafetyNumberBottomSheetFragment__safety_number_changes
+//          },
+//          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_TitleLarge),
+//          DSLSettingsText.CenterModifier
+//        )
+//      )
 
-      textPref(
-        title = DSLSettingsText.from(
-          when {
-            state.isCheckupComplete() && state.hasLargeNumberOfUntrustedRecipients -> getString(R.string.SafetyNumberBottomSheetFragment__all_connections_have_been_reviewed)
-            state.hasLargeNumberOfUntrustedRecipients -> getString(R.string.SafetyNumberBottomSheetFragment__you_have_d_connections, args.untrustedRecipients.size)
-            else -> getString(R.string.SafetyNumberBottomSheetFragment__the_following_people)
-          },
-          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
-          DSLSettingsText.CenterModifier
-        )
-      )
+//      textPref(
+//        title = DSLSettingsText.from(
+//          when {
+//            state.isCheckupComplete() && state.hasLargeNumberOfUntrustedRecipients -> getString(R.string.SafetyNumberBottomSheetFragment__all_connections_have_been_reviewed)
+//            state.hasLargeNumberOfUntrustedRecipients -> getString(R.string.SafetyNumberBottomSheetFragment__you_have_d_connections, args.untrustedRecipients.size)
+//            else -> getString(R.string.SafetyNumberBottomSheetFragment__the_following_people)
+//          },
+//          DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
+//          DSLSettingsText.CenterModifier
+//        )
+//      )
 
       if (state.isEmpty()) {
         space(DimensionUnit.DP.toPixels(48f).toInt())
 
-        noPadTextPref(
-          title = DSLSettingsText.from(
-            R.string.SafetyNumberBottomSheetFragment__no_more_recipients_to_show,
-            DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
-            DSLSettingsText.CenterModifier,
-            DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
-          )
-        )
+//        noPadTextPref(
+//          title = DSLSettingsText.from(
+//            R.string.SafetyNumberBottomSheetFragment__no_more_recipients_to_show,
+//            DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
+//            DSLSettingsText.CenterModifier,
+//            DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
+//          )
+//        )
 
         space(DimensionUnit.DP.toPixels(48f).toInt())
       }

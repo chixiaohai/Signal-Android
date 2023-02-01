@@ -16,7 +16,7 @@ import org.thoughtcrime.securesms.database.model.Mention;
 import org.thoughtcrime.securesms.linkpreview.LinkPreview;
 import org.thoughtcrime.securesms.mediasend.Media;
 import org.thoughtcrime.securesms.stickers.StickerLocator;
-import org.thoughtcrime.securesms.stories.Stories;
+//import org.thoughtcrime.securesms.stories.Stories;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.ParcelUtil;
 import org.thoughtcrime.securesms.util.Util;
@@ -172,9 +172,9 @@ public final class MultiShareArgs implements Parcelable {
       BreakIteratorCompat breakIteratorCompat = BreakIteratorCompat.getInstance();
       breakIteratorCompat.setText(getDraftText());
 
-      if (breakIteratorCompat.countBreaks() > Stories.MAX_TEXT_STORY_SIZE) {
-        return false;
-      }
+//      if (breakIteratorCompat.countBreaks() > Stories.MAX_TEXT_STORY_SIZE) {
+//        return false;
+//      }
     }
 
     return linkPreview != null || !Util.isEmpty(draftText);

@@ -238,8 +238,8 @@
         </intent-filter>
     </activity>
 
-    <activity-alias android:name=".RoutingActivity"
-                    android:targetActivity=".MainActivity"
+    <activity-alias android:name=".AppSettingsActivity"
+                    android:targetActivity=".components.settings.app.AppSettingsActivity"
                     android:exported="true">
 
         <intent-filter>
@@ -250,6 +250,7 @@
 
         <meta-data android:name="com.sec.minimode.icon.portrait.normal"
                    android:resource="@mipmap/ic_launcher" />
+
         <meta-data android:name="com.sec.minimode.icon.landscape.normal"
                    android:resource="@mipmap/ic_launcher" />
 

@@ -35,11 +35,11 @@ import org.thoughtcrime.securesms.mediasend.CameraDisplay
 import org.thoughtcrime.securesms.mediasend.Media
 import org.thoughtcrime.securesms.mediasend.MediaSendActivityResult
 import org.thoughtcrime.securesms.mediasend.v2.review.MediaReviewFragment
-import org.thoughtcrime.securesms.mediasend.v2.text.TextStoryPostCreationViewModel
-import org.thoughtcrime.securesms.mediasend.v2.text.send.TextStoryPostSendRepository
+//import org.thoughtcrime.securesms.mediasend.v2.text.TextStoryPostCreationViewModel
+//import org.thoughtcrime.securesms.mediasend.v2.text.send.TextStoryPostSendRepository
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.safety.SafetyNumberBottomSheet
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.FullscreenHelper
 import org.thoughtcrime.securesms.util.WindowUtil
 import org.thoughtcrime.securesms.util.navigation.safeNavigate
@@ -52,30 +52,30 @@ class MediaSelectionActivity :
   EmojiEventListener,
   EmojiSearchFragment.Callback {
 
-  private var animateInShadowLayerValueAnimator: ValueAnimator? = null
-  private var animateInTextColorValueAnimator: ValueAnimator? = null
-  private var animateOutShadowLayerValueAnimator: ValueAnimator? = null
-  private var animateOutTextColorValueAnimator: ValueAnimator? = null
+//  private var animateInShadowLayerValueAnimator: ValueAnimator? = null
+//  private var animateInTextColorValueAnimator: ValueAnimator? = null
+//  private var animateOutShadowLayerValueAnimator: ValueAnimator? = null
+//  private var animateOutTextColorValueAnimator: ValueAnimator? = null
 
   lateinit var viewModel: MediaSelectionViewModel
 
-  private val textViewModel: TextStoryPostCreationViewModel by viewModels(
-    factoryProducer = {
-      TextStoryPostCreationViewModel.Factory(TextStoryPostSendRepository())
-    }
-  )
+//  private val textViewModel: TextStoryPostCreationViewModel by viewModels(
+//    factoryProducer = {
+//      TextStoryPostCreationViewModel.Factory(TextStoryPostSendRepository())
+//    }
+//  )
 
-  private val destination: MediaSelectionDestination
-    get() = MediaSelectionDestination.fromBundle(requireNotNull(intent.getBundleExtra(DESTINATION)))
+//  private val destination: MediaSelectionDestination
+//    get() = MediaSelectionDestination.fromBundle(requireNotNull(intent.getBundleExtra(DESTINATION)))
 
-  private val isStory: Boolean
-    get() = intent.getBooleanExtra(IS_STORY, false)
+//  private val isStory: Boolean
+//    get() = intent.getBooleanExtra(IS_STORY, false)
 
-  private val shareToTextStory: Boolean
-    get() = intent.getBooleanExtra(AS_TEXT_STORY, false)
+//  private val shareToTextStory: Boolean
+//    get() = intent.getBooleanExtra(AS_TEXT_STORY, false)
 
-  private val draftText: CharSequence?
-    get() = intent.getCharSequenceExtra(MESSAGE)
+//  private val draftText: CharSequence?
+//    get() = intent.getCharSequenceExtra(MESSAGE)
 
   override fun attachBaseContext(newBase: Context) {
     delegate.localNightMode = AppCompatDelegate.MODE_NIGHT_YES
@@ -85,29 +85,30 @@ class MediaSelectionActivity :
   override fun onCreate(savedInstanceState: Bundle?, ready: Boolean) {
     setContentView(R.layout.media_selection_activity)
 
-    FullscreenHelper.showSystemUI(window)
-    WindowUtil.setNavigationBarColor(this, 0x01000000)
-    WindowUtil.setStatusBarColor(window, Color.TRANSPARENT)
+//    FullscreenHelper.showSystemUI(window)
+//    WindowUtil.setNavigationBarColor(this, 0x01000000)
+//    WindowUtil.setStatusBarColor(window, Color.TRANSPARENT)
 
     val sendType: MessageSendType = requireNotNull(intent.getParcelableExtra(MESSAGE_SEND_TYPE))
     val initialMedia: List<Media> = intent.getParcelableArrayListExtra(MEDIA) ?: listOf()
-    val message: CharSequence? = if (shareToTextStory) null else draftText
+//    val message: CharSequence? = if (shareToTextStory) null else draftText
+    val message: CharSequence? = intent.getCharSequenceExtra(MESSAGE)
     val isReply: Boolean = intent.getBooleanExtra(IS_REPLY, false)
-    val isAddToGroupStoryFlow: Boolean = intent.getBooleanExtra(IS_ADD_TO_GROUP_STORY_FLOW, false)
+//    val isAddToGroupStoryFlow: Boolean = intent.getBooleanExtra(IS_ADD_TO_GROUP_STORY_FLOW, false)
 
-    val factory = MediaSelectionViewModel.Factory(destination, sendType, initialMedia, message, isReply, isStory, isAddToGroupStoryFlow, MediaSelectionRepository(this))
-    viewModel = ViewModelProvider(this, factory)[MediaSelectionViewModel::class.java]
+//    val factory = MediaSelectionViewModel.Factory(destination, sendType, initialMedia, message, isReply, isStory, isAddToGroupStoryFlow, MediaSelectionRepository(this))
+//    viewModel = ViewModelProvider(this, factory)[MediaSelectionViewModel::class.java]
 
-    val textStoryToggle: ConstraintLayout = findViewById(R.id.switch_widget)
-    val cameraDisplay = CameraDisplay.getDisplay(this)
+//    val textStoryToggle: ConstraintLayout = findViewById(R.id.switch_widget)
+//    val cameraDisplay = CameraDisplay.getDisplay(this)
 
-    textStoryToggle.updateLayoutParams<FrameLayout.LayoutParams> {
-      bottomMargin = cameraDisplay.getToggleBottomMargin()
-    }
+//    textStoryToggle.updateLayoutParams<FrameLayout.LayoutParams> {
+//      bottomMargin = cameraDisplay.getToggleBottomMargin()
+//    }
 
-    val cameraSelectedConstraintSet = ConstraintSet().apply {
-      clone(textStoryToggle)
-    }
+//    val cameraSelectedConstraintSet = ConstraintSet().apply {
+//      clone(textStoryToggle)
+//    }
     val textSelectedConstraintSet = ConstraintSet().apply {
       clone(this@MediaSelectionActivity, R.layout.media_selection_activity_text_selected_constraints)
     }
@@ -124,11 +125,11 @@ class MediaSelectionActivity :
     }
 
     if (savedInstanceState == null) {
-      if (shareToTextStory) {
-        initializeTextStory()
-      }
-
-      cameraSwitch.isSelected = true
+//      if (shareToTextStory) {
+//        initializeTextStory()
+//      }
+//
+//      cameraSwitch.isSelected = true
 
       val navHostFragment = NavHostFragment.create(R.navigation.media)
 
@@ -140,95 +141,95 @@ class MediaSelectionActivity :
       navigateToStartDestination()
     } else {
       viewModel.onRestoreState(savedInstanceState)
-      textViewModel.restoreFromInstanceState(savedInstanceState)
+//      textViewModel.restoreFromInstanceState(savedInstanceState)
     }
 
-    (supportFragmentManager.findFragmentByTag(NAV_HOST_TAG) as NavHostFragment).navController.addOnDestinationChangedListener { _, d, _ ->
-      when (d.id) {
-        R.id.mediaCaptureFragment -> {
-          textStoryToggle.visible = canDisplayStorySwitch()
-
-          animateTextStyling(cameraSwitch, textSwitch, 200)
-          TransitionManager.beginDelayedTransition(textStoryToggle, AutoTransition().setDuration(200))
-          cameraSelectedConstraintSet.applyTo(textStoryToggle)
-        }
-        R.id.textStoryPostCreationFragment -> {
-          textStoryToggle.visible = canDisplayStorySwitch()
-
-          animateTextStyling(textSwitch, cameraSwitch, 200)
-          TransitionManager.beginDelayedTransition(textStoryToggle, AutoTransition().setDuration(200))
-          textSelectedConstraintSet.applyTo(textStoryToggle)
-        }
-        else -> textStoryToggle.visible = false
-      }
-    }
+//    (supportFragmentManager.findFragmentByTag(NAV_HOST_TAG) as NavHostFragment).navController.addOnDestinationChangedListener { _, d, _ ->
+//      when (d.id) {
+//        R.id.mediaCaptureFragment -> {
+////          textStoryToggle.visible = canDisplayStorySwitch()
+//
+//          animateTextStyling(cameraSwitch, textSwitch, 200)
+//          TransitionManager.beginDelayedTransition(textStoryToggle, AutoTransition().setDuration(200))
+//          cameraSelectedConstraintSet.applyTo(textStoryToggle)
+//        }
+//        R.id.textStoryPostCreationFragment -> {
+////          textStoryToggle.visible = canDisplayStorySwitch()
+//
+//          animateTextStyling(textSwitch, cameraSwitch, 200)
+//          TransitionManager.beginDelayedTransition(textStoryToggle, AutoTransition().setDuration(200))
+//          textSelectedConstraintSet.applyTo(textStoryToggle)
+//        }
+//        else -> textStoryToggle.visible = false
+//      }
+//    }
 
     onBackPressedDispatcher.addCallback(OnBackPressed())
   }
 
-  private fun animateTextStyling(selectedSwitch: TextView, unselectedSwitch: TextView, duration: Long) {
-    val offTextColor = ContextCompat.getColor(this, R.color.signal_colorOnSurface)
-    val onTextColor = ContextCompat.getColor(this, R.color.signal_colorSecondaryContainer)
+//  private fun animateTextStyling(selectedSwitch: TextView, unselectedSwitch: TextView, duration: Long) {
+//    val offTextColor = ContextCompat.getColor(this, R.color.signal_colorOnSurface)
+//    val onTextColor = ContextCompat.getColor(this, R.color.signal_colorSecondaryContainer)
+//
+//    animateInShadowLayerValueAnimator?.cancel()
+//    animateInTextColorValueAnimator?.cancel()
+//    animateOutShadowLayerValueAnimator?.cancel()
+//    animateOutTextColorValueAnimator?.cancel()
+//
+//    animateInShadowLayerValueAnimator = ValueAnimator.ofFloat(selectedSwitch.shadowRadius, 0f).apply {
+//      this.duration = duration
+//      addUpdateListener { selectedSwitch.setShadowLayer(it.animatedValue as Float, 0f, 0f, Color.BLACK) }
+//      start()
+//    }
+//    animateInTextColorValueAnimator = ValueAnimator.ofObject(ArgbEvaluatorCompat(), selectedSwitch.currentTextColor, onTextColor).apply {
+//      setEvaluator(ArgbEvaluatorCompat.getInstance())
+//      this.duration = duration
+//      addUpdateListener { selectedSwitch.setTextColor(it.animatedValue as Int) }
+//      start()
+//    }
+//    animateOutShadowLayerValueAnimator = ValueAnimator.ofFloat(unselectedSwitch.shadowRadius, 3f).apply {
+//      this.duration = duration
+//      addUpdateListener { unselectedSwitch.setShadowLayer(it.animatedValue as Float, 0f, 0f, Color.BLACK) }
+//      start()
+//    }
+//    animateOutTextColorValueAnimator = ValueAnimator.ofObject(ArgbEvaluatorCompat(), unselectedSwitch.currentTextColor, offTextColor).apply {
+//      setEvaluator(ArgbEvaluatorCompat.getInstance())
+//      this.duration = duration
+//      addUpdateListener { unselectedSwitch.setTextColor(it.animatedValue as Int) }
+//      start()
+//    }
+//  }
 
-    animateInShadowLayerValueAnimator?.cancel()
-    animateInTextColorValueAnimator?.cancel()
-    animateOutShadowLayerValueAnimator?.cancel()
-    animateOutTextColorValueAnimator?.cancel()
+//  private fun initializeTextStory() {
+//    val message = draftText?.toString() ?: return
+//    val firstLink = LinkPreviewUtil.findValidPreviewUrls(message).findFirst()
+//    val firstLinkUrl = firstLink.map { it.url }.orElse(null)
+//
+//    val iterator = BreakIteratorCompat.getInstance()
+//    iterator.setText(message)
+//    val trimmedMessage = iterator.take(700).toString()
+//
+////    if (firstLinkUrl == message) {
+////      textViewModel.setLinkPreview(firstLinkUrl)
+////    } else if (firstLinkUrl != null) {
+////      textViewModel.setLinkPreview(firstLinkUrl)
+////      textViewModel.setBody(trimmedMessage.replace(firstLinkUrl, "").trim())
+////    } else {
+////      textViewModel.setBody(trimmedMessage.trim())
+////    }
+//  }
 
-    animateInShadowLayerValueAnimator = ValueAnimator.ofFloat(selectedSwitch.shadowRadius, 0f).apply {
-      this.duration = duration
-      addUpdateListener { selectedSwitch.setShadowLayer(it.animatedValue as Float, 0f, 0f, Color.BLACK) }
-      start()
-    }
-    animateInTextColorValueAnimator = ValueAnimator.ofObject(ArgbEvaluatorCompat(), selectedSwitch.currentTextColor, onTextColor).apply {
-      setEvaluator(ArgbEvaluatorCompat.getInstance())
-      this.duration = duration
-      addUpdateListener { selectedSwitch.setTextColor(it.animatedValue as Int) }
-      start()
-    }
-    animateOutShadowLayerValueAnimator = ValueAnimator.ofFloat(unselectedSwitch.shadowRadius, 3f).apply {
-      this.duration = duration
-      addUpdateListener { unselectedSwitch.setShadowLayer(it.animatedValue as Float, 0f, 0f, Color.BLACK) }
-      start()
-    }
-    animateOutTextColorValueAnimator = ValueAnimator.ofObject(ArgbEvaluatorCompat(), unselectedSwitch.currentTextColor, offTextColor).apply {
-      setEvaluator(ArgbEvaluatorCompat.getInstance())
-      this.duration = duration
-      addUpdateListener { unselectedSwitch.setTextColor(it.animatedValue as Int) }
-      start()
-    }
-  }
-
-  private fun initializeTextStory() {
-    val message = draftText?.toString() ?: return
-    val firstLink = LinkPreviewUtil.findValidPreviewUrls(message).findFirst()
-    val firstLinkUrl = firstLink.map { it.url }.orElse(null)
-
-    val iterator = BreakIteratorCompat.getInstance()
-    iterator.setText(message)
-    val trimmedMessage = iterator.take(700).toString()
-
-    if (firstLinkUrl == message) {
-      textViewModel.setLinkPreview(firstLinkUrl)
-    } else if (firstLinkUrl != null) {
-      textViewModel.setLinkPreview(firstLinkUrl)
-      textViewModel.setBody(trimmedMessage.replace(firstLinkUrl, "").trim())
-    } else {
-      textViewModel.setBody(trimmedMessage.trim())
-    }
-  }
-
-  private fun canDisplayStorySwitch(): Boolean {
-    return Stories.isFeatureEnabled() &&
-      isCameraFirst() &&
-      !viewModel.hasSelectedMedia() &&
-      (destination == MediaSelectionDestination.ChooseAfterMediaSelection || destination is MediaSelectionDestination.SingleStory)
-  }
+//  private fun canDisplayStorySwitch(): Boolean {
+//    return Stories.isFeatureEnabled() &&
+//      isCameraFirst() &&
+//      !viewModel.hasSelectedMedia() &&
+//      (destination == MediaSelectionDestination.ChooseAfterMediaSelection || destination is MediaSelectionDestination.SingleStory)
+//  }
 
   override fun onSaveInstanceState(outState: Bundle) {
     super.onSaveInstanceState(outState)
     viewModel.onSaveState(outState)
-    textViewModel.saveToInstanceState(outState)
+//    textViewModel.saveToInstanceState(outState)
   }
 
   override fun onSentWithResult(mediaSendActivityResult: MediaSendActivityResult) {
@@ -326,9 +327,9 @@ class MediaSelectionActivity :
     override fun handleOnBackPressed() {
       val navController = Navigation.findNavController(this@MediaSelectionActivity, R.id.fragment_container)
 
-      if (shareToTextStory && navController.currentDestination?.id == R.id.textStoryPostCreationFragment) {
-        finish()
-      }
+//      if (shareToTextStory && navController.currentDestination?.id == R.id.textStoryPostCreationFragment) {
+//        finish()
+//      }
 
       if (!navController.popBackStack()) {
         finish()
@@ -347,9 +348,9 @@ class MediaSelectionActivity :
     private const val MESSAGE = "message"
     private const val DESTINATION = "destination"
     private const val IS_REPLY = "is_reply"
-    private const val IS_STORY = "is_story"
-    private const val AS_TEXT_STORY = "as_text_story"
-    private const val IS_ADD_TO_GROUP_STORY_FLOW = "is_add_to_group_story_flow"
+//    private const val IS_STORY = "is_story"
+//    private const val AS_TEXT_STORY = "as_text_story"
+//    private const val IS_ADD_TO_GROUP_STORY_FLOW = "is_add_to_group_story_flow"
 
     @JvmStatic
     fun camera(context: Context): Intent {
@@ -361,7 +362,7 @@ class MediaSelectionActivity :
       return buildIntent(
         context = context,
         startAction = R.id.action_directly_to_mediaCaptureFragment,
-        isStory = isStory
+//        isStory = isStory
       )
     }
 
@@ -372,8 +373,8 @@ class MediaSelectionActivity :
       return buildIntent(
         context = context,
         startAction = R.id.action_directly_to_mediaCaptureFragment,
-        isStory = true,
-        isAddToGroupStoryFlow = true,
+//        isStory = true,
+//        isAddToGroupStoryFlow = true,
         destination = MediaSelectionDestination.SingleStory(recipientId)
       )
     }
@@ -448,18 +449,18 @@ class MediaSelectionActivity :
       messageSendType: MessageSendType,
       media: List<Media>,
       recipientSearchKeys: List<ContactSearchKey.RecipientSearchKey>,
-      message: CharSequence?,
-      asTextStory: Boolean
+      message: CharSequence?
+//      asTextStory: Boolean
     ): Intent {
       return buildIntent(
         context = context,
         messageSendType = messageSendType,
         media = media,
         destination = MediaSelectionDestination.MultipleRecipients(recipientSearchKeys),
-        message = message,
-        asTextStory = asTextStory,
-        startAction = if (asTextStory) R.id.action_directly_to_textPostCreationFragment else -1,
-        isStory = recipientSearchKeys.any { it.isStory }
+        message = message
+//        asTextStory = asTextStory,
+//        startAction = if (asTextStory) R.id.action_directly_to_textPostCreationFragment else -1,
+//        isStory = recipientSearchKeys.any { it.isStory }
       )
     }
 
@@ -470,10 +471,10 @@ class MediaSelectionActivity :
       media: List<Media> = listOf(),
       destination: MediaSelectionDestination = MediaSelectionDestination.ChooseAfterMediaSelection,
       message: CharSequence? = null,
-      isReply: Boolean = false,
-      isStory: Boolean = false,
-      asTextStory: Boolean = false,
-      isAddToGroupStoryFlow: Boolean = false
+      isReply: Boolean = false
+//      isStory: Boolean = false,
+//      asTextStory: Boolean = false,
+//      isAddToGroupStoryFlow: Boolean = false
     ): Intent {
       return Intent(context, MediaSelectionActivity::class.java).apply {
         putExtra(START_ACTION, startAction)
@@ -482,9 +483,9 @@ class MediaSelectionActivity :
         putExtra(MESSAGE, message)
         putExtra(DESTINATION, destination.toBundle())
         putExtra(IS_REPLY, isReply)
-        putExtra(IS_STORY, isStory)
-        putExtra(AS_TEXT_STORY, asTextStory)
-        putExtra(IS_ADD_TO_GROUP_STORY_FLOW, isAddToGroupStoryFlow)
+//        putExtra(IS_STORY, isStory)
+//        putExtra(AS_TEXT_STORY, asTextStory)
+//        putExtra(IS_ADD_TO_GROUP_STORY_FLOW, isAddToGroupStoryFlow)
       }
     }
   }

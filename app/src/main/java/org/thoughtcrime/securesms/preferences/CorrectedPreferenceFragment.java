@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.preferences;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceGroupAdapter;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceViewHolder;
@@ -78,5 +80,15 @@ public abstract class CorrectedPreferenceFragment extends PreferenceFragmentComp
       setZeroPaddingToLayoutChildren(viewGroup.getChildAt(i));
       ViewCompat.setPaddingRelative(viewGroup, 0, viewGroup.getPaddingTop(), ViewCompat.getPaddingEnd(viewGroup), viewGroup.getPaddingBottom());
     }
+  }
+
+  protected PreferenceGroup getPreferenceGroup() {
+    return getPreferenceScreen();
+  }
+
+  public boolean onKeyDown(KeyEvent event) {
+//    RecyclerView rv = getListView();
+
+    return false;
   }
 }

@@ -53,24 +53,24 @@ public class ManageProfileActivity extends PassphraseRequiredActivity implements
     setContentView(R.layout.manage_profile_activity);
 
     if (bundle == null) {
-      Bundle   extras = getIntent().getExtras();
+      Bundle extras = getIntent().getExtras();
 
       //noinspection ConstantConditions
       NavController navController = ((NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment)).getNavController();
 
-      NavGraph graph  = navController.getGraph();
+      NavGraph graph = navController.getGraph();
 
       navController.setGraph(graph, extras != null ? extras : new Bundle());
 
       if (extras != null && extras.getBoolean(START_AT_USERNAME, false)) {
-        NavDirections  action = ManageProfileFragmentDirections.actionManageUsername();
+        NavDirections action = ManageProfileFragmentDirections.actionManageUsername();
         SafeNavigation.safeNavigate(navController, action);
       }
 
-      if (extras != null && extras.getBoolean(START_AT_AVATAR, false)) {
-        NavDirections action = ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null);
-        SafeNavigation.safeNavigate(navController, action);
-      }
+//      if (extras != null && extras.getBoolean(START_AT_AVATAR, false)) {
+//        NavDirections action = ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null);
+//        SafeNavigation.safeNavigate(navController, action);
+//      }
     }
   }
 

@@ -8,6 +8,7 @@ import io.reactivex.rxjava3.kotlin.subscribeBy
 import org.thoughtcrime.securesms.R
 import org.thoughtcrime.securesms.components.ViewBinderDelegate
 import org.thoughtcrime.securesms.components.settings.DSLConfiguration
+import org.thoughtcrime.securesms.components.settings.DSLSettingsAdapter
 import org.thoughtcrime.securesms.components.settings.DSLSettingsFragment
 import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
@@ -36,7 +37,7 @@ class WhoCanSeeMyPhoneNumberFragment : DSLSettingsFragment(
 
   private val binding by ViewBinderDelegate(WhoCanSeeMyPhoneNumberFragmentBinding::bind)
 
-  override fun bindAdapter(adapter: MappingAdapter) {
+  override fun bindAdapter(adapter: DSLSettingsAdapter) {
     require(FeatureFlags.phoneNumberPrivacy())
 
     lifecycleDisposable += viewModel.state.subscribe {

@@ -95,25 +95,13 @@
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
         <action
-            android:id="@+id/action_appSettingsFragment_to_manageDonationsFragment"
-            app:destination="@id/manageDonationsFragment"
+            android:id="@+id/action_dataAndStorageSettingsFragment_to_storagePreferenceFragment"
+            app:destination="@id/storagePreferenceFragment"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
-        <action
-            android:id="@+id/action_appSettingsFragment_to_storyPrivacySettings"
-            app:destination="@+id/story_privacy_settings"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit">
 
-            <argument
-                android:name="title_id"
-                app:argType="integer"
-                app:nullable="false" />
-        </action>
     </fragment>
 
     <activity
@@ -121,7 +109,7 @@
         android:name="org.thoughtcrime.securesms.profiles.manage.ManageProfileActivity"
         android:label="manage_profile_activity" />
 
-    <!-- region Account Settings and subpages -->
+    <!-- region: Account Settings and subpages -->
     <fragment
         android:id="@+id/accountSettingsFragment"
         android:name="org.thoughtcrime.securesms.components.settings.app.account.AccountSettingsFragment"
@@ -281,35 +269,58 @@
     <fragment
         android:id="@+id/notificationsSettingsFragment"
         android:name="org.thoughtcrime.securesms.components.settings.app.notifications.NotificationsSettingsFragment"
-        android:label="notifications_settings_fragment">
+        android:label="notifications_settings_fragment" />
 
+    <!-- region: Privacy -->
+    <fragment
+        android:id="@+id/privacySettingsFragment"
+        android:name="org.thoughtcrime.securesms.components.settings.app.privacy.PrivacySettingsFragment"
+        android:label="privacy_settings_fragment">
         <action
-            android:id="@+id/action_notificationsSettingsFragment_to_notificationProfilesFragment"
-            app:destination="@id/notificationProfilesFragment"
+            android:id="@+id/action_privacySettingsFragment_to_blockedUsersActivity"
+            app:destination="@id/blockedUsersActivity"
             app:enterAnim="@anim/fragment_open_enter"
             app:exitAnim="@anim/fragment_open_exit"
             app:popEnterAnim="@anim/fragment_close_enter"
             app:popExitAnim="@anim/fragment_close_exit" />
-
+        <action
+            android:id="@+id/action_privacySettingsFragment_to_advancedPrivacySettingsFragment"
+            app:destination="@id/advancedPrivacySettingsFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
+        <action
+            android:id="@+id/action_privacySettingsFragment_to_disappearingMessagesTimerSelectFragment"
+            app:destination="@id/app_settings_expire_timer"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_open_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_close_exit" />
     </fragment>
 
-    <!-- region Privacy -->
+    <activity
+        android:id="@+id/blockedUsersActivity"
+        android:name="org.thoughtcrime.securesms.blocked.BlockedUsersActivity"
+        android:label="blocked_users_activity" />
 
-    <include app:graph="@navigation/privacy_settings" />
+    <fragment
+        android:id="@+id/advancedPrivacySettingsFragment"
+        android:name="org.thoughtcrime.securesms.components.settings.app.privacy.advanced.AdvancedPrivacySettingsFragment"
+        android:label="advanced_privacy_settings_fragment" />
 
-    <!-- region Data and Storage -->
+    <include app:graph="@navigation/app_settings_expire_timer" />
+
+    <!-- endregion -->
+
+<!--    <include app:graph="@navigation/privacy_settings" />-->
+
+    <!-- region: Data and Storage -->
 
     <fragment
         android:id="@+id/dataAndStorageSettingsFragment"
         android:name="org.thoughtcrime.securesms.components.settings.app.data.DataAndStorageSettingsFragment"
         android:label="data_and_storage_settings_fragment">
-        <action
-            android:id="@+id/action_dataAndStorageSettingsFragment_to_storagePreferenceFragment"
-            app:destination="@id/storagePreferenceFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
         <action
             android:id="@+id/action_dataAndStorageSettingsFragment_to_editProxyFragment"
             app:destination="@id/editProxyFragment"
@@ -331,7 +342,7 @@
 
     <!-- endregion -->
 
-    <!-- region Help -->
+    <!-- region: Help -->
     <fragment
         android:id="@+id/helpSettingsFragment"
         android:name="org.thoughtcrime.securesms.components.settings.app.help.HelpSettingsFragment"
@@ -368,6 +379,7 @@
         android:id="@+id/submitDebugLogActivity"
         android:name="org.thoughtcrime.securesms.logsubmit.SubmitDebugLogActivity"
         android:label="submit_debug_log_activity" />
+
     <!-- endregion -->
 
     <activity
@@ -377,7 +389,6 @@
         tools:layout="@layout/invite_activity" />
 
     <!-- region Direct-To-Page actions -->
-
 
     <action
         android:id="@+id/action_direct_to_backupsPreferenceFragment"
@@ -421,71 +432,6 @@
         app:popEnterAnim="@anim/fragment_close_enter"
         app:popExitAnim="@anim/fragment_close_exit" />
 
-    <action
-        android:id="@+id/action_direct_to_manageDonations"
-        app:destination="@id/manageDonationsFragment"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit"
-        app:popUpTo="@id/app_settings"
-        app:popUpToInclusive="true" />
-
-    <action
-        android:id="@+id/action_direct_to_donateToSignal"
-        app:destination="@id/donate_to_signal"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit"
-        app:popUpTo="@id/app_settings"
-        app:popUpToInclusive="true">
-
-        <argument
-            android:name="start_type"
-            app:argType="org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalType"
-            app:nullable="false" />
-
-    </action>
-
-    <action
-        android:id="@+id/action_direct_to_notificationProfiles"
-        app:destination="@id/notificationProfilesFragment"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit" />
-
-    <action
-        android:id="@+id/action_direct_to_createNotificationProfiles"
-        app:destination="@id/editNotificationProfileFragment"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit"
-        app:popUpTo="@id/app_settings"
-        app:popUpToInclusive="true" />
-
-    <action
-        android:id="@+id/action_direct_to_notificationProfileDetails"
-        app:destination="@id/notificationProfileDetailsFragment"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit"
-        app:popUpTo="@id/app_settings"
-        app:popUpToInclusive="true" />
-
-    <action
-        android:id="@+id/action_direct_to_privacy"
-        app:destination="@id/privacy_settings"
-        app:enterAnim="@anim/fragment_open_enter"
-        app:exitAnim="@anim/fragment_open_exit"
-        app:popEnterAnim="@anim/fragment_close_enter"
-        app:popExitAnim="@anim/fragment_close_exit"
-        app:popUpTo="@id/app_settings"
-        app:popUpToInclusive="true" />
-
     <!-- endregion -->
 
     <!-- Internal Settings -->
@@ -493,272 +439,8 @@
     <fragment
         android:id="@+id/internalSettingsFragment"
         android:name="org.thoughtcrime.securesms.components.settings.app.internal.InternalSettingsFragment"
-        android:label="internal_settings_fragment">
-        <action
-            android:id="@+id/action_internalSettingsFragment_to_donorErrorConfigurationFragment"
-            app:destination="@id/donorErrorConfigurationFragment" />
-        <action
-            android:id="@+id/action_internalSettingsFragment_to_storyDialogsLauncherFragment"
-            app:destination="@id/storyDialogsLauncherFragment" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/donorErrorConfigurationFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.internal.donor.InternalDonorErrorConfigurationFragment"
-        android:label="donor_error_configuration_fragment" />
-
-    <fragment
-        android:id="@+id/storyDialogsLauncherFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.internal.InternalStoryDialogLauncherFragment"
-        android:label="story_dialogs_launcher_fragment" />
+        android:label="internal_settings_fragment" />
 
     <!-- endregion -->
-
-    <!-- Subscriptions -->
-    <fragment
-        android:id="@+id/manageDonationsFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.subscription.manage.ManageDonationsFragment"
-        android:label="manage_donations_fragment"
-        tools:layout="@layout/dsl_settings_fragment">
-        <action
-            android:id="@+id/action_manageDonationsFragment_to_manage_badges"
-            app:destination="@id/manage_badges"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-        <action
-            android:id="@+id/action_manageDonationsFragment_to_donationReceiptListFragment"
-            app:destination="@id/donationReceiptListFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-        <action
-            android:id="@+id/action_manageDonationsFragment_to_subscribeLearnMoreBottomSheetDialog"
-            app:destination="@id/subscribeLearnMoreBottomSheetDialog" />
-        <action
-            android:id="@+id/action_manageDonationsFragment_to_donateToSignalFragment"
-            app:destination="@id/donate_to_signal"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit">
-
-            <argument
-                android:name="start_type"
-                app:argType="org.thoughtcrime.securesms.components.settings.app.subscription.donate.DonateToSignalType"
-                app:nullable="false" />
-        </action>
-    </fragment>
-
-    <fragment
-        android:id="@+id/donationReceiptListFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.subscription.receipts.list.DonationReceiptListFragment"
-        android:label="donation_receipt_list_fragment"
-        tools:layout="@layout/donation_receipt_list_fragment">
-        <action
-            android:id="@+id/action_donationReceiptListFragment_to_donationReceiptDetailFragment"
-            app:destination="@id/donationReceiptDetailFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/donationReceiptDetailFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.subscription.receipts.detail.DonationReceiptDetailFragment"
-        android:label="donation_receipt_detail_fragment"
-        tools:layout="@layout/donation_receipt_detail_fragment">
-
-        <argument
-            android:name="id"
-            app:argType="long" />
-    </fragment>
-
-    <include app:graph="@navigation/donate_to_signal" />
-
-    <dialog
-        android:id="@+id/subscribeLearnMoreBottomSheetDialog"
-        android:name="org.thoughtcrime.securesms.components.settings.app.subscription.subscribe.SubscribeLearnMoreBottomSheetDialogFragment"
-        android:label="subscribe_learn_more_bottom_sheet_dialog"
-        tools:layout="@layout/subscribe_learn_more_bottom_sheet_dialog_fragment" />
-
-    <include app:graph="@navigation/manage_badges" />
-
-    <!-- endregion -->
-
-    <!-- Notification Profiles -->
-    <fragment
-        android:id="@+id/notificationProfilesFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfilesFragment"
-        tools:layout="@layout/notification_profiles_empty">
-
-        <action
-            android:id="@+id/action_notificationProfilesFragment_to_editNotificationProfileFragment"
-            app:destination="@id/editNotificationProfileFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-        <action
-            android:id="@+id/action_notificationProfilesFragment_to_notificationProfileDetailsFragment"
-            app:destination="@id/notificationProfileDetailsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/editNotificationProfileFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.EditNotificationProfileFragment"
-        tools:layout="@layout/fragment_edit_notification_profile">
-
-        <argument
-            android:name="profileId"
-            android:defaultValue="-1L"
-            app:argType="long" />
-
-        <action
-            android:id="@+id/action_editNotificationProfileFragment_to_addAllowedMembersFragment"
-            app:destination="@id/addAllowedMembersFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"
-            app:popUpTo="@id/editNotificationProfileFragment"
-            app:popUpToInclusive="true" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/addAllowedMembersFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.AddAllowedMembersFragment"
-        tools:layout="@layout/fragment_add_allowed_members">
-
-        <argument
-            android:name="profileId"
-            app:argType="long" />
-
-        <action
-            android:id="@+id/action_addAllowedMembersFragment_to_selectRecipientsFragment"
-            app:destination="@id/selectRecipientsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-        <action
-            android:id="@+id/action_addAllowedMembersFragment_to_editNotificationProfileScheduleFragment"
-            app:destination="@id/editNotificationProfileScheduleFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/selectRecipientsFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.SelectRecipientsFragment"
-        tools:layout="@layout/fragment_select_recipients_fragment">
-
-        <argument
-            android:name="profileId"
-            app:argType="long" />
-
-        <argument
-            android:name="currentSelection"
-            android:defaultValue="@null"
-            app:argType="org.thoughtcrime.securesms.recipients.RecipientId[]"
-            app:nullable="true" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/notificationProfileDetailsFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfileDetailsFragment"
-        tools:layout="@layout/dsl_settings_fragment">
-
-        <argument
-            android:name="profileId"
-            app:argType="long" />
-
-        <action
-            android:id="@+id/action_notificationProfileDetailsFragment_to_selectRecipientsFragment"
-            app:destination="@id/selectRecipientsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-        <action
-            android:id="@+id/action_notificationProfileDetailsFragment_to_editNotificationProfileFragment"
-            app:destination="@id/editNotificationProfileFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-        <action
-            android:id="@+id/action_notificationProfileDetailsFragment_to_editNotificationProfileScheduleFragment"
-            app:destination="@id/editNotificationProfileScheduleFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/editNotificationProfileScheduleFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.EditNotificationProfileScheduleFragment"
-        tools:layout="@layout/fragment_edit_notification_profile_schedule">
-
-        <argument
-            android:name="profileId"
-            app:argType="long" />
-
-        <argument
-            android:name="createMode"
-            app:argType="boolean" />
-
-        <action
-            android:id="@+id/action_editNotificationProfileScheduleFragment_to_notificationProfileCreatedFragment"
-            app:destination="@id/notificationProfileCreatedFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"
-            app:popUpTo="@id/addAllowedMembersFragment"
-            app:popUpToInclusive="true" />
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/notificationProfileCreatedFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.notifications.profiles.NotificationProfileCreatedFragment"
-        tools:layout="@layout/fragment_notification_profile_created">
-
-        <argument
-            android:name="profileId"
-            app:argType="long" />
-
-        <action
-            android:id="@+id/action_notificationProfileCreatedFragment_to_notificationProfileDetailsFragment"
-            app:destination="@id/notificationProfileDetailsFragment"
-            app:enterAnim="@anim/fragment_open_enter"
-            app:exitAnim="@anim/fragment_open_exit"
-            app:popEnterAnim="@anim/fragment_close_enter"
-            app:popExitAnim="@anim/fragment_close_exit"
-            app:popUpTo="@id/notificationProfileCreatedFragment"
-            app:popUpToInclusive="true" />
-
-    </fragment>
-
-    <include app:graph="@navigation/story_privacy_settings" />
 
 </navigation>

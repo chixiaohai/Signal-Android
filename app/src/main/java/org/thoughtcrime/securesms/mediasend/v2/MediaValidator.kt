@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.annotation.WorkerThread
 import org.thoughtcrime.securesms.mediasend.Media
 import org.thoughtcrime.securesms.mms.MediaConstraints
-import org.thoughtcrime.securesms.stories.Stories
+//import org.thoughtcrime.securesms.stories.Stories
 import org.thoughtcrime.securesms.util.MediaUtil
 import org.thoughtcrime.securesms.util.Util
 
@@ -55,9 +55,9 @@ object MediaValidator {
       .filter { m ->
         MediaUtil.isImageAndNotGif(m.mimeType) || isValidGif(context, m, mediaConstraints) || isValidVideo(context, m, mediaConstraints)
       }
-      .filter { m ->
-        !isStory || Stories.MediaTransform.getSendRequirements(m) != Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
-      }
+//      .filter { m ->
+//        !isStory || Stories.MediaTransform.getSendRequirements(m) != Stories.MediaTransform.SendRequirements.CAN_NOT_SEND
+//      }
   }
 
   private fun isValidGif(context: Context, media: Media, mediaConstraints: MediaConstraints): Boolean {
