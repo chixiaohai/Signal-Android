@@ -70,9 +70,9 @@ public class ManageProfileFragment extends LoggingFragment {
       Snackbar.make(view, R.string.ManageProfileFragment__username_created, Snackbar.LENGTH_SHORT).show();
     });
 
-    UsernameShareBottomSheet.ResultContract.INSTANCE.registerForResult(getParentFragmentManager(), getViewLifecycleOwner(), isCopiedToClipboard -> {
-      Snackbar.make(view, R.string.ManageProfileFragment__username_copied, Snackbar.LENGTH_SHORT).show();
-    });
+//    UsernameShareBottomSheet.ResultContract.INSTANCE.registerForResult(getParentFragmentManager(), getViewLifecycleOwner(), isCopiedToClipboard -> {
+//      Snackbar.make(view, R.string.ManageProfileFragment__username_copied, Snackbar.LENGTH_SHORT).show();
+//    });
 
     initializeViewModel();
 
@@ -121,9 +121,9 @@ public class ManageProfileFragment extends LoggingFragment {
                     AvatarPreviewActivity.createTransitionBundle(requireActivity(), binding.manageProfileAvatar));
     });
 
-    binding.manageProfileUsernameShare.setOnClickListener(v -> {
-      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToShareUsernameDialog());
-    });
+//    binding.manageProfileUsernameShare.setOnClickListener(v -> {
+//      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToShareUsernameDialog());
+//    });
   }
 
   @Override

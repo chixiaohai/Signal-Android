@@ -136,81 +136,81 @@ class SafetyNumberBottomSheetFragment : DSLSettingsBottomSheetFragment(layoutId 
 //        )
 //      )
 
-      if (state.isEmpty()) {
-        space(DimensionUnit.DP.toPixels(48f).toInt())
+//      if (state.isEmpty()) {
+//        space(DimensionUnit.DP.toPixels(48f).toInt())
+//
+////        noPadTextPref(
+////          title = DSLSettingsText.from(
+////            R.string.SafetyNumberBottomSheetFragment__no_more_recipients_to_show,
+////            DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
+////            DSLSettingsText.CenterModifier,
+////            DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
+////          )
+////        )
+//
+//        space(DimensionUnit.DP.toPixels(48f).toInt())
+//      }
 
-//        noPadTextPref(
-//          title = DSLSettingsText.from(
-//            R.string.SafetyNumberBottomSheetFragment__no_more_recipients_to_show,
-//            DSLSettingsText.TextAppearanceModifier(R.style.Signal_Text_BodyLarge),
-//            DSLSettingsText.CenterModifier,
-//            DSLSettingsText.ColorModifier(ContextCompat.getColor(requireContext(), R.color.signal_colorOnSurfaceVariant))
+//      if (!state.hasLargeNumberOfUntrustedRecipients) {
+//        state.destinationToRecipientMap.values.flatten().distinct().forEach {
+//          customPref(
+//            SafetyNumberRecipientRowItem.Model(
+//              recipient = it.recipient,
+//              isVerified = it.identityRecord.verifiedStatus == IdentityTable.VerifiedStatus.VERIFIED,
+//              distributionListMembershipCount = it.distributionListMembershipCount,
+//              groupMembershipCount = it.groupMembershipCount,
+//              getContextMenuActions = { model ->
+//                val actions = mutableListOf<ActionItem>()
+//
+//                actions.add(
+//                  ActionItem(
+//                    iconRes = R.drawable.ic_safety_number_24,
+//                    title = getString(R.string.SafetyNumberBottomSheetFragment__verify_safety_number),
+//                    tintRes = R.color.signal_colorOnSurface,
+//                    action = {
+//                      lifecycleDisposable += viewModel.getIdentityRecord(model.recipient.id).subscribe { record ->
+//                        VerifyIdentityFragment.createDialog(
+//                          model.recipient.id,
+//                          IdentityKeyParcelable(record.identityKey),
+//                          false
+//                        ).show(childFragmentManager, null)
+//                      }
+//                    }
+//                  )
+//                )
+//
+//                if (model.distributionListMembershipCount > 0) {
+//                  actions.add(
+//                    ActionItem(
+//                      iconRes = R.drawable.ic_circle_x_24,
+//                      title = getString(R.string.SafetyNumberBottomSheetFragment__remove_from_story),
+//                      tintRes = R.color.signal_colorOnSurface,
+//                      action = {
+//                        viewModel.removeRecipientFromSelectedStories(model.recipient.id)
+//                      }
+//                    )
+//                  )
+//                }
+//
+//                if (model.distributionListMembershipCount == 0 && model.groupMembershipCount == 0) {
+//                  actions.add(
+//                    ActionItem(
+//                      iconRes = R.drawable.ic_circle_x_24,
+//                      title = getString(R.string.SafetyNumberReviewConnectionsFragment__remove),
+//                      tintRes = R.color.signal_colorOnSurface,
+//                      action = {
+//                        viewModel.removeDestination(model.recipient.id)
+//                      }
+//                    )
+//                  )
+//                }
+//
+//                actions
+//              }
+//            )
 //          )
-//        )
-
-        space(DimensionUnit.DP.toPixels(48f).toInt())
-      }
-
-      if (!state.hasLargeNumberOfUntrustedRecipients) {
-        state.destinationToRecipientMap.values.flatten().distinct().forEach {
-          customPref(
-            SafetyNumberRecipientRowItem.Model(
-              recipient = it.recipient,
-              isVerified = it.identityRecord.verifiedStatus == IdentityTable.VerifiedStatus.VERIFIED,
-              distributionListMembershipCount = it.distributionListMembershipCount,
-              groupMembershipCount = it.groupMembershipCount,
-              getContextMenuActions = { model ->
-                val actions = mutableListOf<ActionItem>()
-
-                actions.add(
-                  ActionItem(
-                    iconRes = R.drawable.ic_safety_number_24,
-                    title = getString(R.string.SafetyNumberBottomSheetFragment__verify_safety_number),
-                    tintRes = R.color.signal_colorOnSurface,
-                    action = {
-                      lifecycleDisposable += viewModel.getIdentityRecord(model.recipient.id).subscribe { record ->
-                        VerifyIdentityFragment.createDialog(
-                          model.recipient.id,
-                          IdentityKeyParcelable(record.identityKey),
-                          false
-                        ).show(childFragmentManager, null)
-                      }
-                    }
-                  )
-                )
-
-                if (model.distributionListMembershipCount > 0) {
-                  actions.add(
-                    ActionItem(
-                      iconRes = R.drawable.ic_circle_x_24,
-                      title = getString(R.string.SafetyNumberBottomSheetFragment__remove_from_story),
-                      tintRes = R.color.signal_colorOnSurface,
-                      action = {
-                        viewModel.removeRecipientFromSelectedStories(model.recipient.id)
-                      }
-                    )
-                  )
-                }
-
-                if (model.distributionListMembershipCount == 0 && model.groupMembershipCount == 0) {
-                  actions.add(
-                    ActionItem(
-                      iconRes = R.drawable.ic_circle_x_24,
-                      title = getString(R.string.SafetyNumberReviewConnectionsFragment__remove),
-                      tintRes = R.color.signal_colorOnSurface,
-                      action = {
-                        viewModel.removeDestination(model.recipient.id)
-                      }
-                    )
-                  )
-                }
-
-                actions
-              }
-            )
-          )
-        }
-      }
+//        }
+//      }
     }
   }
 
