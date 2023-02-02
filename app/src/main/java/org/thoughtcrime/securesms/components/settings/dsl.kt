@@ -1,12 +1,7 @@
 package org.thoughtcrime.securesms.components.settings
 
 import androidx.annotation.CallSuper
-import androidx.annotation.Px
 import androidx.annotation.StringRes
-import org.thoughtcrime.securesms.components.settings.models.AsyncSwitch
-import org.thoughtcrime.securesms.components.settings.models.Button
-import org.thoughtcrime.securesms.components.settings.models.Space
-import org.thoughtcrime.securesms.components.settings.models.Text
 import org.thoughtcrime.securesms.util.adapter.mapping.MappingModel
 import org.thoughtcrime.securesms.util.adapter.mapping.MappingModelList
 
@@ -17,9 +12,9 @@ fun configure(init: DSLConfiguration.() -> Unit): DSLConfiguration {
 }
 
 class DSLConfiguration {
-  private val children = arrayListOf<MappingModel<*>>()
+  private val children = arrayListOf<PreferenceModel<*>>()
 
-  fun customPref(customPreference: MappingModel<*>) {
+  fun customPref(customPreference: PreferenceModel<*>) {
     children.add(customPreference)
   }
 
@@ -57,26 +52,16 @@ class DSLConfiguration {
     children.add(preference)
   }
 
-  fun asyncSwitchPref(
-    title: DSLSettingsText,
-    isEnabled: Boolean = true,
-    isChecked: Boolean,
-    isProcessing: Boolean,
-    onClick: () -> Unit
-  ) {
-    val preference = AsyncSwitch.Model(title, isEnabled, isChecked, isProcessing, onClick)
-    children.add(preference)
-  }
-
   fun switchPref(
     title: DSLSettingsText,
     summary: DSLSettingsText? = null,
     icon: DSLSettingsIcon? = null,
     isEnabled: Boolean = true,
     isChecked: Boolean,
+    isVisible: Boolean = false,
     onClick: () -> Unit
   ) {
-    val preference = SwitchPreference(title, summary, icon, isEnabled, isChecked, onClick)
+    val preference = SwitchPreference(title, summary, icon, isEnabled, isChecked, isVisible, onClick)
     children.add(preference)
   }
 
@@ -95,12 +80,10 @@ class DSLConfiguration {
     title: DSLSettingsText,
     summary: DSLSettingsText? = null,
     icon: DSLSettingsIcon? = null,
-    iconEnd: DSLSettingsIcon? = null,
     isEnabled: Boolean = true,
-    onClick: () -> Unit,
-    onLongClick: (() -> Boolean)? = null
+    onClick: () -> Unit
   ) {
-    val preference = ClickPreference(title, summary, icon, iconEnd, isEnabled, onClick, onLongClick)
+    val preference = ClickPreference(title, summary, icon, isEnabled, onClick)
     children.add(preference)
   }
 
@@ -139,68 +122,12 @@ class DSLConfiguration {
     children.add(preference)
   }
 
-  fun noPadTextPref(title: DSLSettingsText) {
-    val preference = Text(title)
-    children.add(Text.Model(preference))
-  }
-
-  fun space(@Px pixels: Int) {
-    val preference = Space(pixels)
-    children.add(Space.Model(preference))
-  }
-
-  fun primaryButton(
-    text: DSLSettingsText,
-    icon: DSLSettingsIcon? = null,
-    isEnabled: Boolean = true,
-    onClick: () -> Unit
-  ) {
-    val preference = Button.Model.Primary(text, icon, isEnabled, onClick)
-    children.add(preference)
-  }
-
-  fun primaryWrappedButton(
-    text: DSLSettingsText,
-    isEnabled: Boolean = true,
-    onClick: () -> Unit
-  ) {
-    val preference = Button.Model.PrimaryWrapped(text, null, isEnabled, onClick)
-    children.add(preference)
-  }
-
-  fun tonalButton(
-    text: DSLSettingsText,
-    isEnabled: Boolean = true,
-    onClick: () -> Unit
-  ) {
-    val preference = Button.Model.Tonal(text, null, isEnabled, onClick)
-    children.add(preference)
-  }
-
-  fun secondaryButtonNoOutline(
-    text: DSLSettingsText,
-    icon: DSLSettingsIcon? = null,
-    isEnabled: Boolean = true,
-    onClick: () -> Unit
-  ) {
-    val preference = Button.Model.SecondaryNoOutline(text, icon, isEnabled, onClick)
-    children.add(preference)
-  }
-
   fun textPref(
     title: DSLSettingsText? = null,
-    summary: DSLSettingsText? = null
-  ) {
-    val preference = TextPreference(title, summary)
-    children.add(preference)
-  }
-
-  fun learnMoreTextPref(
-    title: DSLSettingsText? = null,
     summary: DSLSettingsText? = null,
-    onClick: () -> Unit
+    isVisible: Boolean = false
   ) {
-    val preference = LearnMoreTextPreference(title, summary, onClick)
+    val preference = TextPreference(title, summary, isVisible)
     children.add(preference)
   }
 
@@ -211,8 +138,8 @@ abstract class PreferenceModel<T : PreferenceModel<T>>(
   open val title: DSLSettingsText? = null,
   open val summary: DSLSettingsText? = null,
   open val icon: DSLSettingsIcon? = null,
-  open val iconEnd: DSLSettingsIcon? = null,
   open val isEnabled: Boolean = true,
+  open val isVisiable: Boolean = false
 ) : MappingModel<T> {
   override fun areItemsTheSame(newItem: T): Boolean {
     return when {
@@ -227,21 +154,15 @@ abstract class PreferenceModel<T : PreferenceModel<T>>(
     return areItemsTheSame(newItem) &&
       newItem.summary == summary &&
       newItem.icon == icon &&
-      newItem.isEnabled == isEnabled &&
-      newItem.iconEnd == iconEnd
+      newItem.isEnabled == isEnabled
   }
 }
 
 class TextPreference(
   title: DSLSettingsText?,
-  summary: DSLSettingsText?
-) : PreferenceModel<TextPreference>(title = title, summary = summary)
-
-class LearnMoreTextPreference(
-  override val title: DSLSettingsText?,
-  override val summary: DSLSettingsText?,
-  val onClick: () -> Unit
-) : PreferenceModel<LearnMoreTextPreference>()
+  summary: DSLSettingsText?,
+  isVisible: Boolean = false
+) : PreferenceModel<TextPreference>(title = title, summary = summary, isVisiable = isVisible)
 
 class DividerPreference : PreferenceModel<DividerPreference>() {
   override fun areItemsTheSame(newItem: DividerPreference) = true
@@ -283,6 +204,7 @@ class SwitchPreference(
   override val icon: DSLSettingsIcon? = null,
   override val isEnabled: Boolean,
   val isChecked: Boolean,
+  isVisible: Boolean = false,
   val onClick: () -> Unit
 ) : PreferenceModel<SwitchPreference>() {
   override fun areContentsTheSame(newItem: SwitchPreference): Boolean {
@@ -306,10 +228,8 @@ class ClickPreference(
   override val title: DSLSettingsText,
   override val summary: DSLSettingsText? = null,
   override val icon: DSLSettingsIcon? = null,
-  override val iconEnd: DSLSettingsIcon? = null,
   override val isEnabled: Boolean = true,
-  val onClick: () -> Unit,
-  val onLongClick: (() -> Boolean)? = null
+  val onClick: () -> Unit
 ) : PreferenceModel<ClickPreference>()
 
 class LongClickPreference(

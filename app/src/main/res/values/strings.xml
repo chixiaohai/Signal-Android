@@ -2744,7 +2744,7 @@ Updated May 25, 2018\n
     <string name="preferences__fast">Fast</string>
     <string name="preferences__normal">Normal</string>
     <string name="preferences__slow">Slow</string>
-    <string name="preferences__help">Help</string>
+    <string name="preferences__help">About</string>
     <string name="preferences__advanced">Advanced</string>
     <string name="preferences__donate_to_signal">Donate to Signal</string>
     <!-- Preference label for making one-time donations to Signal -->
@@ -2828,7 +2828,7 @@ Updated May 25, 2018\n
     <string name="preferences_app_protection__who_can">Who can…</string>
     <!-- Privacy settings payments section title -->
     <string name="preferences_app_protection__payments">Payments</string>
-    <string name="preferences_chats__chats">Chats</string>
+    <string name="preferences_chats__chats">Attachments</string>
     <string name="preferences_data_and_storage__manage_storage">Manage storage</string>
     <string name="preferences_data_and_storage__use_less_data_for_calls">Use less data for calls</string>
     <string name="preferences_data_and_storage__never">Never</string>
@@ -3434,7 +3434,7 @@ Updated May 25, 2018\n
     <string name="preferences_app_protection__pin_reminders">PIN reminders</string>
     <string name="preferences_app_protection__turn_off">Turn off</string>
     <string name="preferences_app_protection__confirm_pin">Confirm PIN</string>
-    <string name="preferences_app_protection__confirm_your_signal_pin">Confirm your Signal PIN</string>
+    <string name="preferences_app_protection__confirm_your_signal_pin">Confirm your Pigeon PIN</string>
     <string name="preferences_app_protection__make_sure_you_memorize_or_securely_store_your_pin">Make sure you memorize or securely store your PIN as it can\'t be recovered. If you forget your PIN, you may lose data when re-registering your Signal account.</string>
     <string name="preferences_app_protection__incorrect_pin_try_again">Incorrect PIN. Try again.</string>
     <string name="preferences_app_protection__failed_to_enable_registration_lock">Failed to enable registration lock.</string>

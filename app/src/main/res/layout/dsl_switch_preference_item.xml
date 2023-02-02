@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:viewBindingIgnore="true"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dsl_preference_item_background"
-    android:minHeight="56dp">
+    android:defaultFocusHighlightEnabled="false">
 
     <ImageView
         android:id="@+id/icon"
@@ -17,24 +15,28 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@drawable/ic_advanced_24" />
+        tools:srcCompat="@drawable/ic_advanced_24"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/title"
-        android:layout_width="0dp"
+        style="@style/Signal.Text.Body"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:textAppearance="@style/Signal.Text.BodyLarge"
+        android:paddingStart="35dp"
+        android:paddingEnd="5dp"
+        android:textSize="24sp"
+        android:textColor="@color/white_not_focus"
         app:layout_constraintBottom_toTopOf="@id/summary"
-        app:layout_constraintEnd_toStartOf="@id/switch_widget"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/icon"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
-        app:layout_goneMarginBottom="16dp"
         app:layout_goneMarginStart="@dimen/dsl_settings_gutter"
-        tools:text="Message font size" />
+        android:singleLine="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:ellipsize="marquee"
+        android:focusable="true"/>
 
     <TextView
         android:id="@+id/summary"
@@ -44,7 +46,7 @@
         android:layout_marginEnd="@dimen/dsl_settings_gutter"
         android:layout_marginBottom="16dp"
         android:lineSpacingExtra="4sp"
-        android:textAppearance="@style/Signal.Text.BodyMedium"
+        android:textAppearance="@style/TextAppearance.Signal.Body2"
         android:textColor="@color/text_color_secondary_enabled_selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/switch_widget"
@@ -53,7 +55,7 @@
         app:layout_goneMarginStart="@dimen/dsl_settings_gutter"
         app:layout_goneMarginTop="16dp"
         tools:text="Some random text to get stuff onto more than one line but not absurdly long like lorem/random"
-        tools:visibility="visible" />
+        android:visibility="gone"/>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/switch_widget"
@@ -64,6 +66,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:useMaterialThemeColors="true" />
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
