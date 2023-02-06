@@ -1026,7 +1026,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       list.removeItemDecoration(inlineDateDecoration);
     }
 
-    inlineDateDecoration = new StickyHeaderDecoration(adapter, false, false, ConversationAdapter.HEADER_TYPE_INLINE_DATE);
+    inlineDateDecoration = new StickyHeaderDecoration(adapter, false, false);
     list.addItemDecoration(inlineDateDecoration, 0);
   }
 
@@ -1619,7 +1619,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
     private void bindScrollHeader(StickyHeaderViewHolder headerViewHolder, int positionId) {
       if (((ConversationAdapter)list.getAdapter()).getHeaderId(positionId) != -1) {
-        ((ConversationAdapter) list.getAdapter()).onBindHeaderViewHolder(headerViewHolder, positionId, ConversationAdapter.HEADER_TYPE_POPOVER_DATE);
+        ((ConversationAdapter) list.getAdapter()).onBindHeaderViewHolder(headerViewHolder, positionId);
       }
     }
   }

@@ -349,7 +349,7 @@ public final class ContactSelectionListFragment2 extends Fragment
     recyclerView.setClipToPadding(false);
     recyclerView.setClipChildren(false);
     recyclerView.setPadding(0, 76, 0, 200);
-    recyclerView.addItemDecoration(new StickyHeaderDecoration(concatenateAdapter, true, true,0));
+    recyclerView.addItemDecoration(new StickyHeaderDecoration(concatenateAdapter, true, true));
 
 
   }

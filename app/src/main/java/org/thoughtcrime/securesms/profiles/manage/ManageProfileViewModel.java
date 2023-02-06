@@ -38,12 +38,12 @@ class ManageProfileViewModel extends ViewModel {
 
   private static final String TAG = Log.tag(ManageProfileViewModel.class);
 
-  private final MutableLiveData<InternalAvatarState> internalAvatarState;
+  private final LiveData<AvatarState>                avatar;
+//  private final MutableLiveData<InternalAvatarState> internalAvatarState;
   private final MutableLiveData<ProfileName>         profileName;
   private final MutableLiveData<String>              username;
   private final MutableLiveData<String>              about;
   private final MutableLiveData<String>              aboutEmoji;
-  private final LiveData<AvatarState>                avatarState;
   private final SingleLiveEvent<Event>               events;
   private final RecipientForeverObserver             observer;
   private final ManageProfileRepository          repository;
@@ -52,7 +52,7 @@ class ManageProfileViewModel extends ViewModel {
   private byte[] previousAvatar;
 
   public ManageProfileViewModel() {
-    this.internalAvatarState = new MutableLiveData<>();
+    this.avatar              = new MutableLiveData<>();
     this.profileName         = new MutableLiveData<>();
     this.username            = new MutableLiveData<>();
     this.about               = new MutableLiveData<>();
@@ -61,7 +61,7 @@ class ManageProfileViewModel extends ViewModel {
     this.repository          = new ManageProfileRepository();
 //    this.badge               = new DefaultValueLiveData<>(Optional.empty());
     this.observer            = this::onRecipientChanged;
-    this.avatarState         = LiveDataUtil.combineLatest(Recipient.self().live().getLiveData(), internalAvatarState, (self, state) -> new AvatarState(state, self));
+//    this.avatar         = LiveDataUtil.combineLatest(Recipient.self().live().getLiveData(), internalAvatarState, (self, state) -> new AvatarState(state, self));
 
     SignalExecutors.BOUNDED.execute(() -> {
       onRecipientChanged(Recipient.self().fresh());
@@ -72,7 +72,7 @@ class ManageProfileViewModel extends ViewModel {
   }
 
   public @NonNull LiveData<AvatarState> getAvatar() {
-    return Transformations.distinctUntilChanged(avatarState);
+    return Transformations.distinctUntilChanged(avatar);
   }
 
   public @NonNull LiveData<ProfileName> getProfileName() {
@@ -103,54 +103,54 @@ class ManageProfileViewModel extends ViewModel {
     return FeatureFlags.usernames();
   }
 
-  public void onAvatarSelected(@NonNull Context context, @Nullable Media media) {
-    previousAvatar = internalAvatarState.getValue() != null ? internalAvatarState.getValue().getAvatar() : null;
+//  public void onAvatarSelected(@NonNull Context context, @Nullable Media media) {
+//    previousAvatar = avatar.getValue() != null ? avatar.getValue().getAvatar() : null;
+//
+//    if (media == null) {
+//      avatar.postValue(AvatarState.loading(null));
+//      repository.clearAvatar(context, result -> {
+//        switch (result) {
+//          case SUCCESS:
+//            avatar.postValue(InternalAvatarState.loaded(null));
+//            previousAvatar = null;
+//            break;
+//          case FAILURE_NETWORK:
+//            avatar.postValue(InternalAvatarState.loaded(previousAvatar));
+//            events.postValue(Event.AVATAR_NETWORK_FAILURE);
+//            break;
+//        }
+//      });
+//    } else {
+//      SignalExecutors.BOUNDED.execute(() -> {
+//        try {
+//          InputStream stream = BlobProvider.getInstance().getStream(context, media.getUri());
+//          byte[]      data   = StreamUtil.readFully(stream);
+//
+//          avatar.postValue(InternalAvatarState.loading(data));
+//
+//          repository.setAvatar(context, data, media.getMimeType(), result -> {
+//            switch (result) {
+//              case SUCCESS:
+//                avatar.postValue(InternalAvatarState.loaded(data));
+//                previousAvatar = data;
+//                break;
+//              case FAILURE_NETWORK:
+//                avatar.postValue(InternalAvatarState.loaded(previousAvatar));
+//                events.postValue(Event.AVATAR_NETWORK_FAILURE);
+//                break;
+//            }
+//          });
+//        } catch (IOException e) {
+//          Log.w(TAG, "Failed to save avatar!", e);
+//          events.postValue(Event.AVATAR_DISK_FAILURE);
+//        }
+//      });
+//    }
+//  }
 
-    if (media == null) {
-      internalAvatarState.postValue(InternalAvatarState.loading(null));
-      repository.clearAvatar(context, result -> {
-        switch (result) {
-          case SUCCESS:
-            internalAvatarState.postValue(InternalAvatarState.loaded(null));
-            previousAvatar = null;
-            break;
-          case FAILURE_NETWORK:
-            internalAvatarState.postValue(InternalAvatarState.loaded(previousAvatar));
-            events.postValue(Event.AVATAR_NETWORK_FAILURE);
-            break;
-        }
-      });
-    } else {
-      SignalExecutors.BOUNDED.execute(() -> {
-        try {
-          InputStream stream = BlobProvider.getInstance().getStream(context, media.getUri());
-          byte[]      data   = StreamUtil.readFully(stream);
-
-          internalAvatarState.postValue(InternalAvatarState.loading(data));
-
-          repository.setAvatar(context, data, media.getMimeType(), result -> {
-            switch (result) {
-              case SUCCESS:
-                internalAvatarState.postValue(InternalAvatarState.loaded(data));
-                previousAvatar = data;
-                break;
-              case FAILURE_NETWORK:
-                internalAvatarState.postValue(InternalAvatarState.loaded(previousAvatar));
-                events.postValue(Event.AVATAR_NETWORK_FAILURE);
-                break;
-            }
-          });
-        } catch (IOException e) {
-          Log.w(TAG, "Failed to save avatar!", e);
-          events.postValue(Event.AVATAR_DISK_FAILURE);
-        }
-      });
-    }
-  }
-
-  public boolean canRemoveAvatar() {
-    return internalAvatarState.getValue() != null;
-  }
+//  public boolean canRemoveAvatar() {
+//    return internalAvatarState.getValue() != null;
+//  }
 
   private void onRecipientChanged(@NonNull Recipient recipient) {
     profileName.postValue(recipient.getProfileName());
@@ -158,21 +158,21 @@ class ManageProfileViewModel extends ViewModel {
     about.postValue(recipient.getAbout());
     aboutEmoji.postValue(recipient.getAboutEmoji());
 //    badge.postValue(Optional.ofNullable(recipient.getFeaturedBadge()));
-    renderAvatar(AvatarHelper.getSelfProfileAvatarStream(ApplicationDependencies.getApplication()));
+//    renderAvatar(AvatarHelper.getSelfProfileAvatarStream(ApplicationDependencies.getApplication()));
   }
 
-  private void renderAvatar(@Nullable StreamDetails details) {
-    if (details != null) {
-      try {
-        internalAvatarState.postValue(InternalAvatarState.loaded(StreamUtil.readFully(details.getStream())));
-      } catch (IOException e) {
-        Log.w(TAG, "Failed to read avatar!");
-        internalAvatarState.postValue(InternalAvatarState.none());
-      }
-    } else {
-      internalAvatarState.postValue(InternalAvatarState.none());
-    }
-  }
+//  private void renderAvatar(@Nullable StreamDetails details) {
+//    if (details != null) {
+//      try {
+//        internalAvatarState.postValue(InternalAvatarState.loaded(StreamUtil.readFully(details.getStream())));
+//      } catch (IOException e) {
+//        Log.w(TAG, "Failed to read avatar!");
+//        internalAvatarState.postValue(InternalAvatarState.none());
+//      }
+//    } else {
+//      internalAvatarState.postValue(InternalAvatarState.none());
+//    }
+//  }
 
   @Override
   protected void onCleared() {

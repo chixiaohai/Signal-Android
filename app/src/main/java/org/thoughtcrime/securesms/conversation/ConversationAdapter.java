@@ -335,35 +335,19 @@ public class ConversationAdapter
   }
 
   @Override
-  public StickyHeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position, int type) {
+  public StickyHeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position) {
     return new StickyHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.conversation_item_header, parent, false));
   }
 
   @Override
-  public void onBindHeaderViewHolder(StickyHeaderViewHolder viewHolder, int position, int type) {
-    Context             context             = viewHolder.itemView.getContext();
+  public void onBindHeaderViewHolder(StickyHeaderViewHolder viewHolder, int position) {
     ConversationMessage conversationMessage = Objects.requireNonNull(getItem(position));
+    viewHolder.setText(DateUtils.getConversationDateHeaderString(viewHolder.itemView.getContext(), locale, conversationMessage.getMessageRecord().getDateReceived()));
 
-    viewHolder.setText(DateUtils.getConversationDateHeaderString(viewHolder.itemView.getContext(), locale, conversationMessage.getMessageRecord().getDateSent()));
-
-    if (type == HEADER_TYPE_POPOVER_DATE) {
-      if (hasWallpaper) {
-        viewHolder.setBackgroundRes(R.drawable.wallpaper_bubble_background_18);
-      } else {
-        viewHolder.setBackgroundRes(R.drawable.sticky_date_header_background);
-      }
-    } else if (type == HEADER_TYPE_INLINE_DATE) {
-      if (hasWallpaper) {
-        viewHolder.setBackgroundRes(R.drawable.wallpaper_bubble_background_18);
-      } else {
-        viewHolder.clearBackground();
-      }
-    }
-
-    if (hasWallpaper && ThemeUtil.isDarkTheme(context)) {
-      viewHolder.setTextColor(ContextCompat.getColor(context, R.color.signal_colorNeutralInverse));
+    if (recipient.hasWallpaper()) {
+      viewHolder.setBackgroundRes(R.drawable.wallpaper_bubble_background_8);
     } else {
-      viewHolder.setTextColor(ContextCompat.getColor(context, R.color.signal_colorOnSurfaceVariant));
+      viewHolder.clearBackground();
     }
   }
 

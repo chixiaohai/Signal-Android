@@ -27,9 +27,9 @@ class PaymentsSecuritySetupFragment : Fragment(R.layout.payments_security_setup_
         }
       }
     )
-    binding.paymentsSecuritySetupEnableLock.setOnClickListener {
-      findNavController().safeNavigate(PaymentsHomeFragmentDirections.actionPaymentsHomeToPrivacySettings(true))
-    }
+//    binding.paymentsSecuritySetupEnableLock.setOnClickListener {
+//      findNavController().safeNavigate(PaymentsHomeFragmentDirections.actionPaymentsHomeToPrivacySettings(true))
+//    }
     binding.paymentsSecuritySetupFragmentNotNow.setOnClickListener { showSkipDialog() }
     binding.toolbar.setNavigationOnClickListener { showSkipDialog() }
   }

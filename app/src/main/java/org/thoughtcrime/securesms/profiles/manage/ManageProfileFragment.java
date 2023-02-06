@@ -2,11 +2,11 @@ package org.thoughtcrime.securesms.profiles.manage;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,30 +18,17 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
-import com.airbnb.lottie.SimpleColorFilter;
 import com.bumptech.glide.Glide;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.signal.core.util.logging.Log;
-import org.thoughtcrime.securesms.AvatarPreviewActivity;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
-//import org.thoughtcrime.securesms.avatar.Avatars;
-//import org.thoughtcrime.securesms.avatar.picker.AvatarPickerFragment;
-//import org.thoughtcrime.securesms.badges.models.Badge;
-//import org.thoughtcrime.securesms.badges.self.none.BecomeASustainerFragment;
-import org.thoughtcrime.securesms.components.emoji.EmojiTextView;
 import org.thoughtcrime.securesms.components.emoji.EmojiUtil;
 import org.thoughtcrime.securesms.databinding.ManageProfileFragmentBinding;
-import org.thoughtcrime.securesms.mediasend.Media;
 import org.thoughtcrime.securesms.profiles.ProfileName;
-import org.thoughtcrime.securesms.profiles.manage.ManageProfileViewModel.AvatarState;
-import org.thoughtcrime.securesms.recipients.Recipient;
-import org.thoughtcrime.securesms.util.FeatureFlags;
-import org.thoughtcrime.securesms.util.NameUtil;
 import org.thoughtcrime.securesms.util.livedata.LiveDataUtil;
 import org.thoughtcrime.securesms.util.navigation.SafeNavigation;
-import org.thoughtcrime.securesms.util.views.SimpleProgressDialog;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -52,9 +39,19 @@ import java.util.Optional;
 public class ManageProfileFragment extends LoggingFragment {
 
   private static final String TAG = Log.tag(ManageProfileFragment.class);
+  private static final short  REQUEST_CODE_SELECT_AVATAR = 31726;
 
-  private AlertDialog                  avatarProgress;
-  private ManageProfileViewModel       viewModel;
+  private ManageProfileViewModel viewModel;
+
+  public static int mFocusHeight;
+  public static int mNormalHeight;
+  public static int mFocusTextSize;
+  public static int mNormalTextSize;
+  public static int mNormalPaddingX;
+  public static int mFocusPaddingX;
+
+//  private AlertDialog                  avatarProgress;
+//  private ManageProfileViewModel       viewModel;
   private ManageProfileFragmentBinding binding;
 
   @Override
@@ -76,7 +73,7 @@ public class ManageProfileFragment extends LoggingFragment {
 
     initializeViewModel();
 
-    binding.toolbar.setNavigationOnClickListener(v -> requireActivity().finish());
+//    binding.toolbar.setNavigationOnClickListener(v -> requireActivity().finish());
 
 //    binding.manageProfileEditPhoto.setOnClickListener(v -> onEditAvatarClicked());
 
@@ -101,12 +98,12 @@ public class ManageProfileFragment extends LoggingFragment {
 //      }
 //    });
 
-    EmojiTextView avatarInitials = binding.manageProfileAvatarInitials;
-    avatarInitials.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-      if (avatarInitials.length() > 0) {
-//        updateInitials(avatarInitials.getText().toString());
-      }
-    });
+//    EmojiTextView avatarInitials = binding.manageProfileAvatarInitials;
+//    avatarInitials.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
+//      if (avatarInitials.length() > 0) {
+////        updateInitials(avatarInitials.getText().toString());
+//      }
+//    });
 
 //    binding.manageProfileBadgesContainer.setOnClickListener(v -> {
 //      if (Recipient.self().getBadges().isEmpty()) {
@@ -116,10 +113,10 @@ public class ManageProfileFragment extends LoggingFragment {
 //      }
 //    });
 
-    binding.manageProfileAvatar.setOnClickListener(v -> {
-      startActivity(AvatarPreviewActivity.intentFromRecipientId(requireContext(), Recipient.self().getId()),
-                    AvatarPreviewActivity.createTransitionBundle(requireActivity(), binding.manageProfileAvatar));
-    });
+//    binding.manageProfileAvatar.setOnClickListener(v -> {
+//      startActivity(AvatarPreviewActivity.intentFromRecipientId(requireContext(), Recipient.self().getId()),
+//                    AvatarPreviewActivity.createTransitionBundle(requireActivity(), binding.manageProfileAvatar));
+//    });
 
 //    binding.manageProfileUsernameShare.setOnClickListener(v -> {
 //      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToShareUsernameDialog());
@@ -137,7 +134,7 @@ public class ManageProfileFragment extends LoggingFragment {
 
     LiveData<Optional<byte[]>> avatarImage = Transformations.map(LiveDataUtil.distinctUntilChanged(viewModel.getAvatar(), (b1, b2) -> Arrays.equals(b1.getAvatar(), b2.getAvatar())),
                                                                  b -> Optional.ofNullable(b.getAvatar()));
-    avatarImage.observe(getViewLifecycleOwner(), this::presentAvatarImage);
+//    avatarImage.observe(getViewLifecycleOwner(), this::presentAvatarImage);
 
 //    viewModel.getAvatar().observe(getViewLifecycleOwner(), this::presentAvatarPlaceholder);
     viewModel.getProfileName().observe(getViewLifecycleOwner(), this::presentProfileName);
@@ -153,16 +150,16 @@ public class ManageProfileFragment extends LoggingFragment {
     }
   }
 
-  private void presentAvatarImage(@NonNull Optional<byte[]> avatarData) {
-    if (avatarData.isPresent()) {
-      Glide.with(this)
-           .load(avatarData.get())
-           .circleCrop()
-           .into(binding.manageProfileAvatar);
-    } else {
-      Glide.with(this).load((Drawable) null).into(binding.manageProfileAvatar);
-    }
-  }
+//  private void presentAvatarImage(@NonNull Optional<byte[]> avatarData) {
+//    if (avatarData.isPresent()) {
+//      Glide.with(this)
+//           .load(avatarData.get())
+//           .circleCrop()
+//           .into(binding.manageProfileAvatar);
+//    } else {
+//      Glide.with(this).load((Drawable) null).into(binding.manageProfileAvatar);
+//    }
+//  }
 
 //  private void presentAvatarPlaceholder(@NonNull AvatarState avatarState) {
 //    if (avatarState.getAvatar() == null) {
@@ -213,7 +210,7 @@ public class ManageProfileFragment extends LoggingFragment {
   private void presentUsername(@Nullable String username) {
     if (username == null || username.isEmpty()) {
       binding.manageProfileUsername.setText(R.string.ManageProfileFragment_username);
-      binding.manageProfileUsernameShare.setVisibility(View.GONE);
+//      binding.manageProfileUsernameShare.setVisibility(View.GONE);
     } else {
       binding.manageProfileUsername.setText(username);
 
@@ -224,7 +221,7 @@ public class ManageProfileFragment extends LoggingFragment {
         binding.manageProfileUsernameSubtitle.setText(R.string.ManageProfileFragment_your_username);
       }
 
-      binding.manageProfileUsernameShare.setVisibility(View.VISIBLE);
+//      binding.manageProfileUsernameShare.setVisibility(View.VISIBLE);
     }
   }
 
@@ -238,14 +235,14 @@ public class ManageProfileFragment extends LoggingFragment {
 
   private void presentAboutEmoji(@NonNull String aboutEmoji) {
     if (aboutEmoji == null || aboutEmoji.isEmpty()) {
-      binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
+//      binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
     } else {
       Drawable emoji = EmojiUtil.convertToDrawable(requireContext(), aboutEmoji);
 
       if (emoji != null) {
-        binding.manageProfileAboutIcon.setImageDrawable(emoji);
+//        binding.manageProfileAboutIcon.setImageDrawable(emoji);
       } else {
-        binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
+//        binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
       }
     }
   }

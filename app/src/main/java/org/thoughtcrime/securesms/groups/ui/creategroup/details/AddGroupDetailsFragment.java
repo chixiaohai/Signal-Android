@@ -161,7 +161,7 @@ public class AddGroupDetailsFragment extends LoggingFragment{
     members.setClipToPadding(false);
     members.setClipChildren(false);
     members.setPadding(0, 76, 0, 200);
-    members.addItemDecoration(new StickyHeaderDecoration(concatenateAdapter, true, true,0));
+    members.addItemDecoration(new StickyHeaderDecoration(concatenateAdapter, true, true));
   }
 
   private View createEditGroupNameActionView() {

@@ -63,23 +63,23 @@ public class PaymentsHomeFragment extends LoggingFragment {
   public void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     long    paymentLockTimestamp = SignalStore.paymentsValues().getPaymentLockTimestamp();
-    boolean enablePaymentLock    = PaymentsHomeFragmentArgs.fromBundle(getArguments()).getEnablePaymentLock();
+//    boolean enablePaymentLock    = PaymentsHomeFragmentArgs.fromBundle(getArguments()).getEnablePaymentLock();
     boolean showPaymentLock      = SignalStore.paymentsValues().getPaymentLockSkipCount() < MAX_PAYMENT_LOCK_SKIP_COUNT &&
                                    (System.currentTimeMillis() >= paymentLockTimestamp);
 
-    if (enablePaymentLock && showPaymentLock) {
-      long waitUntil = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(DAYS_UNTIL_REPROMPT_PAYMENT_LOCK);
-
-      SignalStore.paymentsValues().setPaymentLockTimestamp(waitUntil);
-      new MaterialAlertDialogBuilder(requireContext())
-          .setTitle(getString(R.string.PaymentsHomeFragment__turn_on))
-          .setMessage(getString(R.string.PaymentsHomeFragment__add_an_additional_layer))
-          .setPositiveButton(R.string.PaymentsHomeFragment__enable, (dialog, which) ->
-              SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionPaymentsHomeToPrivacySettings(true)))
-          .setNegativeButton(R.string.PaymentsHomeFragment__not_now, (dialog, which) -> setSkipCount())
-          .setCancelable(false)
-          .show();
-    }
+//    if (enablePaymentLock && showPaymentLock) {
+//      long waitUntil = System.currentTimeMillis() + TimeUnit.DAYS.toMillis(DAYS_UNTIL_REPROMPT_PAYMENT_LOCK);
+//
+//      SignalStore.paymentsValues().setPaymentLockTimestamp(waitUntil);
+//      new MaterialAlertDialogBuilder(requireContext())
+//          .setTitle(getString(R.string.PaymentsHomeFragment__turn_on))
+//          .setMessage(getString(R.string.PaymentsHomeFragment__add_an_additional_layer))
+//          .setPositiveButton(R.string.PaymentsHomeFragment__enable, (dialog, which) ->
+//              SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionPaymentsHomeToPrivacySettings(true)))
+//          .setNegativeButton(R.string.PaymentsHomeFragment__not_now, (dialog, which) -> setSkipCount())
+//          .setCancelable(false)
+//          .show();
+//    }
   }
 
   private void setSkipCount() {
@@ -161,7 +161,7 @@ public class PaymentsHomeFragment extends LoggingFragment {
       if (SignalStore.paymentsValues().getShowSaveRecoveryPhrase() &&
           !SignalStore.paymentsValues().getUserConfirmedMnemonic() &&
           !balanceAmount.isEqualOrLessThanZero()) {
-        SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(RecoveryPhraseStates.FIRST_TIME_NON_ZERO_BALANCE_WITH_MNEMONIC_NOT_CONFIRMED));
+//        SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(RecoveryPhraseStates.FIRST_TIME_NON_ZERO_BALANCE_WITH_MNEMONIC_NOT_CONFIRMED));
         SignalStore.paymentsValues().setShowSaveRecoveryPhrase(false);
       }
     });
@@ -229,11 +229,11 @@ public class PaymentsHomeFragment extends LoggingFragment {
             SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), R.id.action_paymentsHome_to_deactivateWallet);
           });
           break;
-        case ACTIVATED:
-          if (!SignalStore.paymentsValues().isPaymentLockEnabled()) {
-            SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), R.id.action_paymentsHome_to_securitySetup);
-          }
-          return;
+//        case ACTIVATED:
+//          if (!SignalStore.paymentsValues().isPaymentLockEnabled()) {
+//            SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), R.id.action_paymentsHome_to_securitySetup);
+//          }
+//          return;
         default:
           throw new IllegalStateException("Unsupported event type: " + paymentStateEvent.name());
       }
@@ -302,10 +302,10 @@ public class PaymentsHomeFragment extends LoggingFragment {
       viewModel.deactivatePayments();
       return true;
     } else if (item.getItemId() == R.id.payments_home_fragment_menu_view_recovery_phrase) {
-      SafeNavigation.safeNavigate(NavHostFragment.findNavController(this),
-                                  PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(SignalStore.paymentsValues().isMnemonicConfirmed() ?
-                                                                                        RecoveryPhraseStates.FROM_PAYMENTS_MENU_WITH_MNEMONIC_CONFIRMED :
-                                                                                        RecoveryPhraseStates.FROM_PAYMENTS_MENU_WITH_MNEMONIC_NOT_CONFIRMED));
+//      SafeNavigation.safeNavigate(NavHostFragment.findNavController(this),
+//                                  PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(SignalStore.paymentsValues().isMnemonicConfirmed() ?
+//                                                                                        RecoveryPhraseStates.FROM_PAYMENTS_MENU_WITH_MNEMONIC_CONFIRMED :
+//                                                                                        RecoveryPhraseStates.FROM_PAYMENTS_MENU_WITH_MNEMONIC_NOT_CONFIRMED));
       return true;
     } else if (item.getItemId() == R.id.payments_home_fragment_menu_help) {
       startActivity(AppSettingsActivity.help(requireContext(), HelpFragment.PAYMENT_INDEX));
@@ -375,8 +375,8 @@ public class PaymentsHomeFragment extends LoggingFragment {
     }
 
     private void showSaveRecoveryPhrase() {
-      SafeNavigation.safeNavigate(NavHostFragment.findNavController(PaymentsHomeFragment.this),
-                                  PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(RecoveryPhraseStates.FROM_INFO_CARD_WITH_MNEMONIC_NOT_CONFIRMED));
+//      SafeNavigation.safeNavigate(NavHostFragment.findNavController(PaymentsHomeFragment.this),
+//                                  PaymentsHomeFragmentDirections.actionPaymentsHomeToPaymentsBackup().setRecoveryPhraseState(RecoveryPhraseStates.FROM_INFO_CARD_WITH_MNEMONIC_NOT_CONFIRMED));
     }
   }
 

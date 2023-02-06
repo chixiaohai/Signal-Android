@@ -82,7 +82,7 @@ class MessageQuotesBottomSheet : FixedRoundedCornerBottomSheetDialogFragment() {
 
       doOnNextLayout {
         // Adding this without waiting for a layout pass would result in an indeterminate amount of padding added to the top of the view
-        addItemDecoration(StickyHeaderDecoration(messageAdapter, false, false, ConversationAdapter.HEADER_TYPE_INLINE_DATE))
+        addItemDecoration(StickyHeaderDecoration(messageAdapter, false, false))
       }
     }
 

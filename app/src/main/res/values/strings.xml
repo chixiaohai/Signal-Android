@@ -5565,4 +5565,6 @@ Updated May 25, 2018\n
     <string name="preferences_notifications__events">Events</string>
     <string name="preferences_events__contact_joined_signal">Contact available on Pigeon</string>
 
+    <string name="BlockedUsersActivity__do_you_want_to_unblock_s">Do you want to unblock \"%1$s\"?</string>
+    <string name="BlockedUsersActivity__unblock">Unblock</string>
 </resources>

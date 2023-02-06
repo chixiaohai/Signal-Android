@@ -126,13 +126,13 @@ class ConversationListSearchAdapter extends    RecyclerView.Adapter<RecyclerView
   }
 
   @Override
-  public HeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position, int type) {
+  public HeaderViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position) {
     return new HeaderViewHolder(LayoutInflater.from(parent.getContext())
                                               .inflate(R.layout.dsl_section_header, parent, false));
   }
 
   @Override
-  public void onBindHeaderViewHolder(HeaderViewHolder viewHolder, int position, int type) {
+  public void onBindHeaderViewHolder(HeaderViewHolder viewHolder, int position) {
     viewHolder.bind((int) getHeaderId(position));
   }
 

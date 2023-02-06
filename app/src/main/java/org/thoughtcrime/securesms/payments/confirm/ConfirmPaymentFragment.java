@@ -66,7 +66,7 @@ public class ConfirmPaymentFragment extends BottomSheetDialogFragment {
       requireActivity().setResult(Activity.RESULT_OK);
       requireActivity().finish();
     } else {
-      SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionDirectlyToPaymentsHome(!isPaymentLockEnabled(requireContext())));
+//      SafeNavigation.safeNavigate(NavHostFragment.findNavController(this), PaymentsHomeFragmentDirections.actionDirectlyToPaymentsHome(!isPaymentLockEnabled(requireContext())));
     }
   };
 

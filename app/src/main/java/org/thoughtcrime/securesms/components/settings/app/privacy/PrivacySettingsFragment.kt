@@ -101,15 +101,15 @@ class PrivacySettingsFragment : DSLSettingsFragment(R.string.preferences__privac
     val repository = PrivacySettingsRepository()
     val factory = PrivacySettingsViewModel.Factory(sharedPreferences, repository)
     viewModel = ViewModelProvider(this, factory)[PrivacySettingsViewModel::class.java]
-    val args: PrivacySettingsFragmentArgs by navArgs()
-    var showPaymentLock = true
+//    val args: PrivacySettingsFragmentArgs by navArgs()
+//    var showPaymentLock = true
 
     viewModel.state.observe(viewLifecycleOwner) { state ->
       adapter.submitList(getConfiguration(state).toMappingModelList())
-      if (args.showPaymentLock && showPaymentLock) {
-        showPaymentLock = false
-        recyclerView?.scrollToPosition(adapter.itemCount - 1)
-      }
+//      if (args.showPaymentLock && showPaymentLock) {
+//        showPaymentLock = false
+//        recyclerView?.scrollToPosition(adapter.itemCount - 1)
+//      }
     }
   }
 
@@ -124,7 +124,7 @@ class PrivacySettingsFragment : DSLSettingsFragment(R.string.preferences__privac
         }
       )
 
-      dividerPref()
+//      dividerPref()
 
       if (FeatureFlags.phoneNumberPrivacy()) {
         sectionHeaderPref(R.string.preferences_app_protection__who_can)

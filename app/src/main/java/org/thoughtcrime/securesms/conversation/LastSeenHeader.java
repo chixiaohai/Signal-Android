@@ -19,7 +19,7 @@ class LastSeenHeader extends StickyHeaderDecoration {
   private long unreadCount;
 
   LastSeenHeader(ConversationAdapter adapter, long lastSeenTimestamp) {
-    super(adapter, false, false, ConversationAdapter.HEADER_TYPE_LAST_SEEN);
+    super(adapter, false, false);
     this.adapter               = adapter;
     this.lastSeenTimestamp     = lastSeenTimestamp;
   }

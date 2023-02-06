@@ -85,7 +85,7 @@ public class ConversationListSearchFragment extends ConversationListFragment
         return null;
       }
     }, GlideApp.with(this), this, Locale.getDefault());
-    searchAdapterDecoration = new StickyHeaderDecoration(searchAdapter, false, false,0);
+    searchAdapterDecoration = new StickyHeaderDecoration(searchAdapter, false, false);
     list.setAdapter(searchAdapter);
   }
 

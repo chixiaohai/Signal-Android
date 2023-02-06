@@ -50,9 +50,13 @@ import java.text.NumberFormat;
 
 public class StoragePreferenceFragment extends ListSummaryPreferenceFragment implements Preference.OnPreferenceClickListener{
 
-  private Mp02CommonPreference keepMessages;
-  private Mp02CommonPreference trimLength;
-  private Mp02CommonPreference mTrimLimitPref;
+//  private Mp02CommonPreference keepMessages;
+//  private Mp02CommonPreference trimLength;
+//  private Mp02CommonPreference mTrimLimitPref;
+
+  private Preference keepMessages;
+  private Preference trimLength;
+  private Preference mTrimLimitPref;
 
   private        PreferenceGroup        mPrefGroup;
   private        int                    mPrefCount;
@@ -67,37 +71,37 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment imp
     findPreference("pref_storage_clear_message_history")
             .setOnPreferenceClickListener(new ClearMessageHistoryClickListener());
 
-//    trimLength = findPreference(SettingsValues.THREAD_TRIM_LENGTH);
-//    trimLength.setOnPreferenceClickListener(p -> {
-//      updateToolbarTitle(R.string.preferences__conversation_length_limit);
-//      pushFragment(BaseSettingsFragment.create(new ConversationLengthLimitConfiguration()));
-//      return true;
-//    });
-//
-//    keepMessages = findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
-//    keepMessages.setOnPreferenceClickListener(p -> {
-//      updateToolbarTitle(R.string.preferences__keep_messages);
-//      pushFragment(BaseSettingsFragment.create(new KeepMessagesConfiguration()));
-//      return true;
-//    });
-//
-//    StoragePreferenceCategory       storageCategory = (StoragePreferenceCategory) findPreference("pref_storage_category");
-//    FragmentActivity                activity        = requireActivity();
-//    ApplicationPreferencesViewModel viewModel       = ApplicationPreferencesViewModel.getApplicationPreferencesViewModel(activity);
-//
-//    storageCategory.setOnFreeUpSpace(() -> activity.startActivity(MediaOverviewActivity.forAll(activity)));
-//
-//    viewModel.getStorageBreakdown().observe(activity, storageCategory::setStorage);
+    trimLength = findPreference(SettingsValues.THREAD_TRIM_LENGTH);
+    trimLength.setOnPreferenceClickListener(p -> {
+      updateToolbarTitle(R.string.preferences__conversation_length_limit);
+      pushFragment(BaseSettingsFragment.create(new ConversationLengthLimitConfiguration()));
+      return true;
+    });
 
-    trimLength = (Mp02CommonPreference)findPreference(SettingsValues.THREAD_TRIM_LENGTH);
-    trimLength.setOnPreferenceClickListener(this);
-    keepMessages = (Mp02CommonPreference)findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
-    keepMessages.setOnPreferenceClickListener(this);
-    mTrimLimitPref = (Mp02CommonPreference) findPreference(TextSecurePreferences.THREAD_TRIM_LENGTH);
-    mTrimLimitPref.setOnPreferenceClickListener(this);
+    keepMessages = findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
+    keepMessages.setOnPreferenceClickListener(p -> {
+      updateToolbarTitle(R.string.preferences__keep_messages);
+      pushFragment(BaseSettingsFragment.create(new KeepMessagesConfiguration()));
+      return true;
+    });
 
-    mPrefGroup = getPreferenceGroup();
-    mPrefCount = mPrefGroup.getPreferenceCount();
+    StoragePreferenceCategory       storageCategory = (StoragePreferenceCategory) findPreference("pref_storage_category");
+    FragmentActivity                activity        = requireActivity();
+    ApplicationPreferencesViewModel viewModel       = ApplicationPreferencesViewModel.getApplicationPreferencesViewModel(activity);
+
+    storageCategory.setOnFreeUpSpace(() -> activity.startActivity(MediaOverviewActivity.forAll(activity)));
+
+    viewModel.getStorageBreakdown().observe(activity, storageCategory::setStorage);
+
+//    trimLength = (Mp02CommonPreference)findPreference(SettingsValues.THREAD_TRIM_LENGTH);
+//    trimLength.setOnPreferenceClickListener(this);
+//    keepMessages = (Mp02CommonPreference)findPreference(SettingsValues.KEEP_MESSAGES_DURATION);
+//    keepMessages.setOnPreferenceClickListener(this);
+//    mTrimLimitPref = (Mp02CommonPreference) findPreference(TextSecurePreferences.THREAD_TRIM_LENGTH);
+//    mTrimLimitPref.setOnPreferenceClickListener(this);
+//
+//    mPrefGroup = getPreferenceGroup();
+//    mPrefCount = mPrefGroup.getPreferenceCount();
   }
 
   @Override

@@ -22,18 +22,18 @@ public final class RecyclerViewConcatenateAdapterStickyHeader extends    Recycle
   }
 
   @Override
-  public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position, int type) {
-    return getForPosition(position).map(p -> p.first().onCreateHeaderViewHolder(parent, p.second(), type)).orElse(null);
+  public RecyclerView.ViewHolder onCreateHeaderViewHolder(ViewGroup parent, int position) {
+    return getForPosition(position).map(p -> p.first().onCreateHeaderViewHolder(parent, p.second())).orElse(null);
   }
 
   @Override
-  public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position, int type) {
+  public void onBindHeaderViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
     Optional<Pair<StickyHeaderDecoration.StickyHeaderAdapter, Integer>> forPosition = getForPosition(position);
 
     if (forPosition.isPresent()) {
       Pair<StickyHeaderDecoration.StickyHeaderAdapter, Integer> stickyHeaderAdapterIntegerPair = forPosition.get();
       //noinspection unchecked
-      stickyHeaderAdapterIntegerPair.first().onBindHeaderViewHolder(viewHolder, stickyHeaderAdapterIntegerPair.second(), type);
+      stickyHeaderAdapterIntegerPair.first().onBindHeaderViewHolder(viewHolder, stickyHeaderAdapterIntegerPair.second());
     }
   }
 
