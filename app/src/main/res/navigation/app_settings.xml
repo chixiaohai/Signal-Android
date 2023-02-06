@@ -319,7 +319,7 @@
 
     <fragment
         android:id="@+id/dataAndStorageSettingsFragment"
-        android:name="org.thoughtcrime.securesms.components.settings.app.data.DataAndStorageSettingsFragment"
+        android:name="org.thoughtcrime.securesms.components.settings.app.data.DataAndStoragePreferenceFragment"
         android:label="data_and_storage_settings_fragment">
         <action
             android:id="@+id/action_dataAndStorageSettingsFragment_to_editProxyFragment"

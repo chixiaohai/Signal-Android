@@ -4,6 +4,7 @@ package org.thoughtcrime.securesms.preferences;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,8 +21,25 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.CustomDefaultPreference;
+import org.thoughtcrime.securesms.components.mp02anim.ItemAnimViewController;
 
 public abstract class CorrectedPreferenceFragment extends PreferenceFragmentCompat {
+
+  protected static final String PREF_STATUS_ON = " ON";
+  protected static final String PREF_STATUS_OFF = " OFF";
+
+  private   ItemAnimViewController mItemAnimViewController;
+  private   ViewGroup              mContainer;
+  protected int                    mItemFocusHeight;
+  protected int                    mItemNormalHeight;
+  protected int                    mItemFocusTextSize;
+  protected int mItemNormalTextSize;
+  protected int mItemFocusPadding;
+  protected int mItemNormalPadding;
+  protected int mItemStartY;
+  protected boolean mIsScrollUp;
+  private RecyclerView list;
+  private int focus=0;
 
   @Override
   public void onCreate(Bundle icicle) {
@@ -31,9 +49,37 @@ public abstract class CorrectedPreferenceFragment extends PreferenceFragmentComp
   @Override
   public void onActivityCreated(Bundle savedInstanceState) {
     super.onActivityCreated(savedInstanceState);
+    requireView().setBackgroundColor(getResources().getColor(R.color.black));
+    RecyclerView rv = getListView();
+    rv.setClipToPadding(false);
+    rv.setClipChildren(false);
+    rv.setPadding(0, 76, 0, 200);
+//    View lv = getView().findViewById(android.R.id.list);
+//    if (lv != null) lv.setPadding(0, 0, 0, 0);
+  }
 
-    View lv = getView().findViewById(android.R.id.list);
-    if (lv != null) lv.setPadding(0, 0, 0, 0);
+  @Override
+  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    View root = super.onCreateView(inflater, container, savedInstanceState);
+    root.findViewById(android.R.id.list_container).setBackgroundColor(getResources().getColor(R.color.sim_background));
+    list = getListView();
+    mContainer = (ViewGroup) list.getParent();
+    mItemFocusHeight = 56;
+    mItemNormalHeight = 32;
+    mItemFocusTextSize = 40;
+    mItemNormalTextSize = 24;
+    mItemFocusPadding = 5;
+    mItemNormalPadding = 30;
+    mItemStartY = 76;
+    return root;
+  }
+
+  public int getFocus() {
+    return focus;
+  }
+
+  public void setFocus(int focus) {
+    this.focus = focus;
   }
 
   @Override
