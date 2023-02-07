@@ -5567,4 +5567,7 @@ Updated May 25, 2018\n
 
     <string name="BlockedUsersActivity__do_you_want_to_unblock_s">Do you want to unblock \"%1$s\"?</string>
     <string name="BlockedUsersActivity__unblock">Unblock</string>
+
+    <string name="ringtone_default">Default ringtone</string>
+    <string name="notification_sound_default">Default notification sound</string>
 </resources>

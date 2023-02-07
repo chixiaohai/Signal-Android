@@ -32,6 +32,7 @@ import org.thoughtcrime.securesms.components.settings.RadioListPreferenceViewHol
 import org.thoughtcrime.securesms.components.settings.configure
 import org.thoughtcrime.securesms.keyvalue.SignalStore
 import org.thoughtcrime.securesms.notifications.NotificationChannels
+import org.thoughtcrime.securesms.preferences.RingtonePickerActivity
 import org.thoughtcrime.securesms.util.RingtoneUtil
 import org.thoughtcrime.securesms.util.ViewUtil
 import org.thoughtcrime.securesms.util.adapter.mapping.LayoutFactory
@@ -112,7 +113,7 @@ class NotificationsSettingsFragment : DSLSettingsFragment(R.string.preferences__
 
         clickPref(
           title = DSLSettingsText.from(R.string.preferences__sound),
-          summary = DSLSettingsText.from(getRingtoneSummary(state.messageNotificationsState.sound)),
+//          summary = DSLSettingsText.from(getRingtoneSummary(state.messageNotificationsState.sound)),
           isEnabled = state.messageNotificationsState.notificationsEnabled,
           onClick = {
             launchMessageSoundSelectionIntent()
@@ -221,7 +222,7 @@ class NotificationsSettingsFragment : DSLSettingsFragment(R.string.preferences__
 
       clickPref(
         title = DSLSettingsText.from(R.string.preferences_notifications__ringtone),
-        summary = DSLSettingsText.from(getRingtoneSummary(state.callNotificationsState.ringtone)),
+        summary = DSLSettingsText.from(R.string.NotificationsSettingsFragment__create_a_profile_to_receive_notifications_only_from_people_and_groups_you_choose),
         isEnabled = state.callNotificationsState.notificationsEnabled,
         onClick = {
           launchCallRingtoneSelectionIntent()
@@ -294,7 +295,7 @@ class NotificationsSettingsFragment : DSLSettingsFragment(R.string.preferences__
   private fun launchMessageSoundSelectionIntent() {
     val current = SignalStore.settings().messageNotificationSound
 
-    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
+    val intent = Intent(context, RingtonePickerActivity::class.java)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_NOTIFICATION)
@@ -321,7 +322,7 @@ class NotificationsSettingsFragment : DSLSettingsFragment(R.string.preferences__
   private fun launchCallRingtoneSelectionIntent() {
     val current = SignalStore.settings().callRingtone
 
-    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER)
+    val intent = Intent(context, RingtonePickerActivity::class.java)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
     intent.putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_RINGTONE)
