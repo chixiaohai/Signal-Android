@@ -17,16 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/message_request_badge"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="52dp"
-        android:contentDescription="@string/ImageView__badge"
-        app:badge_size="large"
-        app:layout_constraintStart_toStartOf="@id/message_request_avatar"
-        app:layout_constraintTop_toTopOf="@id/message_request_avatar" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/message_request_badge"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="36dp"-->
+<!--        android:layout_marginStart="44dp"-->
+<!--        android:layout_marginTop="52dp"-->
+<!--        android:contentDescription="@string/ImageView__badge"-->
+<!--        app:badge_size="large"-->
+<!--        app:layout_constraintStart_toStartOf="@id/message_request_avatar"-->
+<!--        app:layout_constraintTop_toTopOf="@id/message_request_avatar" />-->
 
     <LinearLayout
         android:id="@+id/message_request_avatar_tap_to_view"

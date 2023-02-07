@@ -42,15 +42,15 @@ object AvatarPreference {
   }
 
   private class ViewHolder(itemView: View) : MappingViewHolder<Model>(itemView) {
-    private val avatar: AvatarImageView = itemView.findViewById<AvatarImageView>(R.id.bio_preference_avatar).apply {
-      setFallbackPhotoProvider(AvatarPreferenceFallbackPhotoProvider())
-    }
+//    private val avatar: AvatarImageView = itemView.findViewById<AvatarImageView>(R.id.bio_preference_avatar).apply {
+//      setFallbackPhotoProvider(AvatarPreferenceFallbackPhotoProvider())
+//    }
 
 //    private val badge: BadgeImageView = itemView.findViewById(R.id.bio_preference_badge)
 
-    init {
-      ViewCompat.setTransitionName(avatar.parent as View, "avatar")
-    }
+//    init {
+//      ViewCompat.setTransitionName(avatar.parent as View, "avatar")
+//    }
 
     override fun bind(model: Model) {
 //      if (model.recipient.isSelf) {
@@ -68,9 +68,9 @@ object AvatarPreference {
 
 //      avatar.setStoryRingFromState(model.storyViewState)
 //      avatar.displayChatAvatar(model.recipient)
-      avatar.setAvatar(model.recipient)
-      avatar.disableQuickContact()
-      avatar.setOnClickListener { model.onAvatarClick(avatar) }
+//      avatar.setAvatar(model.recipient)
+//      avatar.disableQuickContact()
+//      avatar.setOnClickListener { model.onAvatarClick(avatar) }
     }
   }
 

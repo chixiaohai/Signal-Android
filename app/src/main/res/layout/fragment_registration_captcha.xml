@@ -8,5 +8,14 @@
     <WebView
         android:id="@+id/registration_captcha_web_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:focusable="false"/>
+
+    <LinearLayout
+        android:layout_width="10px"
+        android:layout_height="10px"
+        android:id="@+id/ll_mouse"
+        android:orientation="horizontal"
+        android:background="@color/black"
+        android:focusable="false"/>
 </FrameLayout>

@@ -11,38 +11,35 @@
         android:layout_height="wrap_content"
         tools:theme="@style/Theme.Signal.RoundedBottomSheet.Light">
 
-        <org.thoughtcrime.securesms.avatar.view.AvatarView
-            android:id="@+id/rbs_recipient_avatar"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+<!--        <org.thoughtcrime.securesms.avatar.view.AvatarView-->
+<!--            android:id="@+id/rbs_recipient_avatar"-->
+<!--            android:layout_width="80dp"-->
+<!--            android:layout_height="80dp"-->
+<!--            android:layout_gravity="center_horizontal"-->
+<!--            android:layout_marginTop="24dp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintHorizontal_bias="0.5"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent" />-->
 
-        <org.thoughtcrime.securesms.badges.BadgeImageView
-            android:id="@+id/rbs_badge"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginTop="52dp"
-            android:contentDescription="@string/ImageView__badge"
-            app:badge_size="large"
-            app:layout_constraintStart_toStartOf="@id/rbs_recipient_avatar"
-            app:layout_constraintTop_toTopOf="@id/rbs_recipient_avatar" />
+<!--        <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--            android:id="@+id/rbs_badge"-->
+<!--            android:layout_width="36dp"-->
+<!--            android:layout_height="36dp"-->
+<!--            android:layout_marginStart="44dp"-->
+<!--            android:layout_marginTop="52dp"-->
+<!--            android:contentDescription="@string/ImageView__badge"-->
+<!--            app:badge_size="large"-->
+<!--            app:layout_constraintStart_toStartOf="@id/rbs_recipient_avatar"-->
+<!--            app:layout_constraintTop_toTopOf="@id/rbs_recipient_avatar" />-->
 
         <ProgressBar
             android:id="@+id/rbs_admin_action_busy"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="@+id/rbs_recipient_avatar"
-            app:layout_constraintEnd_toEndOf="@+id/rbs_recipient_avatar"
-            app:layout_constraintStart_toStartOf="@+id/rbs_recipient_avatar"
-            app:layout_constraintTop_toTopOf="@+id/rbs_recipient_avatar"
-            tools:visibility="visible" />
+            tools:visibility="visible"
+            tools:ignore="MissingConstraints" />
 
         <org.thoughtcrime.securesms.components.emoji.EmojiTextView
             android:id="@+id/rbs_full_name"
@@ -57,8 +54,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rbs_recipient_avatar"
-            tools:text="Gwen Stacy" />
+            tools:text="Gwen Stacy"
+            tools:ignore="MissingConstraints" />
 
         <org.thoughtcrime.securesms.components.emoji.EmojiTextView
             android:id="@+id/rbs_about"
