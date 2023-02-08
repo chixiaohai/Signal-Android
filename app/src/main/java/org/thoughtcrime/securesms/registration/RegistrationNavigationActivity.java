@@ -116,8 +116,6 @@ public final class RegistrationNavigationActivity extends AppCompatActivity {
       case KeyEvent.KEYCODE_8:
       case KeyEvent.KEYCODE_5:
       case KeyEvent.KEYCODE_0:
-      case KeyEvent.KEYCODE_1:
-      case KeyEvent.KEYCODE_3:
         if (fragment instanceof CaptchaFragment) {
           ((CaptchaFragment) fragment).onKeyDown(code, event.getAction());
           return true;

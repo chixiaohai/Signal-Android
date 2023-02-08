@@ -1,10 +1,7 @@
 package org.thoughtcrime.securesms.registration.fragments;
 
 import android.annotation.SuppressLint;
-import android.graphics.Point;
-import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -17,6 +14,7 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.InputDeviceCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -27,6 +25,7 @@ import org.thoughtcrime.securesms.registration.viewmodel.BaseRegistrationViewMod
 import org.thoughtcrime.securesms.registration.viewmodel.RegistrationViewModel;
 
 import java.io.Serializable;
+import java.sql.Array;
 
 /**
  * Fragment that displays a Captcha in a WebView.
@@ -35,8 +34,6 @@ public final class CaptchaFragment extends LoggingFragment {
   private static final String       TAG                       = Log.tag(CaptchaFragment.class);
   private              WebView      mWebview;
   private              LinearLayout linearLayout;
-  private              Rect         mouseRect;
-  private              Rect         webRect;
   public static final  String       EXTRA_VIEW_MODEL_PROVIDER = "view_model_provider";
 
   private BaseRegistrationViewModel viewModel;
@@ -89,14 +86,6 @@ public final class CaptchaFragment extends LoggingFragment {
       viewModel = provider.get(this);
     }
 
-//    mWebview.setOnTouchListener(new View.OnTouchListener() {
-//      @Override public boolean onTouch(View v, MotionEvent event) {
-//        Log.d(TAG, "lyh  setOnTouchListener, view has focus " + v.getId() + "    " + event.getAction());
-//        Log.d(TAG, "lyh  setOnTouchListener, view has focus " + v.findFocus().getId() + "    " + event.getAction());
-//        Log.d(TAG, "lyh  setOnTouchListener, view has focus " + v.findFocus() + "    " + event.getAction());
-//        return false;
-//      }
-//    });
   }
 
   public void onKeyDown(int keyCode, int action) {
@@ -141,33 +130,54 @@ public final class CaptchaFragment extends LoggingFragment {
 //        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_DOWN));
         break;
       case KeyEvent.KEYCODE_5:
-          if (action == KeyEvent.ACTION_DOWN) {
-            mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_SPACE));
-          }
-//        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_ENTER));
-        mWebview.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-                                                       SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, linearLayout.getX(), linearLayout.getY(), 0));
-        Log.d(TAG, "lyh  鼠标坐标   x = " + linearLayout.getX() + ", y = " + linearLayout.getY());
-//        mWebview.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-//                                                       SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY(), 0));
-        break;
-      case KeyEvent.KEYCODE_1:
         if (action == KeyEvent.ACTION_DOWN) {
-          mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_SPACE));
+          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, linearLayout.getX(), linearLayout.getY()));
+          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY()));
         }
-        mWebview.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-                                                       SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY(), 0));
-        break;
-      case KeyEvent.KEYCODE_3:
-        if (action == KeyEvent.ACTION_DOWN) {
-          mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_SPACE));
-        }
-        mWebview.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-                                                       SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, linearLayout.getX(), linearLayout.getY(), 0));
-        mWebview.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),
-                                                       SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY(), 0));
         break;
     }
+  }
+
+  private MotionEvent createMotionEvent(int action, Float x, Float y){
+    long  currentTime = SystemClock.uptimeMillis();
+    int   pointerCount = 1;
+
+    MotionEvent.PointerProperties[] pointerProperties = new MotionEvent.PointerProperties[1];
+    pointerProperties[0]=new MotionEvent.PointerProperties();
+    pointerProperties[0].clear();
+    pointerProperties[0].id = 0;
+    pointerProperties[0].toolType = MotionEvent.TOOL_TYPE_FINGER;
+
+
+    MotionEvent.PointerCoords[] pointerCoords = new MotionEvent.PointerCoords[1];
+    pointerCoords[0]=new MotionEvent.PointerCoords();
+    pointerCoords[0].clear();
+    pointerCoords[0].x = x;
+    pointerCoords[0].y = y;
+    pointerCoords[0].pressure = 1.0f;
+    pointerCoords[0].size = 1.0f;
+
+    int metaState = 0;
+    int buttonState = 0;
+    float xPrecision = 1.0f;
+    float yPrecision = 1.0f;
+    int deviceId = 0;
+    int edgeFlags = 0;
+    int source = InputDeviceCompat.SOURCE_TOUCHSCREEN;
+    int FLAG_TARGET_ACCESSIBILITY_FOCUS = 0x4000000;
+
+    return MotionEvent.obtain(currentTime,
+                              currentTime,
+                              action,
+                              pointerCount,
+                              pointerProperties,
+                              pointerCoords,
+                              metaState,
+                              buttonState,
+                              xPrecision,
+                              yPrecision,
+                              deviceId,
+                              edgeFlags, source, FLAG_TARGET_ACCESSIBILITY_FOCUS);
   }
 
   private void handleToken(@NonNull String token) {

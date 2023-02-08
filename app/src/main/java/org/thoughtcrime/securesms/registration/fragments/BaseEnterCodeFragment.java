@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.registration.fragments;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.net.Uri;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -44,7 +46,6 @@ import org.thoughtcrime.securesms.util.CommunicationActions;
 import org.thoughtcrime.securesms.util.FeatureFlags;
 import org.thoughtcrime.securesms.util.LifecycleDisposable;
 import org.thoughtcrime.securesms.util.SupportEmailUtil;
-import org.thoughtcrime.securesms.util.UpdateFocusUtil;
 import org.whispersystems.signalservice.internal.push.LockedException;
 
 import java.io.IOException;
@@ -537,12 +538,44 @@ public abstract class BaseEnterCodeFragment<ViewModel extends BaseRegistrationVi
           } else {
             tv.setEllipsize(TextUtils.TruncateAt.END);
           }
-//          updateFocusView(view, b, tv);
-          UpdateFocusUtil updateFocusUtil = new UpdateFocusUtil(mContext.getResources());
-          updateFocusUtil.updateFocusView(view, b, tv, null);
+          updateFocusView(view, b, tv);
         }
       });
       return new ViewHolder(view);
+    }
+
+    private void updateFocusView(View parent, boolean hasFocus, TextView tv) {
+      ValueAnimator va;
+      if (hasFocus) {
+        va = ValueAnimator.ofFloat(0, 1);
+      } else {
+        va = ValueAnimator.ofFloat(1, 0);
+      }
+      va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator valueAnimator) {
+          float scale = (float) valueAnimator.getAnimatedValue();
+//          float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
+          float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+          float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
+          int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
+          int color = alpha * 0x1000000 + 0xffffff;
+
+          tv.setTextColor(color);
+          tv.setTextSize(textsize);
+//          parent.getLayoutParams().height = (int) (height);
+          parent.setPadding((int) padding, parent.getPaddingTop(), parent.getPaddingRight(), parent.getPaddingBottom());
+        }
+      });
+      FastOutLinearInInterpolator FastOutLinearInInterpolator = new FastOutLinearInInterpolator();
+      va.setInterpolator(FastOutLinearInInterpolator);
+      if (hasFocus) {
+        va.setDuration(270);
+        va.start();
+      } else {
+        va.setDuration(270);
+        va.start();
+      }
     }
 
     @Override
