@@ -1,6 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="Signal.Widget.Button.Base.Primary" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/signal_button_primary_text_selector</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.035</item>
+        <item name="iconGravity">textEnd</item>
+        <item name="backgroundTint">@color/signal_button_primary</item>
+        <item name="iconTint">@color/signal_button_primary_text_selector</item>
+        <item name="rippleColor">@color/signal_button_primary_ripple</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Large.Primary" parent="@style/Signal.Widget.Button.Base.Primary">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Large.Primary.Inverse" parent="@style/Signal.Widget.Button.Large.Primary">
+        <item name="android:minHeight">48dp</item>
+        <item name="android:textColor">@color/signal_button_primary_inverse_text_selector</item>
+        <item name="background">?attr/selectableItemBackground</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Large.Danger" parent="@style/Signal.Widget.Button.Large.Primary">
+        <item name="backgroundTint">@color/signal_alert_primary</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Medium.Primary" parent="@style/Signal.Widget.Button.Base.Primary">
+        <item name="android:minHeight">36dp</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Small.Primary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing" tools:targetApi="21">0.01</item>
+        <item name="strokeWidth">1.5dp</item>
+        <item name="cornerRadius">18dp</item>
+        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
+        <item name="strokeColor">@color/signal_button_secondary_stroke</item>
+        <item name="backgroundTint">@color/transparent</item>
+        <item name="rippleColor">@color/signal_button_secondary</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Small.Secondary" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">7dp</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing" tools:targetApi="21">0.01</item>
+        <item name="android:elevation" tools:ignore="NewApi">0dp</item>
+        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
+        <item name="background">@color/signal_background_tertiary</item>
+        <item name="rippleColor">@color/core_ultramarine</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Signal.Button.Rounded</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Base.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
+        <item name="android:letterSpacing" tools:ignore="NewApi">0.035</item>
+        <item name="iconGravity">textEnd</item>
+        <item name="iconTint">@color/signal_button_secondary_text_selector</item>
+        <item name="strokeColor">@color/signal_button_secondary_stroke</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="rippleColor">@color/signal_button_secondary_ripple</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Large.Secondary" parent="@style/Signal.Widget.Button.Base.Secondary">
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Large.Secondary.NoOutline">
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Medium.Secondary" parent="@style/Signal.Widget.Button.Base.Secondary">
+        <item name="android:minHeight">36dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Signal.Widget.CompoundButton.RadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="colorControlNormal">@color/core_grey_50</item>
+    </style>
+
+    <style name="Signal.Widget.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textAppearance">@style/Signal.TextAppearance.Button.Dialog</item>
+        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
+    </style>
+
+    <style name="Signal.TextAppearance.Button.Dialog" parent="TextAppearance.MaterialComponents.Button">
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Signal.ShapeOverlay.Rounded" parent="ShapeAppearance.MaterialComponents.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="Signal.MaterialAlertDialog" parent="MaterialAlertDialog.MaterialComponents">
+        <item name="shapeAppearance">@style/Signal.ShapeOverlay.Rounded</item>
+    </style>
+
+    <style name="Signal.DayNight.Popup" parent="@style/ThemeOverlay.AppCompat.Light" />
+
+    <style name="Signal.DayNight.Toolbar.Overflow" parent="@style/Signal.Toolbar.Overflow.Light" />
+
+    <style name="Signal.DayNight.TitleTextStyle" parent="@style/TextSecure.TitleTextStyle" />
+
+    <style name="Signal.DayNight.Dialog.FullScreen" parent="Signal.DayNight">
+        <item name="android:windowAnimationStyle">@style/TextSecure.Animation.FullScreenDialog</item>
+    </style>
+
+    <style name="Signal.Media.Dialog.AddMessageDialog" parent="TextSecure.MediaPreview">
+        <item name="android:windowAnimationStyle">@style/TextSecure.Animation.AddMessageDialog</item>
+    </style>
+
+    <style name="Signal.ThemeOverlay.Dialog.Rounded" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog</item>
+        <item name="android:background">@color/signal_background_dialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Signal.Title2.MaterialDialog</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.Signal.Body1</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Signal.Widget.Button.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Signal.Widget.Button.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Signal.Widget.Button.Dialog</item>
+        <item name="textColorAlertDialogListItem">@color/signal_text_secondary</item>
+    </style>
+
     <style name="Signal.Widget.ImageView.ActionButton" parent="ThemeOverlay.Material3">
         <item name="tint">@color/signal_colorOnSecondaryContainer</item>
         <item name="android:background">@drawable/selectable_icon_button</item>
@@ -19,66 +159,6 @@
         <item name="android:textAppearance">@style/Signal.Text.BodyMedium</item>
         <item name="android:textColor">@color/signal_colorOnBackground</item>
         <item name="android:maxLines">2</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Base.Primary" parent="Widget.Material3.Button">
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Large.Primary" parent="@style/Signal.Widget.Button.Base.Primary">
-        <item name="android:minHeight">44dp</item>
-        <item name="materialThemeOverlay">@style/ThemeOverlay.Signal.Button.Primary</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Large.Primary.Inverse" parent="@style/Signal.Widget.Button.Large.Primary">
-        <item name="android:minHeight">44dp</item>
-        <item name="android:textColor">@color/signal_button_primary_inverse_text_selector</item>
-        <item name="background">?attr/selectableItemBackground</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Large.Danger" parent="@style/Signal.Widget.Button.Large.Primary">
-        <item name="backgroundTint">@color/signal_alert_primary</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Medium.Primary" parent="@style/Signal.Widget.Button.Base.Primary">
-        <item name="android:minHeight">40dp</item>
-        <item name="materialThemeOverlay">@style/ThemeOverlay.Signal.Button.Primary</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Small.Primary" parent="Widget.Material3.Button.OutlinedButton">
-        <item name="android:textAllCaps">false</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">7dp</item>
-        <item name="android:paddingStart">14dp</item>
-        <item name="android:paddingEnd">14dp</item>
-        <item name="android:minHeight">32dp</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing" tools:targetApi="21">0.01</item>
-        <item name="strokeWidth">1.5dp</item>
-        <item name="cornerRadius">18dp</item>
-        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
-        <item name="strokeColor">@color/signal_button_secondary_stroke</item>
-        <item name="backgroundTint">@color/transparent</item>
-        <item name="rippleColor">@color/signal_button_secondary</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Small.Secondary" parent="Widget.Material3.Button.UnelevatedButton">
-        <item name="android:textAllCaps">false</item>
-        <item name="android:paddingTop">6dp</item>
-        <item name="android:paddingBottom">7dp</item>
-        <item name="android:paddingStart">14dp</item>
-        <item name="android:paddingEnd">14dp</item>
-        <item name="android:minHeight">0dp</item>
-        <item name="android:textSize">13sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:letterSpacing" tools:targetApi="21">0.01</item>
-        <item name="android:elevation" tools:ignore="NewApi">0dp</item>
-        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
-        <item name="background">@color/signal_background_tertiary</item>
-        <item name="rippleColor">@color/core_ultramarine</item>
-        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.Signal.Circle</item>
     </style>
 
     <style name="Widget.Signal.Button.Small" parent="Widget.Material3.Button.TonalButton">
@@ -106,30 +186,10 @@
         <item name="colorOnContainer">@color/signal_colorOnSurfaceVariant</item>
         <item name="colorContainer">@color/signal_colorSurface1</item>
     </style>
-    
+
     <style name="ThemeOverlay.Signal.Button.Surface2" parent="ThemeOverlay.Material3.Button">
         <item name="colorOnContainer">@color/signal_colorOnSurface</item>
         <item name="colorContainer">@color/signal_colorSurface2</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Base.Secondary" parent="Widget.Material3.Button.TextButton">
-        <item name="android:insetTop">0dp</item>
-        <item name="android:insetBottom">0dp</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
-        <item name="iconGravity">textEnd</item>
-        <item name="iconTint">@color/signal_button_secondary_text_selector</item>
-        <item name="rippleColor">@color/signal_button_secondary_ripple</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Large.Secondary" parent="@style/Signal.Widget.Button.Base.Secondary">
-        <item name="android:minHeight">@dimen/signal_m3_large_button_height</item>
-        <item name="strokeWidth">0dp</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Medium.Secondary" parent="@style/Signal.Widget.Button.Base.Secondary">
-        <item name="android:minHeight">36dp</item>
-        <item name="strokeWidth">0dp</item>
     </style>
 
     <style name="Signal.Widget.Button.Medium.OutlinedButton" parent="Signal.Widget.Button.Medium.Secondary">
@@ -163,21 +223,6 @@
         <item name="tint">@color/signal_colorOnSecondaryContainer</item>
     </style>
 
-    <style name="Signal.Widget.CompoundButton.RadioButton" parent="Widget.Material3.CompoundButton.RadioButton">
-        <item name="android:minWidth">0dp</item>
-        <item name="buttonTint">@color/signal_selection_control_button_tint</item>
-    </style>
-
-    <style name="Signal.Widget.Button.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textAppearance">@style/Signal.Text.LabelLarge</item>
-        <item name="android:textColor">@color/signal_button_secondary_text_selector</item>
-    </style>
-
-    <style name="Signal.ShapeOverlay.Rounded" parent="ShapeAppearance.MaterialComponents.MediumComponent">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">8dp</item>
-    </style>
-
     <style name="ShapeAppearance.Signal.MaterialAlertDialog" parent="ShapeAppearance.Material3.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerRadius">28dp</item>
@@ -191,48 +236,29 @@
         <item name="android:popupBackground">@drawable/rounded_rectangle_surface_2_18</item>
     </style>
 
-    <style name="Signal.MaterialAlertDialog" parent="MaterialAlertDialog.Material3">
-        <item name="shapeAppearance">@style/Signal.ShapeOverlay.Rounded</item>
-    </style>
-
     <style name="Signal.MaterialAlertDialog.Wide">
         <item name="backgroundInsetStart">0dp</item>
         <item name="backgroundInsetEnd">0dp</item>
     </style>
 
-    <style name="Signal.DayNight.Popup" parent="@style/ThemeOverlay.AppCompat.Light" />
+    <style name="Signal.DayNight.Dialog.FullScreen.Donate"></style>
 
-    <style name="Signal.DayNight.Toolbar.Overflow" parent="@style/Signal.Toolbar.Overflow.Light" />
+<!--    <style name="ThemeOverlay.Signal.MaterialAlertDialog" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">-->
+<!--        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog</item>-->
+<!--        <item name="android:background">@color/signal_background_dialog</item>-->
+<!--        <item name="android:dialogCornerRadius" tools:ignore="NewApi">28dp</item>-->
+<!--        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Signal.Title.Text</item>-->
+<!--        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.Signal.Body.Text</item>-->
+<!--        <item name="buttonBarPositiveButtonStyle">@style/Signal.Widget.Button.Dialog</item>-->
+<!--        <item name="buttonBarNeutralButtonStyle">@style/Signal.Widget.Button.Dialog</item>-->
+<!--        <item name="buttonBarNegativeButtonStyle">@style/Signal.Widget.Button.Dialog</item>-->
+<!--        <item name="textColorAlertDialogListItem">@color/signal_colorOnSurfaceVariant</item>-->
+<!--        <item name="android:checkedTextViewStyle">@style/Widget.Signal.CheckedTextView</item>-->
+<!--    </style>-->
 
-    <style name="Signal.DayNight.TitleTextStyle" parent="@style/TextSecure.TitleTextStyle" />
-
-    <style name="Signal.DayNight.Dialog.FullScreen" parent="Signal.DayNight">
-        <item name="android:windowAnimationStyle">@style/TextSecure.Animation.FullScreenDialog</item>
-    </style>
-
-    <style name="Signal.DayNight.Dialog.FullScreen.Donate">
-    </style>
-    
-    <style name="Signal.Media.Dialog.AddMessageDialog" parent="TextSecure.MediaPreview">
-        <item name="android:windowAnimationStyle">@style/TextSecure.Animation.AddMessageDialog</item>
-    </style>
-
-    <style name="ThemeOverlay.Signal.MaterialAlertDialog" parent="@style/ThemeOverlay.Material3.MaterialAlertDialog">
-        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog</item>
-        <item name="android:background">@color/signal_colorSurface1</item>
-        <item name="android:dialogCornerRadius" tools:ignore="NewApi">28dp</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Signal.Title.Text</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.Signal.Body.Text</item>
-        <item name="buttonBarPositiveButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="textColorAlertDialogListItem">@color/signal_colorOnSurfaceVariant</item>
-        <item name="android:checkedTextViewStyle">@style/Widget.Signal.CheckedTextView</item>
-    </style>
-    
-    <style name="ThemeOverlay.Signal.MaterialAlertDialog.Wide">
-        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog.Wide</item>
-    </style>
+<!--    <style name="ThemeOverlay.Signal.MaterialAlertDialog.Wide">-->
+<!--        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog.Wide</item>-->
+<!--    </style>-->
 
     <style name="Widget.Signal.CheckedTextView" parent="Widget.Material3.CheckedTextView">
         <item name="android:textAppearance">@style/Signal.Text.BodyLarge</item>
@@ -284,16 +310,5 @@
 
     <style name="Widget.Signal.CircularProgressIndicator.Medium.Indeterminate.Tonal">
         <item name="indicatorColor">@color/signal_colorPrimaryContainer</item>
-    </style>
-
-    <style name="Signal.ThemeOverlay.Dialog.Rounded" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
-        <item name="alertDialogStyle">@style/Signal.MaterialAlertDialog</item>
-        <item name="android:background">@color/signal_background_dialog</item>
-        <item name="materialAlertDialogTitleTextStyle">@style/TextAppearance.Signal.Title2.MaterialDialog</item>
-        <item name="materialAlertDialogBodyTextStyle">@style/TextAppearance.Signal.Body1</item>
-        <item name="buttonBarPositiveButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="buttonBarNeutralButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="buttonBarNegativeButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="textColorAlertDialogListItem">@color/signal_text_secondary</item>
     </style>
 </resources>

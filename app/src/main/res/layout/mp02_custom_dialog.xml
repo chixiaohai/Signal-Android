@@ -50,6 +50,18 @@
                     android:textSize="40px"
                     android:visibility="gone" />
 
+                <EditText
+                    android:id="@+id/focus_item_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:defaultFocusHighlightEnabled="false"
+                    android:paddingStart="5px"
+                    android:singleLine="false"
+                    android:textColor="@color/white"
+                    android:textSize="40px"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -72,6 +84,16 @@
 
                 <TextView
                     android:id="@+id/unfocus_top_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="32px"
+                    android:paddingStart="30px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/unfocus_top_2"
                     android:layout_width="match_parent"
                     android:layout_height="32px"
                     android:paddingStart="30px"
@@ -112,6 +134,16 @@
 
                 <TextView
                     android:id="@+id/unfocus_bottom_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="32px"
+                    android:paddingStart="30px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="24px"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/unfocus_bottom_3"
                     android:layout_width="match_parent"
                     android:layout_height="32px"
                     android:paddingStart="30px"

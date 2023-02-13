@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:viewBindingIgnore="true"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -43,6 +42,7 @@
       android:hint="@string/EditAboutFragment_write_a_few_words_about_yourself"
       android:inputType="textCapSentences"
       android:maxLines="1"
+      android:textColor="@color/white"
       app:layout_constraintTop_toBottomOf="@id/toolbar"
       app:layout_constraintStart_toEndOf="@id/edit_about_emoji"
       app:layout_constraintEnd_toStartOf="@id/edit_about_clear"
@@ -81,7 +81,7 @@
       app:layout_constraintTop_toBottomOf="@id/edit_about_count"
       app:layout_constraintBottom_toBottomOf="parent" />
 
-  <org.thoughtcrime.securesms.util.views.CircularProgressMaterialButton
+  <com.dd.CircularProgressButton
       android:id="@+id/edit_about_save"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
@@ -90,8 +90,16 @@
       android:layout_marginBottom="16dp"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
+      android:textColor="@color/white"
+      android:text="@string/EditProfileNameFragment_save"
+      app:cornerRadius="80dp"
+      app:elevation="4dp"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
-      app:circularProgressMaterialButton__label="@string/EditProfileNameFragment_save" />
+      app:cpb_colorIndicator="@color/white"
+      app:cpb_colorProgress="?colorAccent"
+      app:cpb_cornerRadius="28dp"
+      app:cpb_selectorIdle="@drawable/progress_button_state"
+      app:cpb_textIdle="@string/EditProfileNameFragment_save" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

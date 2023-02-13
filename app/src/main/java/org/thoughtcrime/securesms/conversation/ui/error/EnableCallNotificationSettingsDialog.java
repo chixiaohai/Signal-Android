@@ -69,7 +69,7 @@ public final class EnableCallNotificationSettingsDialog extends DialogFragment {
 
   @Override
   public Dialog onCreateDialog(Bundle savedInstanceState) {
-    MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireContext(), R.style.ThemeOverlay_Signal_MaterialAlertDialog);
+    MaterialAlertDialogBuilder dialogBuilder = new MaterialAlertDialogBuilder(requireContext(), R.style.Signal_ThemeOverlay_Dialog_Rounded);
 
     Runnable action = null;
     switch (getCallNotificationSettingsBitmask(requireContext())) {

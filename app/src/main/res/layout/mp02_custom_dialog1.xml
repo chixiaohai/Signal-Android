@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:defaultFocusHighlightEnabled="false"
+        android:scrollbarSize="0dp"
+        android:scrollbars="none">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                style="@style/Theme.AppCompat.NoActionBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60px"
+                android:orientation="vertical"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:defaultFocusHighlightEnabled="false"
+                    android:paddingStart="5px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="20px"
+                    android:text="@string/preferences__conversation_length_limit"
+                    android:focusable="true"/>
+
+                <EditText
+                    android:id="@+id/et_length_limit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:paddingStart="5px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="20px"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:id="@+id/tv_ok"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:paddingStart="5px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="20px"
+                    android:text="@string/mp02_custom_dialog_ok"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/tv_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:paddingStart="5px"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="20px"
+                    android:text="@string/mp02_custom_dialog_cancel"
+                    android:focusable="true" />
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</FrameLayout>

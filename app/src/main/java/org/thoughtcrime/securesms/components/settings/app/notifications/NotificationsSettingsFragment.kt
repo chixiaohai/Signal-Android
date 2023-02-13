@@ -222,7 +222,7 @@ class NotificationsSettingsFragment : DSLSettingsFragment(R.string.preferences__
 
       clickPref(
         title = DSLSettingsText.from(R.string.preferences_notifications__ringtone),
-        summary = DSLSettingsText.from(R.string.NotificationsSettingsFragment__create_a_profile_to_receive_notifications_only_from_people_and_groups_you_choose),
+//        summary = DSLSettingsText.from(R.string.NotificationsSettingsFragment__create_a_profile_to_receive_notifications_only_from_people_and_groups_you_choose),
         isEnabled = state.callNotificationsState.notificationsEnabled,
         onClick = {
           launchCallRingtoneSelectionIntent()

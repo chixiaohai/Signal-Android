@@ -49,7 +49,7 @@ public final class SignalPinReminderDialog {
 
     Log.i(TAG, "Showing PIN reminder dialog.");
 
-    AlertDialog dialog = new MaterialAlertDialogBuilder(context, R.style.ThemeOverlay_Signal_MaterialAlertDialog_Wide)
+    AlertDialog dialog = new MaterialAlertDialogBuilder(context, R.style.Theme_Signal_AlertDialog_Dark_Cornered_ColoredAccent)
                                         .setView(R.layout.kbs_pin_reminder_view)
                                         .setCancelable(false)
                                         .setOnCancelListener(d -> RegistrationLockReminders.scheduleReminder(context, false))

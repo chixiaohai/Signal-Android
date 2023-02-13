@@ -1,6 +1,8 @@
 package org.thoughtcrime.securesms.components.settings;
 
 import android.view.View;
+import android.widget.CheckedTextView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,11 +20,14 @@ import java.util.Objects;
 public class CustomizableSingleSelectSetting {
 
   public interface CustomizableSingleSelectionListener extends SingleSelectSetting.SingleSelectSelectionChangedListener {
-    void onCustomizeClicked(@Nullable Item item);
+    void onCustomizeClicked(@NonNull Item item);
   }
 
   public static class ViewHolder extends MappingViewHolder<Item> {
-    private final View                                customize;
+    private final CheckedTextView text;
+    private final TextView        summaryText;
+    private final View            customize;
+    //    private final RadioButton                         radio;
     private final SingleSelectSetting.ViewHolder      delegate;
     private final Group                               customizeGroup;
     private final CustomizableSingleSelectionListener selectionListener;
@@ -30,33 +35,51 @@ public class CustomizableSingleSelectSetting {
     public ViewHolder(@NonNull View itemView, @NonNull CustomizableSingleSelectionListener selectionListener) {
       super(itemView);
       this.selectionListener = selectionListener;
-
+      this.text = findViewById(R.id.single_select_item_text);
+      //      radio          = findViewById(R.id.customizable_single_select_radio);
+      summaryText    = findViewById(R.id.customizable_single_select_summary);
       customize      = findViewById(R.id.customizable_single_select_customize);
       customizeGroup = findViewById(R.id.customizable_single_select_customize_group);
 
+      ((View)text.getParent()).setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+          delegate.updateFocusView(text, hasFocus);
+        }
+      });
       delegate = new SingleSelectSetting.ViewHolder(itemView, selectionListener);
     }
 
     @Override
     public void bind(@NonNull Item model) {
       delegate.bind(model.singleSelectItem);
-      customizeGroup.setVisibility(model.singleSelectItem.isSelected() ? View.VISIBLE : View.GONE);
+//      customizeGroup.setVisibility(model.singleSelectItem.isSelected() ? View.VISIBLE : View.GONE);
       customize.setOnClickListener(v -> selectionListener.onCustomizeClicked(model));
+      if (model.getCustomValue() != null) {
+        summaryText.setText(model.getSummaryText());
+      }
     }
   }
 
   public static class Item implements MappingModel<Item> {
-    private final SingleSelectSetting.Item singleSelectItem;
-    private final Object                   customValue;
+    private SingleSelectSetting.Item singleSelectItem;
+    private Object                   customValue;
+    private String                   summaryText;
 
     public <T> Item(@NonNull T item, @Nullable String text, boolean isSelected, @Nullable Object customValue, @Nullable String summaryText) {
       this.customValue = customValue;
+      this.summaryText = summaryText;
 
-      singleSelectItem = new SingleSelectSetting.Item(item, text, summaryText, isSelected);
+      singleSelectItem = new SingleSelectSetting.Item(item, text, isSelected);
     }
 
     public @Nullable Object getCustomValue() {
       return customValue;
+    }
+
+    public @Nullable String getSummaryText() {
+      return summaryText;
     }
 
     @Override
@@ -66,7 +89,8 @@ public class CustomizableSingleSelectSetting {
 
     @Override
     public boolean areContentsTheSame(@NonNull Item newItem) {
-      return singleSelectItem.areContentsTheSame(newItem.singleSelectItem) && Objects.equals(customValue, newItem.customValue);
+      return singleSelectItem.areContentsTheSame(newItem.singleSelectItem) && Objects.equals(customValue, newItem.customValue) && Objects.equals(summaryText, newItem.summaryText);
+
     }
   }
 }

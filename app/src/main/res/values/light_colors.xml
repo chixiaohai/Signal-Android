@@ -8,7 +8,7 @@
     <color name="signal_background_primary">@color/core_white</color>
     <color name="signal_background_secondary">@color/core_grey_05</color>
     <color name="signal_background_tertiary">@color/core_grey_02</color>
-    <color name="signal_background_dialog">@color/core_white</color>
+    <color name="signal_background_dialog">@color/core_grey_75</color>
     <color name="signal_background_dialog_secondary">@color/signal_background_secondary</color>
     <color name="signal_background_secondary1">@color/core_grey_34</color>
 

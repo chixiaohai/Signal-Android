@@ -869,6 +869,10 @@ public class SignalServiceAccountManager {
     return this.pushServiceSocket.getAciByUsername(username);
   }
 
+  public void setUsername(String username) throws IOException {
+    this.pushServiceSocket.setUsername(username);
+  }
+
   public void setUsername(String nickname, String existingUsername) throws IOException {
     this.pushServiceSocket.setUsername(nickname, existingUsername);
   }

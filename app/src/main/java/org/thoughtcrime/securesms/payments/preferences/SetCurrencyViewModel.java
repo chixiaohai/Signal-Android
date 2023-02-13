@@ -87,7 +87,7 @@ public final class SetCurrencyViewModel extends ViewModel {
 
   private @NonNull MappingModelList fromCurrencies(@NonNull Collection<Currency> currencies, @NonNull Currency currentCurrency) {
     return Stream.of(currencies)
-                 .map(c -> new SingleSelectSetting.Item(c, c.getDisplayName(Locale.getDefault()), c.getCurrencyCode(), c.equals(currentCurrency)))
+                 .map(c -> new SingleSelectSetting.Item(c, c.getDisplayName(Locale.getDefault()), c.equals(currentCurrency)))
                  .sortBy(SingleSelectSetting.Item::getText)
                  .collect(MappingModelList.toMappingModelList());
   }
