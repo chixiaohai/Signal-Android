@@ -13,7 +13,6 @@ import org.thoughtcrime.securesms.contactshare.Contact;
 import org.thoughtcrime.securesms.conversation.ConversationMessage;
 import org.thoughtcrime.securesms.conversation.colors.Colorizable;
 import org.thoughtcrime.securesms.conversation.colors.Colorizer;
-import org.thoughtcrime.securesms.conversation.ConversationItemDisplayMode;
 import org.thoughtcrime.securesms.conversation.mutiselect.MultiselectPart;
 import org.thoughtcrime.securesms.conversation.mutiselect.Multiselectable;
 import org.thoughtcrime.securesms.database.model.InMemoryMessageRecord;
@@ -27,6 +26,7 @@ import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.stickers.StickerLocator;
+import org.thoughtcrime.securesms.video.exo.SignalMediaSourceFactory;
 
 import java.util.List;
 import java.util.Locale;
@@ -46,11 +46,11 @@ public interface BindableConversationItem extends Unbindable, GiphyMp4Playable, 
             boolean pulseMention,
             boolean hasWallpaper,
             boolean isMessageRequestAccepted,
+            @NonNull SignalMediaSourceFactory attachmentMediaSourceFactory,
             boolean canPlayInline,
-            @NonNull Colorizer colorizer,
-            @NonNull ConversationItemDisplayMode displayMode);
+            @NonNull Colorizer colorizer);
 
-  @NonNull ConversationMessage getConversationMessage();
+  ConversationMessage getConversationMessage();
 
   void setEventListener(@Nullable EventListener listener);
 
@@ -59,10 +59,6 @@ public interface BindableConversationItem extends Unbindable, GiphyMp4Playable, 
   }
 
   default void updateContactNameColor() {
-    // Intentionally Blank.
-  }
-
-  default void updateSelectedState() {
     // Intentionally Blank.
   }
 
@@ -77,7 +73,7 @@ public interface BindableConversationItem extends Unbindable, GiphyMp4Playable, 
     void onAddToContactsClicked(@NonNull Contact contact);
     void onMessageSharedContactClicked(@NonNull List<Recipient> choices);
     void onInviteSharedContactClicked(@NonNull List<Recipient> choices);
-    void onReactionClicked(@NonNull MultiselectPart multiselectPart, long messageId, boolean isMms);
+    void onReactionClicked(@NonNull View reactionTarget, long messageId, boolean isMms);
     void onGroupMemberClicked(@NonNull RecipientId recipientId, @NonNull GroupId groupId);
     void onMessageWithErrorClicked(@NonNull MessageRecord messageRecord);
     void onMessageWithRecaptchaNeededClicked(@NonNull MessageRecord messageRecord);
@@ -109,8 +105,5 @@ public interface BindableConversationItem extends Unbindable, GiphyMp4Playable, 
 
     /** @return true if handled, false if you want to let the normal url handling continue */
     boolean onUrlClicked(@NonNull String url);
-
-    void onViewGiftBadgeClicked(@NonNull MessageRecord messageRecord);
-    void onGiftBadgeRevealed(@NonNull MessageRecord messageRecord);
   }
 }

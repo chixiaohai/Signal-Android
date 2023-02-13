@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.components.settings.app
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.KeyEvent
 import androidx.navigation.NavDirections
 import org.thoughtcrime.securesms.MainActivity
 import org.thoughtcrime.securesms.R

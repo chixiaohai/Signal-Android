@@ -116,7 +116,6 @@
                     android:layout_marginStart="12dp"
                     android:layout_marginEnd="8dp"
                     android:visibility="gone"
-                    tools:src="@drawable/ic_emoji"
                     tools:visibility="visible" />
 
                 <FrameLayout
@@ -194,7 +193,6 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="@dimen/quote_story_emoji_margin"
         android:visibility="gone"
-        tools:src="@drawable/ic_emoji"
         tools:visibility="visible" />
 
     <androidx.appcompat.widget.AppCompatImageView

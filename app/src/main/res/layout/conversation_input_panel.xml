@@ -9,7 +9,7 @@
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="vertical"
-    android:background="@color/signal_background_primary">
+    android:background="@color/black">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/input_panel_sticker_suggestion"

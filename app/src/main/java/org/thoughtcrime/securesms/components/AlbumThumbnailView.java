@@ -28,12 +28,12 @@ public class AlbumThumbnailView extends FrameLayout {
   private int currentSizeClass;
 
   private ViewGroup                 albumCellContainer;
-  private Stub<TransferControlView> transferControls;
+  public Stub<TransferControlView> transferControls;
 
   private final SlideClickListener defaultThumbnailClickListener = (v, slide) -> {
-      if (thumbnailClickListener != null) {
-        thumbnailClickListener.onClick(v, slide);
-      }
+    if (thumbnailClickListener != null) {
+      thumbnailClickListener.onClick(v, slide);
+    }
   };
 
   private final OnLongClickListener defaultLongClickListener = v -> this.performLongClick();

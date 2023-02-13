@@ -17,6 +17,7 @@ import org.thoughtcrime.securesms.util.Projection;
 import org.thoughtcrime.securesms.util.Util;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -32,17 +33,17 @@ public class ConversationItemBodyBubble extends LinearLayout {
 
   public ConversationItemBodyBubble(Context context) {
     super(context);
-    setLayoutTransition(new BodyBubbleLayoutTransition());
+    setLayoutTransition(new BodyBubbleLayoutTransition(this));
   }
 
   public ConversationItemBodyBubble(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
-    setLayoutTransition(new BodyBubbleLayoutTransition());
+    setLayoutTransition(new BodyBubbleLayoutTransition(this));
   }
 
   public ConversationItemBodyBubble(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    setLayoutTransition(new BodyBubbleLayoutTransition());
+    setLayoutTransition(new BodyBubbleLayoutTransition(this));
   }
 
   public void setOutliners(@NonNull List<Outliner> outliners) {
@@ -62,19 +63,11 @@ public class ConversationItemBodyBubble extends LinearLayout {
   }
 
   public void setQuoteViewProjection(@Nullable Projection quoteViewProjection) {
-    if (this.quoteViewProjection != null) {
-      this.quoteViewProjection.release();
-    }
-
     this.quoteViewProjection = quoteViewProjection;
     clipProjectionDrawable.setProjections(getProjections());
   }
 
   public void setVideoPlayerProjection(@Nullable Projection videoPlayerProjection) {
-    if (this.videoPlayerProjection != null) {
-      this.videoPlayerProjection.release();
-    }
-
     this.videoPlayerProjection = videoPlayerProjection;
     clipProjectionDrawable.setProjections(getProjections());
   }
@@ -90,14 +83,14 @@ public class ConversationItemBodyBubble extends LinearLayout {
   }
 
   @Override
-  public void onDrawForeground(Canvas canvas) {
-    super.onDrawForeground(canvas);
+  protected void onDraw(Canvas canvas) {
+    super.onDraw(canvas);
 
     if (Util.isEmpty(outliners)) return;
 
-    for (Outliner outliner : outliners) {
-      outliner.draw(canvas, 0, getMeasuredWidth(), getMeasuredHeight(), 0);
-    }
+//    for (Outliner outliner : outliners) {
+//      outliner.draw(canvas, 0, getMeasuredWidth(), getMeasuredHeight(), 0);
+//    }
   }
 
   @Override

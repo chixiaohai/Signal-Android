@@ -128,6 +128,8 @@ Updated May 25, 2018\n
     <string name="please_wait">Please wait…</string>
     <string name="save">Save</string>
     <string name="note_to_self">Note to Self</string>
+    <string name="sub_menu_reply_message">Reply message</string>
+    <string name="conversation_context__menu_forward_message">Forward message</string>
 
     <!-- AlbumThumbnailView -->
     <string name="AlbumThumbnailView_plus" translatable="false">\+%d</string>

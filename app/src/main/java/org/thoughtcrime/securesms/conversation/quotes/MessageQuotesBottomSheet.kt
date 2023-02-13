@@ -38,6 +38,7 @@ import org.thoughtcrime.securesms.util.BottomSheetUtil
 import org.thoughtcrime.securesms.util.LifecycleDisposable
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration
 import org.thoughtcrime.securesms.util.fragments.findListener
+import org.thoughtcrime.securesms.video.exo.SignalMediaSourceFactory
 import java.util.Locale
 
 class MessageQuotesBottomSheet : FixedRoundedCornerBottomSheetDialogFragment() {
@@ -70,7 +71,7 @@ class MessageQuotesBottomSheet : FixedRoundedCornerBottomSheetDialogFragment() {
 
     val colorizer = Colorizer()
 
-    messageAdapter = ConversationAdapter(requireContext(), viewLifecycleOwner, GlideApp.with(this), Locale.getDefault(), ConversationAdapterListener(), conversationRecipient, colorizer).apply {
+    messageAdapter = ConversationAdapter(requireContext(), viewLifecycleOwner, GlideApp.with(this), Locale.getDefault(), ConversationAdapterListener(), conversationRecipient, SignalMediaSourceFactory(requireContext()),colorizer).apply {
       setCondensedMode(true)
     }
 
@@ -170,11 +171,6 @@ class MessageQuotesBottomSheet : FixedRoundedCornerBottomSheetDialogFragment() {
       getAdapterListener().onQuotedIndicatorClicked(messageRecord)
     }
 
-    override fun onReactionClicked(multiselectPart: MultiselectPart, messageId: Long, isMms: Boolean) {
-      dismiss()
-      getCallback().jumpToMessage(multiselectPart.conversationMessage.messageRecord)
-    }
-
     override fun onGroupMemberClicked(recipientId: RecipientId, groupId: GroupId) {
       dismiss()
       getAdapterListener().onGroupMemberClicked(recipientId, groupId)
@@ -235,10 +231,6 @@ class MessageQuotesBottomSheet : FixedRoundedCornerBottomSheetDialogFragment() {
       getAdapterListener().onRecipientNameClicked(target)
     }
 
-    override fun onViewGiftBadgeClicked(messageRecord: MessageRecord) {
-      dismiss()
-      getAdapterListener().onViewGiftBadgeClicked(messageRecord)
-    }
 
     override fun onActivatePaymentsClicked() {
       dismiss()

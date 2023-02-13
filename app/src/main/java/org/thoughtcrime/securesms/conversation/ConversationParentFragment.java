@@ -2160,7 +2160,7 @@ public class ConversationParentFragment extends Fragment
     if (chatWallpaper != null) {
       chatWallpaper.loadInto(wallpaper);
       ChatWallpaperDimLevelUtil.applyDimLevelForNightMode(wallpaperDim, chatWallpaper);
-      inputPanel.setWallpaperEnabled(true);
+//      inputPanel.setWallpaperEnabled(true);
       if (attachmentKeyboardStub.resolved()) {
         attachmentKeyboardStub.get().setWallpaperEnabled(true);
       }
@@ -2175,7 +2175,7 @@ public class ConversationParentFragment extends Fragment
     } else {
       wallpaper.setImageDrawable(null);
       wallpaperDim.setVisibility(View.GONE);
-      inputPanel.setWallpaperEnabled(false);
+//      inputPanel.setWallpaperEnabled(false);
       if (attachmentKeyboardStub.resolved()) {
         attachmentKeyboardStub.get().setWallpaperEnabled(false);
       }
@@ -3968,7 +3968,7 @@ public class ConversationParentFragment extends Fragment
 
   @Override
   public void onBottomActionBarVisibilityChanged(int visibility) {
-    inputPanel.setHideForSelection(visibility == View.VISIBLE);
+//    inputPanel.setHideForSelection(visibility == View.VISIBLE);
   }
 
   @Override
@@ -4210,23 +4210,23 @@ public class ConversationParentFragment extends Fragment
     {
       Log.d(TAG, "[presentMessageRequestState] Have extra, so ignoring provided state.");
       messageRequestBottomView.setVisibility(View.GONE);
-      inputPanel.setHideForMessageRequestState(false);
+//      inputPanel.setHideForMessageRequestState(false);
     } else if (isPushGroupV1Conversation() && !isActiveGroup()) {
       Log.d(TAG, "[presentMessageRequestState] Inactive push group V1, so ignoring provided state.");
       messageRequestBottomView.setVisibility(View.GONE);
-      inputPanel.setHideForMessageRequestState(false);
+//      inputPanel.setHideForMessageRequestState(false);
     } else if (messageData == null) {
       Log.d(TAG, "[presentMessageRequestState] Null messageData. Ignoring.");
     } else if (messageData.getMessageState() == MessageRequestState.NONE) {
       Log.d(TAG, "[presentMessageRequestState] No message request necessary.");
       messageRequestBottomView.setVisibility(View.GONE);
-      inputPanel.setHideForMessageRequestState(false);
+//      inputPanel.setHideForMessageRequestState(false);
     } else {
       Log.d(TAG, "[presentMessageRequestState] " + messageData.getMessageState());
       messageRequestBottomView.setMessageData(messageData);
       messageRequestBottomView.setVisibility(View.VISIBLE);
       noLongerMemberBanner.setVisibility(View.GONE);
-      inputPanel.setHideForMessageRequestState(true);
+//      inputPanel.setHideForMessageRequestState(true);
     }
 
     invalidateOptionsMenu();

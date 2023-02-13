@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<org.thoughtcrime.securesms.profiles.spoofing.ReviewBannerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    tools:viewBindingIgnore="true"
+<org.thoughtcrime.securesms.profiles.spoofing.ReviewBannerView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/review_banner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="108dp"
-        android:background="@color/signal_background_primary">
+    android:minHeight="108dp">
 
     <FrameLayout
         android:id="@+id/banner_icon_frame"
@@ -75,7 +67,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Review requests carefully Signal found another contact with the same name." />
+        tools:text="Review requests carefully Pigeon found another contact with the same name." />
 
     <ImageView
         android:id="@+id/banner_close"
@@ -99,13 +91,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@id/banner_message"
         app:layout_constraintTop_toBottomOf="@id/banner_message" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/toolbar_shadow"
-        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </org.thoughtcrime.securesms.profiles.spoofing.ReviewBannerView>

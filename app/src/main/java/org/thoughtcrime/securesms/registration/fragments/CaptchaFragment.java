@@ -98,6 +98,7 @@ public final class CaptchaFragment extends LoggingFragment {
         mWebview.reload();
         break;
       case KeyEvent.KEYCODE_2:
+        System.out.println("lyh   KeyEvent.KEYCODE_2");
         if (linearLayout.getY() < 10) {
           if (mWebview.getY() < 10) {
             mWebview.setTranslationY(mWebview.getY() + 10);
@@ -109,16 +110,19 @@ public final class CaptchaFragment extends LoggingFragment {
 //        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_UP));
         break;
       case KeyEvent.KEYCODE_4:
+        System.out.println("lyh   KeyEvent.KEYCODE_4");
         if (linearLayout.getX() > 0)
           linearLayout.setTranslationX(linearLayout.getX() - 5);
 //        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_LEFT));
         break;
       case KeyEvent.KEYCODE_6:
+        System.out.println("lyh   KeyEvent.KEYCODE_6");
         if (linearLayout.getX() < 320)
           linearLayout.setTranslationX(linearLayout.getX() + 5);
 //        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_RIGHT));
         break;
       case KeyEvent.KEYCODE_8:
+        System.out.println("lyh   KeyEvent.KEYCODE_8");
         if (linearLayout.getY() == 240) {
           if (mWebview.getY() + mWebview.getHeight() > 240) {
             mWebview.setTranslationY(mWebview.getY() - 10);
@@ -130,6 +134,7 @@ public final class CaptchaFragment extends LoggingFragment {
 //        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_DOWN));
         break;
       case KeyEvent.KEYCODE_5:
+        System.out.println("lyh   KeyEvent.KEYCODE_5");
         if (action == KeyEvent.ACTION_DOWN) {
           mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, linearLayout.getX(), linearLayout.getY()));
           mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY()));

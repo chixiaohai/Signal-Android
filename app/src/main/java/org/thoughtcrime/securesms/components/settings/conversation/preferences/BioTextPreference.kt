@@ -44,13 +44,15 @@ object BioTextPreference {
         recipient.getDisplayNameOrUsername(context)
       }
 
-      return if (recipient.showVerified()) {
-        SpannableStringBuilder(name).apply {
-          SpanUtil.appendCenteredImageSpan(this, ContextUtil.requireDrawable(context, R.drawable.ic_official_28), 28, 28)
-        }
-      } else {
-        name
-      }
+//      return if (recipient.showVerified()) {
+//        SpannableStringBuilder(name).apply {
+//          SpanUtil.appendCenteredImageSpan(this, ContextUtil.requireDrawable(context, R.drawable.ic_official_28), 28, 28)
+//        }
+//      } else {
+//        name
+//      }
+
+      return name
     }
 
     override fun getSubhead1Text(context: Context): String? {

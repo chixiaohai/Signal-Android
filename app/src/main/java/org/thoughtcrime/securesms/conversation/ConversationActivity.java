@@ -535,6 +535,8 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******1");
+      android.util.Log.d(TAG, "onKeyDown: fragment.getCurrentPosition() = " + fragment.getCurrentPosition() + " !isForward = " + !isForward);
       isKeyUpOrDown = false;
 //            if (isComposeTextFocus && panelParent.getVisibility() == View.GONE){
 //                panelParent.setVisibility(View.VISIBLE);
@@ -542,6 +544,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
 //            }
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******UP******1");
       isKeyUpOrDown = true;
     }
     if (keyCode == KeyEvent.KEYCODE_CALL && composeText.hasFocus()) {
@@ -573,14 +576,19 @@ public class ConversationActivity extends PassphraseRequiredActivity
       }
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_UP && mRecyclerview.getChildAt(0) != null && mRecyclerview.getChildAt(0).hasFocus()) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******UP******2");
       mRecyclerview.setVisibility(View.GONE);
       if (isBlocked()) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******UP******3");
         unblockButton.requestFocus();
       } else if (registerButton.getVisibility() == View.VISIBLE) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******UP******4");
         registerButton.requestFocus();
       } else if (makeDefaultSmsButton.getVisibility() == View.VISIBLE) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******UP******5");
         makeDefaultSmsButton.requestFocus();
       } else {
+        android.util.Log.d(TAG, "onKeyDown: lyh******UP******6");
         fragment.getList().scrollToPosition(-1);
         panelParent.setVisibility(View.VISIBLE);
         composeText.requestFocus();
@@ -605,27 +613,36 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && sendButton.hasFocus()) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******3");
       mRecyclerview.setVisibility(View.VISIBLE);
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && fragment.isLongerMsgItem(keyCode)) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******4");
       fragment.getList().smoothScrollBy(0, 40);
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP && !composeText.isFocused() && fragment.isLongerMsgItem(keyCode)) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******UP******7");
       fragment.getList().smoothScrollBy(0, -40);
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && mRecyclerview.getVisibility() != View.VISIBLE && fragment.getCurrentPosition() == 0 && !isForward) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******5");
       if (isBlocked()) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******6");
         unblockButton.requestFocus();
       } else if (registerButton.getVisibility() == View.VISIBLE) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******7");
         registerButton.requestFocus();
       } else if (makeDefaultSmsButton.getVisibility() == View.VISIBLE) {
+        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******8");
         makeDefaultSmsButton.requestFocus();
       } else {
+        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******9");
         isHideInputPanelView(false);
       }
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && mRecyclerview.getVisibility() != View.VISIBLE && fragment.isAtBottom() && isForward) {
+      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******10");
       isHideInputPanelView(false);
       return true;
     }
@@ -3872,27 +3889,11 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return;
     }
 
-    if (draftViewModel.getVoiceNoteDraft() != null) {
-      buttonToggle.display(sendButton);
-      quickAttachmentToggle.hide();
-      inlineAttachmentToggle.hide();
-      return;
-    }
+    draftViewModel.getVoiceNoteDraft();
 
-    if (composeText.getText().length() == 0 && !attachmentManager.isAttachmentPresent()) {
-      buttonToggle.display(sendButton);
-      quickAttachmentToggle.hide();
-      inlineAttachmentToggle.hide();
-    } else {
-      buttonToggle.display(sendButton);
-      quickAttachmentToggle.hide();
-
-      if (!attachmentManager.isAttachmentPresent() && !linkPreviewViewModel.hasLinkPreviewUi()) {
-        inlineAttachmentToggle.hide();
-      } else {
-        inlineAttachmentToggle.hide();
-      }
-    }
+    buttonToggle.display(sendButton);
+    quickAttachmentToggle.hide();
+    inlineAttachmentToggle.hide();
   }
 
   private void onViewModelEvent(@NonNull ConversationViewModel.Event event) {

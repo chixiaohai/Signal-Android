@@ -35,13 +35,13 @@ final class ConversationSwipeAnimationHelper {
 
     updateBodyBubbleTransition(conversationItem.bodyBubble, dx, sign);
     updateReactionsTransition(conversationItem.reactionsView, dx, sign);
-    updateReplyIconTransition(conversationItem.replyIcon, dx, progress, sign);
+    updateReplyIconTransition(conversationItem.reply, dx, progress, sign);
     updateContactPhotoHolderTransition(conversationItem.contactPhotoHolder, progress, sign);
 //    updateContactPhotoHolderTransition(conversationItem.badgeImageView, progress, sign);
   }
 
   public static void trigger(@NonNull ConversationItem conversationItem) {
-    triggerReplyIcon(conversationItem.replyIcon);
+    triggerReplyIcon(conversationItem.reply);
   }
 
   private static void updateBodyBubbleTransition(@NonNull View bodyBubble, float dx, float sign) {

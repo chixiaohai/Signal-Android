@@ -85,6 +85,7 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
     initializeToolbar();
     initializeResources();
     initializeSearch();
+    initializeTextView();
   }
 
   @Override
@@ -102,6 +103,13 @@ public abstract class ContactSelectionActivity extends PassphraseRequiredActivit
 
   private void initializeContactFilterView() {
     this.contactFilterView = findViewById(R.id.contact_filter_edit_text);
+  }
+
+  protected TextView getConfirmTextView(){return confirm_tv;}
+
+  private void initializeTextView(){
+    this.confirm_tv = this.findViewById(R.id.confirm_tv);
+    confirm_tv.setVisibility(View.GONE);
   }
 
   private void initializeToolbar() {

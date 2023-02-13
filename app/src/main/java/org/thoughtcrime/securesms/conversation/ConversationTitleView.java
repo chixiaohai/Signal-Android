@@ -148,9 +148,9 @@ public class ConversationTitleView extends RelativeLayout {
       endDrawable = DrawableUtil.tint(endDrawable, ContextCompat.getColor(getContext(), R.color.signal_inverse_transparent_80));
     }
 
-    if (recipient != null && recipient.showVerified()) {
-      endDrawable = ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_24);
-    }
+//    if (recipient != null && recipient.showVerified()) {
+//      endDrawable = ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_24);
+//    }
 
     title.setCompoundDrawablesRelativeWithIntrinsicBounds(startDrawable, null, endDrawable, null);
 

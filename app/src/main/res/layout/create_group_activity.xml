@@ -18,8 +18,9 @@
         android:paddingLeft="30px"
         android:text="@string/ChooseNewAdminActivity_done"
         android:textSize="24px"
-        tools:ignore="MissingConstraints,UnusedAttribute"
-        app:layout_constraintTop_toTopOf="parent"/>
+        tools:ignore="UnusedAttribute"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <org.thoughtcrime.securesms.util.views.DarkOverflowToolbar
         android:id="@+id/toolbar"

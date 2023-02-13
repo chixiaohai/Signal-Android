@@ -83,10 +83,11 @@ public class ConversationBannerView extends ConstraintLayout {
 
   public String setTitle(@NonNull Recipient recipient) {
     SpannableStringBuilder title = new SpannableStringBuilder(recipient.isSelf() ? getContext().getString(R.string.note_to_self) : recipient.getDisplayNameOrUsername(getContext()));
-    if (recipient.showVerified()) {
-      SpanUtil.appendCenteredImageSpan(title, ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_28), 28, 28);
-    }
+//    if (recipient.showVerified()) {
+//      SpanUtil.appendCenteredImageSpan(title, ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_28), 28, 28);
+//    }
     contactTitle.setText(title);
+    contactTitle.setTextColor(getContext().getResources().getColor(R.color.white));
     return title.toString();
   }
 
@@ -104,6 +105,7 @@ public class ConversationBannerView extends ConstraintLayout {
 
   public void setSubtitle(@Nullable CharSequence subtitle) {
     contactSubtitle.setText(subtitle);
+    contactSubtitle.setTextColor(getContext().getResources().getColor(R.color.white));
     contactSubtitle.setVisibility(TextUtils.isEmpty(subtitle) ? GONE : VISIBLE);
   }
 

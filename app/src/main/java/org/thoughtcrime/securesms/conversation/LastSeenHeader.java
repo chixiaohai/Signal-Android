@@ -14,23 +14,17 @@ import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
 class LastSeenHeader extends StickyHeaderDecoration {
 
   private final ConversationAdapter adapter;
-  private final long                lastSeenTimestamp;
-
-  private long unreadCount;
+  private final long                 lastSeenTimestamp;
 
   LastSeenHeader(ConversationAdapter adapter, long lastSeenTimestamp) {
     super(adapter, false, false);
-    this.adapter               = adapter;
-    this.lastSeenTimestamp     = lastSeenTimestamp;
-  }
-
-  public void setUnreadCount(long unreadCount) {
-    this.unreadCount = unreadCount;
+    this.adapter           = adapter;
+    this.lastSeenTimestamp = lastSeenTimestamp;
   }
 
   @Override
   protected boolean hasHeader(RecyclerView parent, StickyHeaderAdapter stickyAdapter, int position) {
-    if (lastSeenTimestamp <= 0 || unreadCount <= 0) {
+    if (lastSeenTimestamp <= 0) {
       return false;
     }
 
@@ -48,7 +42,7 @@ class LastSeenHeader extends StickyHeaderDecoration {
   @Override
   protected @NonNull RecyclerView.ViewHolder getHeader(RecyclerView parent, StickyHeaderAdapter stickyAdapter, int position) {
     StickyHeaderViewHolder viewHolder = new StickyHeaderViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.conversation_item_last_seen, parent, false));
-    adapter.onBindLastSeenViewHolder(viewHolder, unreadCount);
+    adapter.onBindLastSeenViewHolder(viewHolder, position);
 
     int widthSpec  = View.MeasureSpec.makeMeasureSpec(parent.getWidth(), View.MeasureSpec.EXACTLY);
     int heightSpec = View.MeasureSpec.makeMeasureSpec(parent.getHeight(), View.MeasureSpec.UNSPECIFIED);

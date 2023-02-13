@@ -150,7 +150,7 @@ public class InputPanel extends LinearLayout
       mediaKeyboard.setVisibility(View.GONE);
       emojiVisible = false;
     } else {
-      mediaKeyboard.setVisibility(View.VISIBLE);
+      mediaKeyboard.setVisibility(View.GONE);
       emojiVisible = true;
     }
 

@@ -60,13 +60,13 @@ public class FromTextView extends SimpleEmojiTextView {
       builder.append(suffix);
     }
 
-    if (recipient.showVerified()) {
-      Drawable official = ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_20);
-      official.setBounds(0, 0, ViewUtil.dpToPx(20), ViewUtil.dpToPx(20));
-
-      builder.append(" ")
-             .append(SpanUtil.buildCenteredImageSpan(official));
-    }
+//    if (recipient.showVerified()) {
+//      Drawable official = ContextUtil.requireDrawable(getContext(), R.drawable.ic_official_20);
+//      official.setBounds(0, 0, ViewUtil.dpToPx(20), ViewUtil.dpToPx(20));
+//
+//      builder.append(" ")
+//             .append(SpanUtil.buildCenteredImageSpan(official));
+//    }
 
     setText(builder);
 

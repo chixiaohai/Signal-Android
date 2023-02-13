@@ -31,6 +31,7 @@ import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -194,6 +195,7 @@ import org.thoughtcrime.securesms.util.WindowUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
 import org.thoughtcrime.securesms.util.task.ProgressDialogAsyncTask;
 import org.thoughtcrime.securesms.verify.VerifyIdentityActivity;
+import org.thoughtcrime.securesms.video.exo.SignalMediaSourceFactory;
 import org.thoughtcrime.securesms.wallpaper.ChatWallpaper;
 
 import java.io.IOException;
@@ -225,7 +227,11 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   private final LifecycleDisposable lastSeenDisposable     = new LifecycleDisposable();
 
   private ConversationFragmentListener listener;
+  private static final int HANDLE_REPLY_MESSAGE = 100;
+  private static final int HANDLE_FORWARD = 200;
+  private static final int HANDLE_SUBMENU = 300;
   private int mPos = -1;
+  private boolean isReply = false;
 
   private LiveRecipient               recipient;
   private long                        threadId;
@@ -366,6 +372,17 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     this.messageCountsViewModel = new ViewModelProvider(requireActivity()).get(MessageCountsViewModel.class);
     this.conversationViewModel  = new ViewModelProvider(requireActivity(), new ConversationViewModel.Factory()).get(ConversationViewModel.class);
 
+    conversationViewModel.getMessageData().subscribe(messageData -> {
+      ConversationAdapter adapter = getListAdapter();
+      if (adapter != null) {
+        getListAdapter().submitList(messageData.getMessages(), () -> {
+          list.post(() -> conversationViewModel.onMessagesCommitted(messageData.getMessages()));
+        });
+        onSubmitList();
+      }
+    });
+
+
     disposables.add(conversationViewModel.getChatColors().subscribe(chatColors -> {
       recyclerViewColorizer.setChatColors(chatColors);
       scrollToMentionButton.setUnreadCountBackgroundTint(chatColors.asSingleColor());
@@ -457,6 +474,30 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
                 .show();
 //      }
     }
+
+  private void onSubmitList() {
+    if (mPos == -1) {
+      new Handler().postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          getListAdapter().addItemSelectLisioner((pos, isFocus) -> {
+            if (isFocus) {
+              mPos = pos;
+              if (((ConversationActivity) getActivity()).getPanelLayout().getVisibility() == View.VISIBLE) {
+                ((ConversationActivity) getActivity()).isHideInputPanelView(true);
+              }
+              getListLayoutManager().smoothScrollToPosition(getActivity(), mPos, 60);
+            } else if (pos == 0) {
+              if (((ConversationActivity) getActivity()).getComposePanelVisibility() == View.VISIBLE && isReply) {
+                isReply = false;
+                ((ConversationActivity) getActivity()).isHideInputPanelView(false);
+              }
+            }
+          });
+        }
+      }, 900);
+    }
+  }
 
 
   private @NonNull GiphyMp4ProjectionRecycler initializeGiphyMp4() {
@@ -630,9 +671,9 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       if (adapter != null) {
         Log.d(TAG, "Notifying adapter that wallpaper state has changed.");
 
-        if (adapter.onHasWallpaperChanged(wallpaper != null)) {
-          setInlineDateDecoration(adapter);
-        }
+//        if (adapter.onHasWallpaperChanged(wallpaper != null)) {
+//          setInlineDateDecoration(adapter);
+//        }
       }
     }
   }
@@ -780,7 +821,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       }
 
       Log.d(TAG, "Initializing adapter for " + recipient.getId());
-      ConversationAdapter adapter = new ConversationAdapter(requireContext(), this, GlideApp.with(this), locale, selectionClickListener, this.recipient.get(), colorizer);
+      ConversationAdapter adapter = new ConversationAdapter(requireContext(), this, GlideApp.with(this), locale, selectionClickListener, this.recipient.get(), new SignalMediaSourceFactory(requireContext()), colorizer);
       adapter.setPagingController(conversationViewModel.getPagingController());
       list.setAdapter(adapter);
       setInlineDateDecoration(adapter);
@@ -1031,23 +1072,12 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   }
 
   public void setLastSeen(long lastSeen) {
-    lastSeenDisposable.clear();
     if (lastSeenDecoration != null) {
       list.removeItemDecoration(lastSeenDecoration);
     }
 
     lastSeenDecoration = new LastSeenHeader(getListAdapter(), lastSeen);
-    list.addItemDecoration(lastSeenDecoration, 0);
-
-    if (lastSeen > 0) {
-      lastSeenDisposable.add(conversationViewModel.getThreadUnreadCount(lastSeen)
-                                                  .distinctUntilChanged()
-                                                  .observeOn(AndroidSchedulers.mainThread())
-                                                  .subscribe(unreadCount -> {
-                                                    lastSeenDecoration.setUnreadCount(unreadCount);
-                                                    list.invalidateItemDecorations();
-                                                  }));
-    }
+    list.addItemDecoration(lastSeenDecoration);
   }
 
   private void handleCopyMessage(final Set<MultiselectPart> multiselectParts) {
@@ -1641,126 +1671,145 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       }
     }
 
+//    @Override
+//    public void onItemLongClick(View itemView, MultiselectPart item) {
+//
+//      if (actionMode != null) return;
+//
+//      MessageRecord messageRecord = item.getConversationMessage().getMessageRecord();
+//
+////      if (isUnopenedGift(itemView, messageRecord)) {
+////        return;
+////      }
+//
+//      if (messageRecord.isSecure()                                        &&
+//          !messageRecord.isRemoteDelete()                                 &&
+//          !messageRecord.isUpdate()                                       &&
+//          !recipient.get().isBlocked()                                    &&
+//          !messageRequestViewModel.shouldShowMessageRequest()             &&
+//          (!recipient.get().isGroup() || recipient.get().isActiveGroup()) &&
+//          ((ConversationAdapter) list.getAdapter()).getSelectedItems().isEmpty())
+//      {
+//        multiselectItemDecoration.setFocusedItem(new MultiselectPart.Message(item.getConversationMessage()));
+//        list.invalidateItemDecorations();
+//
+//        reactionsShade.setVisibility(View.VISIBLE);
+//        list.setLayoutFrozen(true);
+//
+//        if (itemView instanceof ConversationItem) {
+//          Uri audioUri = getAudioUriForLongClick(messageRecord);
+//          if (audioUri != null) {
+//            listener.onVoiceNotePause(audioUri);
+//          }
+//
+//          Bitmap videoBitmap          = null;
+//          int    childAdapterPosition = list.getChildAdapterPosition(itemView);
+//
+//          GiphyMp4ProjectionPlayerHolder mp4Holder = null;
+//          if (childAdapterPosition != RecyclerView.NO_POSITION) {
+//            mp4Holder = giphyMp4ProjectionRecycler.getCurrentHolder(childAdapterPosition);
+//            if (mp4Holder != null && mp4Holder.isVisible()) {
+//              mp4Holder.pause();
+//              videoBitmap = mp4Holder.getBitmap();
+//              mp4Holder.hide();
+//            } else {
+//              mp4Holder = null;
+//            }
+//          }
+//          final GiphyMp4ProjectionPlayerHolder finalMp4Holder = mp4Holder;
+//
+//          ConversationItem conversationItem = (ConversationItem) itemView;
+//          Bitmap           bitmap           = ConversationItemSelection.snapshotView(conversationItem, list, messageRecord, videoBitmap);
+//
+//          View focusedView = listener.isKeyboardOpen() ? conversationItem.getRootView().findFocus() : null;
+//
+//          final ConversationItemBodyBubble bodyBubble                = conversationItem.bodyBubble;
+//                SelectedConversationModel  selectedConversationModel = new SelectedConversationModel(bitmap,
+//                                                                                                     itemView.getX(),
+//                                                                                                     itemView.getY() + list.getTranslationY(),
+//                                                                                                     bodyBubble.getX(),
+//                                                                                                     bodyBubble.getY(),
+//                                                                                                     bodyBubble.getWidth(),
+//                                                                                                     audioUri,
+//                                                                                                     messageRecord.isOutgoing(),
+//                                                                                                     focusedView);
+//
+//          bodyBubble.setVisibility(View.INVISIBLE);
+//          conversationItem.reactionsView.setVisibility(View.INVISIBLE);
+//
+//          ViewUtil.hideKeyboard(requireContext(), conversationItem);
+//
+//          boolean showScrollButtons = conversationViewModel.getShowScrollButtons();
+//          if (showScrollButtons) {
+//            conversationViewModel.setShowScrollButtons(false);
+//          }
+//
+//          boolean isAttachmentKeyboardOpen = listener.isAttachmentKeyboardOpen();
+//
+//          listener.handleReaction(item.getConversationMessage(),
+//                                  new ReactionsToolbarListener(item.getConversationMessage()),
+//                                  selectedConversationModel,
+//                                  new ConversationReactionOverlay.OnHideListener() {
+//                                    @Override public void startHide() {
+//                                      multiselectItemDecoration.hideShade(list);
+//                                      ViewUtil.fadeOut(reactionsShade, getResources().getInteger(R.integer.reaction_scrubber_hide_duration), View.GONE);
+//                                    }
+//
+//                                    @Override public void onHide() {
+//                                      list.setLayoutFrozen(false);
+//
+//                                      if (selectedConversationModel.getAudioUri() != null) {
+//                                        listener.onVoiceNoteResume(selectedConversationModel.getAudioUri(), messageRecord.getId());
+//                                      }
+//
+//                                      WindowUtil.setLightStatusBarFromTheme(requireActivity());
+//                                      WindowUtil.setLightNavigationBarFromTheme(requireActivity());
+//                                      clearFocusedItem();
+//
+//                                      if (finalMp4Holder != null) {
+//                                        finalMp4Holder.show();
+//                                        finalMp4Holder.resume();
+//                                      }
+//
+//                                      bodyBubble.setVisibility(View.VISIBLE);
+//                                      conversationItem.reactionsView.setVisibility(View.VISIBLE);
+//
+//                                      if (showScrollButtons) {
+//                                        conversationViewModel.setShowScrollButtons(true);
+//                                      }
+//
+//                                      if (isAttachmentKeyboardOpen) {
+//                                        listener.openAttachmentKeyboard();
+//                                      }
+//                                    }
+//                                  });
+//        }
+//      } else {
+//        clearFocusedItem();
+//        ((ConversationAdapter) list.getAdapter()).toggleSelection(item);
+//        list.invalidateItemDecorations();
+//
+//        actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
+//      }
+//    }
+
     @Override
     public void onItemLongClick(View itemView, MultiselectPart item) {
 
-      if (actionMode != null) return;
-
       MessageRecord messageRecord = item.getConversationMessage().getMessageRecord();
-
-//      if (isUnopenedGift(itemView, messageRecord)) {
-//        return;
-//      }
-
-      if (messageRecord.isSecure()                                        &&
-          !messageRecord.isRemoteDelete()                                 &&
-          !messageRecord.isUpdate()                                       &&
-          !recipient.get().isBlocked()                                    &&
-          !messageRequestViewModel.shouldShowMessageRequest()             &&
+      if (messageRecord.isSecure() &&
+          !messageRecord.isRemoteDelete() &&
+          !messageRecord.isUpdate() &&
+          !recipient.get().isBlocked() &&
+          !messageRequestViewModel.shouldShowMessageRequest() &&
           (!recipient.get().isGroup() || recipient.get().isActiveGroup()) &&
-          ((ConversationAdapter) list.getAdapter()).getSelectedItems().isEmpty())
-      {
-        multiselectItemDecoration.setFocusedItem(new MultiselectPart.Message(item.getConversationMessage()));
-        list.invalidateItemDecorations();
-
-        reactionsShade.setVisibility(View.VISIBLE);
-        list.setLayoutFrozen(true);
-
-        if (itemView instanceof ConversationItem) {
-          Uri audioUri = getAudioUriForLongClick(messageRecord);
-          if (audioUri != null) {
-            listener.onVoiceNotePause(audioUri);
-          }
-
-          Bitmap videoBitmap          = null;
-          int    childAdapterPosition = list.getChildAdapterPosition(itemView);
-
-          GiphyMp4ProjectionPlayerHolder mp4Holder = null;
-          if (childAdapterPosition != RecyclerView.NO_POSITION) {
-            mp4Holder = giphyMp4ProjectionRecycler.getCurrentHolder(childAdapterPosition);
-            if (mp4Holder != null && mp4Holder.isVisible()) {
-              mp4Holder.pause();
-              videoBitmap = mp4Holder.getBitmap();
-              mp4Holder.hide();
-            } else {
-              mp4Holder = null;
-            }
-          }
-          final GiphyMp4ProjectionPlayerHolder finalMp4Holder = mp4Holder;
-
-          ConversationItem conversationItem = (ConversationItem) itemView;
-          Bitmap           bitmap           = ConversationItemSelection.snapshotView(conversationItem, list, messageRecord, videoBitmap);
-
-          View focusedView = listener.isKeyboardOpen() ? conversationItem.getRootView().findFocus() : null;
-
-          final ConversationItemBodyBubble bodyBubble                = conversationItem.bodyBubble;
-                SelectedConversationModel  selectedConversationModel = new SelectedConversationModel(bitmap,
-                                                                                                     itemView.getX(),
-                                                                                                     itemView.getY() + list.getTranslationY(),
-                                                                                                     bodyBubble.getX(),
-                                                                                                     bodyBubble.getY(),
-                                                                                                     bodyBubble.getWidth(),
-                                                                                                     audioUri,
-                                                                                                     messageRecord.isOutgoing(),
-                                                                                                     focusedView);
-
-          bodyBubble.setVisibility(View.INVISIBLE);
-          conversationItem.reactionsView.setVisibility(View.INVISIBLE);
-
-          ViewUtil.hideKeyboard(requireContext(), conversationItem);
-
-          boolean showScrollButtons = conversationViewModel.getShowScrollButtons();
-          if (showScrollButtons) {
-            conversationViewModel.setShowScrollButtons(false);
-          }
-
-          boolean isAttachmentKeyboardOpen = listener.isAttachmentKeyboardOpen();
-
-          listener.handleReaction(item.getConversationMessage(),
-                                  new ReactionsToolbarListener(item.getConversationMessage()),
-                                  selectedConversationModel,
-                                  new ConversationReactionOverlay.OnHideListener() {
-                                    @Override public void startHide() {
-                                      multiselectItemDecoration.hideShade(list);
-                                      ViewUtil.fadeOut(reactionsShade, getResources().getInteger(R.integer.reaction_scrubber_hide_duration), View.GONE);
-                                    }
-
-                                    @Override public void onHide() {
-                                      list.setLayoutFrozen(false);
-
-                                      if (selectedConversationModel.getAudioUri() != null) {
-                                        listener.onVoiceNoteResume(selectedConversationModel.getAudioUri(), messageRecord.getId());
-                                      }
-
-                                      WindowUtil.setLightStatusBarFromTheme(requireActivity());
-                                      WindowUtil.setLightNavigationBarFromTheme(requireActivity());
-                                      clearFocusedItem();
-
-                                      if (finalMp4Holder != null) {
-                                        finalMp4Holder.show();
-                                        finalMp4Holder.resume();
-                                      }
-
-                                      bodyBubble.setVisibility(View.VISIBLE);
-                                      conversationItem.reactionsView.setVisibility(View.VISIBLE);
-
-                                      if (showScrollButtons) {
-                                        conversationViewModel.setShowScrollButtons(true);
-                                      }
-
-                                      if (isAttachmentKeyboardOpen) {
-                                        listener.openAttachmentKeyboard();
-                                      }
-                                    }
-                                  });
-        }
-      } else {
-        clearFocusedItem();
+          ((ConversationAdapter) list.getAdapter()).getSelectedItems().isEmpty()) {
         ((ConversationAdapter) list.getAdapter()).toggleSelection(item);
         list.invalidateItemDecorations();
-
-        actionMode = ((AppCompatActivity)getActivity()).startSupportActionMode(actionModeCallback);
+        Intent intent = new Intent(requireContext(), ConversationSubMemuActivity.class);
+        startActivityForResult(intent, HANDLE_SUBMENU);
       }
+
     }
 
     @Nullable private Uri getAudioUriForLongClick(@NonNull MessageRecord messageRecord) {
@@ -1934,8 +1983,7 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
       });
     }
 
-    @Override
-    public void onReactionClicked(@NonNull MultiselectPart multiselectPart, long messageId, boolean isMms) {
+    @Override public void onReactionClicked(@NonNull View reactionTarget, long messageId, boolean isMms) {
       if (getParentFragment() == null) return;
 
       ReactionsBottomSheetDialogFragment.create(messageId, isMms).show(getParentFragmentManager(), null);
@@ -2153,26 +2201,6 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     @Override
     public void onInviteToSignalClicked() {
       listener.onInviteToSignal();
-    }
-
-    @Override
-    public void onViewGiftBadgeClicked(@NonNull MessageRecord messageRecord) {
-      if (!MessageRecordUtil.hasGiftBadge(messageRecord)) {
-        return;
-      }
-
-//      if (messageRecord.isOutgoing()) {
-//        ViewSentGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
-//      } else {
-//        ViewReceivedGiftBottomSheet.show(getChildFragmentManager(), (MmsMessageRecord) messageRecord);
-//      }
-    }
-
-    @Override
-    public void onGiftBadgeRevealed(@NonNull MessageRecord messageRecord) {
-      if (messageRecord.isOutgoing() && MessageRecordUtil.hasGiftBadge(messageRecord)) {
-        conversationViewModel.markGiftBadgeRevealed(messageRecord.getId());
-      }
     }
 
     @Override

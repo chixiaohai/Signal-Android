@@ -36,6 +36,7 @@ import org.thoughtcrime.securesms.util.DateUtils;
 import org.thoughtcrime.securesms.util.ExpirationUtil;
 import org.thoughtcrime.securesms.util.Projection;
 import org.thoughtcrime.securesms.util.ProjectionList;
+import org.thoughtcrime.securesms.video.exo.SignalMediaSourceFactory;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -109,9 +110,9 @@ final class MessageHeaderViewHolder extends RecyclerView.ViewHolder implements G
                           false,
                           false,
                           false,
+                          new SignalMediaSourceFactory(conversationItem.getContext()),
                           true,
-                          colorizer,
-                          ConversationItemDisplayMode.DETAILED);
+                          colorizer);
   }
 
   private void bindErrorState(MessageRecord messageRecord) {
@@ -279,6 +280,11 @@ final class MessageHeaderViewHolder extends RecyclerView.ViewHolder implements G
   @Override
   public boolean shouldProjectContent() {
     return conversationItem.shouldProjectContent();
+  }
+
+  @Override
+  public @NonNull Projection getProjection(@NonNull ViewGroup recyclerview) {
+    return conversationItem.getProjection(recyclerview);
   }
 
   @Override

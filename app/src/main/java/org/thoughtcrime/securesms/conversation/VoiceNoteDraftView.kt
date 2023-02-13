@@ -79,7 +79,7 @@ class VoiceNoteDraftView @JvmOverloads constructor(
 
     override fun onProgressUpdated(durationMillis: Long, playheadMillis: Long) = Unit
 
-    override fun onSpeedChanged(speed: Float, isPlaying: Boolean) = Unit
+//    override fun onSpeedChanged(speed: Float, isPlaying: Boolean) = Unit
   }
 
   interface Listener {

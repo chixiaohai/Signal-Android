@@ -70,4 +70,11 @@ public final class SignalMediaSourceFactory implements MediaSourceFactory {
   public MediaSource createMediaSource(MediaItem mediaItem) {
     return progressiveMediaSourceFactory.createMediaSource(mediaItem);
   }
+
+  /**
+   * Creates a MediaSource for a given Uri
+   */
+  public @NonNull MediaSource createMediaSource(Uri uri) {
+    return progressiveMediaSourceFactory.createMediaSource(MediaItem.fromUri(uri));
+  }
 }

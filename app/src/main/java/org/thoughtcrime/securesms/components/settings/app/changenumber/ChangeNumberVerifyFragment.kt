@@ -74,4 +74,5 @@ class ChangeNumberVerifyFragment : LoggingFragment(R.layout.fragment_change_phon
         }
       }
   }
+
 }

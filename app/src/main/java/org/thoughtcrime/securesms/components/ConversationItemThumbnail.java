@@ -10,9 +10,10 @@ import android.widget.ImageView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.Px;
 import androidx.annotation.UiThread;
+import androidx.core.content.ContextCompat;
 
+import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.mms.GlideRequests;
@@ -26,17 +27,18 @@ import java.util.List;
 
 public class ConversationItemThumbnail extends FrameLayout {
 
-  private ThumbnailView          thumbnail;
-  private AlbumThumbnailView     album;
+  private static final String TAG = ConversationItemThumbnail.class.getSimpleName();
+  public ThumbnailView          thumbnail;
+  public AlbumThumbnailView     album;
   private ImageView              shade;
   private ConversationItemFooter footer;
   private CornerMask             cornerMask;
+  private Outliner               outliner;
   private Outliner               pulseOutliner;
   private boolean                borderless;
   private int[]                  normalBounds;
   private int[]                  gifBounds;
   private int                    minimumThumbnailWidth;
-  private int                    maximumThumbnailHeight;
 
   public ConversationItemThumbnail(Context context) {
     super(context);
@@ -53,6 +55,14 @@ public class ConversationItemThumbnail extends FrameLayout {
     init(attrs);
   }
 
+  public AlbumThumbnailView getAlbum(){
+    return album;
+  }
+
+  public ThumbnailView getThumbnailview(){
+    return thumbnail;
+  }
+
   private void init(@Nullable AttributeSet attrs) {
     inflate(getContext(), R.layout.conversation_item_thumbnail, this);
 
@@ -61,6 +71,9 @@ public class ConversationItemThumbnail extends FrameLayout {
     this.shade      = findViewById(R.id.conversation_thumbnail_shade);
     this.footer     = findViewById(R.id.conversation_thumbnail_footer);
     this.cornerMask = new CornerMask(this);
+    this.outliner   = new Outliner();
+
+    outliner.setColor(ContextCompat.getColor(getContext(), R.color.signal_inverse_transparent_20));
 
     int gifWidth = ViewUtil.dpToPx(260);
     if (attrs != null) {
@@ -85,8 +98,17 @@ public class ConversationItemThumbnail extends FrameLayout {
         Integer.MAX_VALUE
     };
 
-    minimumThumbnailWidth  = -1;
-    maximumThumbnailHeight = -1;
+    minimumThumbnailWidth = -1;
+    thumbnail.setOnClickListener(v -> {
+      Log.d(TAG, "init()  onClick  ");
+    });
+
+    album.setOnClickListener(v -> {
+      ThumbnailView cell = findViewById(R.id.album_cell_1);
+      if (cell!=null) {
+        cell.performClick();
+      }
+    });
   }
 
   @SuppressWarnings("SuspiciousNameCombination")
@@ -96,6 +118,10 @@ public class ConversationItemThumbnail extends FrameLayout {
 
     if (!borderless) {
       cornerMask.mask(canvas);
+
+      if (album.getVisibility() != VISIBLE) {
+        outliner.draw(canvas);
+      }
     }
 
     if (pulseOutliner != null) {
@@ -144,16 +170,12 @@ public class ConversationItemThumbnail extends FrameLayout {
 
   public void setCorners(int topLeft, int topRight, int bottomRight, int bottomLeft) {
     cornerMask.setRadii(topLeft, topRight, bottomRight, bottomLeft);
+    outliner.setRadii(topLeft, topRight, bottomRight, bottomLeft);
   }
 
-  public void setMinimumThumbnailWidth(@Px int width) {
+  public void setMinimumThumbnailWidth(int width) {
     minimumThumbnailWidth = width;
     thumbnail.setMinimumThumbnailWidth(width);
-  }
-
-  public void setMaximumThumbnailHeight(@Px int height) {
-    maximumThumbnailHeight = height;
-    thumbnail.setMaximumThumbnailHeight(height);
   }
 
   public void setBorderless(boolean borderless) {
@@ -177,10 +199,6 @@ public class ConversationItemThumbnail extends FrameLayout {
 
         if (minimumThumbnailWidth != -1) {
           thumbnail.setMinimumThumbnailWidth(minimumThumbnailWidth);
-        }
-
-        if (maximumThumbnailHeight != -1) {
-          thumbnail.setMaximumThumbnailHeight(maximumThumbnailHeight);
         }
       }
 

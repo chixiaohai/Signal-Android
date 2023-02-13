@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.signal.core.util.concurrent.SimpleTask;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.conversationlist.model.Conversation;
 import org.thoughtcrime.securesms.database.SignalDatabase;
 import org.thoughtcrime.securesms.database.ThreadTable;
 import org.thoughtcrime.securesms.database.model.ThreadRecord;
@@ -30,7 +29,7 @@ import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
 import java.util.Locale;
 
 public class ConversationListSearchFragment extends ConversationListFragment
-        implements ConversationListSearchAdapter.EventListener{
+    implements ConversationListSearchAdapter.EventListener{
 
   private static final String TAG = Log.tag(ConversationListSearchFragment.class);
 
@@ -71,7 +70,7 @@ public class ConversationListSearchFragment extends ConversationListFragment
   }
 
   private void initializeViewModel() {
-    viewModel = new ViewModelProvider(this, new ConversationListViewModel.Factory(isArchived(),"")).get(ConversationListViewModel.class);
+    viewModel = new ViewModelProvider(this, new ConversationListViewModel.Factory(isArchived(), "")).get(ConversationListViewModel.class);
     viewModel.getSearchResult().observe(getViewLifecycleOwner(), result -> {
       result = result != null ? result : SearchResult.EMPTY;
       searchAdapter.updateResults(result);
@@ -80,11 +79,7 @@ public class ConversationListSearchFragment extends ConversationListFragment
   }
 
   private void initializeListAdapters() {
-    searchAdapter = new ConversationListSearchAdapter(new LifecycleOwner() {
-      @NonNull @Override public Lifecycle getLifecycle() {
-        return null;
-      }
-    }, GlideApp.with(this), this, Locale.getDefault());
+    searchAdapter = new ConversationListSearchAdapter(requireContext(), GlideApp.with(this), this, Locale.getDefault());
     searchAdapterDecoration = new StickyHeaderDecoration(searchAdapter, false, false);
     list.setAdapter(searchAdapter);
   }
@@ -93,9 +88,9 @@ public class ConversationListSearchFragment extends ConversationListFragment
   public void onConversationClicked(@NonNull ThreadRecord threadRecord) {
     hideKeyboard();
     getNavigator().goToConversation(threadRecord.getRecipient().getId(),
-            threadRecord.getThreadId(),
-            threadRecord.getDistributionType(),
-            -1);
+                                    threadRecord.getThreadId(),
+                                    threadRecord.getDistributionType(),
+                                    -1);
   }
 
   @Override
@@ -105,9 +100,8 @@ public class ConversationListSearchFragment extends ConversationListFragment
     }, threadId -> {
       hideKeyboard();
       getNavigator().goToConversation(contact.getId(),
-              threadId,
-                                      ThreadTable.DistributionTypes.DEFAULT,
-              -1);
+                                      threadId,
+                                      ThreadTable.DistributionTypes.DEFAULT, -1);
     });
   }
 
@@ -125,6 +119,18 @@ public class ConversationListSearchFragment extends ConversationListFragment
     });
   }
 
+  @Override
+  public void onSearchTextChange(String text) {
+    String trimmed = text.trim();
+    viewModel.onSearchQueryUpdated(trimmed);
+    //TODO Temp mark decoration to avoid bug, need further check.
+    /*if (trimmed.length() > 0) {
+      list.removeItemDecoration(searchAdapterDecoration);
+      list.addItemDecoration(searchAdapterDecoration);
+    } else {
+      list.removeItemDecoration(searchAdapterDecoration);
+    }*/
+  }
 
   private void hideKeyboard() {
     InputMethodManager imm = ServiceUtil.getInputMethodManager(requireContext());
@@ -140,5 +146,4 @@ public class ConversationListSearchFragment extends ConversationListFragment
     getNavigator().setFromSearch(true);
     return super.onBackPressed();
   }
-
 }

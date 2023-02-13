@@ -6,6 +6,8 @@ import android.view.ViewStub;
 
 import androidx.annotation.NonNull;
 
+import java.util.Objects;
+
 public class Stub<T extends View> {
 
   private ViewStub viewStub;
@@ -23,6 +25,13 @@ public class Stub<T extends View> {
     }
 
     return view;
+  }
+  public @NonNull T require() {
+    return Objects.requireNonNull(get());
+  }
+
+  public boolean isResolved() {
+    return viewStub != null;
   }
 
   public boolean resolved() {

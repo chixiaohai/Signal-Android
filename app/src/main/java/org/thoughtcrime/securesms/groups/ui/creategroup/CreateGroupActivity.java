@@ -80,7 +80,6 @@ public class CreateGroupActivity extends ContactSelectionActivity implements Con
     extendSkip();
 
     next.setOnClickListener(v -> {
-      System.out.println("lyh   next.click");
       handleNextPressed();
     });
   }

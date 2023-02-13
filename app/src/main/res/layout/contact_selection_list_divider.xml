@@ -11,4 +11,5 @@
     android:paddingEnd="@dimen/dsl_settings_gutter"
     android:paddingBottom="12dp"
     android:textAppearance="@style/Signal.Text.TitleSmall"
+    android:textColor="@color/white_not_focus"
     tools:text="@string/CameraContacts_recent_contacts" />

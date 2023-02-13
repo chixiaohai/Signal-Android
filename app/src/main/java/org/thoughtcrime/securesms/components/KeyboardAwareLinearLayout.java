@@ -63,7 +63,8 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
   private int viewInset;
 
   private boolean keyboardOpen = false;
-  private int     rotation     = 0;
+  private int     rotation     = -1;
+  private boolean isFullscreen = false;
   private boolean isBubble     = false;
 
   public KeyboardAwareLinearLayout(Context context) {
@@ -107,11 +108,7 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
   }
 
   private void updateKeyboardState() {
-    updateKeyboardState(Integer.MAX_VALUE);
-  }
-
-  private void updateKeyboardState(int previousHeight) {
-    if (viewInset == 0 && Build.VERSION.SDK_INT >= 21) viewInset = getViewInset();
+    if (viewInset == 0 && Build.VERSION.SDK_INT >= VERSION_CODES.LOLLIPOP) viewInset = getViewInset();
 
     getWindowVisibleDisplayFrame(rect);
 
@@ -130,22 +127,16 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
         onKeyboardOpen(keyboardHeight);
       }
     } else if (keyboardOpen) {
-      if (previousHeight == keyboardHeight) {
-        onKeyboardClose();
-      } else {
-        postDelayed(() -> updateKeyboardState(keyboardHeight), 100);
-      }
+      onKeyboardClose();
     }
   }
 
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
-    rotation = getDeviceRotation();
     if (Build.VERSION.SDK_INT >= 23 && getRootWindowInsets() != null) {
       int          bottomInset;
       WindowInsets windowInsets = getRootWindowInsets();
-
       if (Build.VERSION.SDK_INT >= 30) {
         bottomInset = windowInsets.getInsets(WindowInsets.Type.navigationBars()).bottom;
       } else {
@@ -305,6 +296,10 @@ public class KeyboardAwareLinearLayout extends LinearLayoutCompat {
 
   public void removeOnKeyboardShownListener(OnKeyboardShownListener listener) {
     shownListeners.remove(listener);
+  }
+
+  public void setFullscreen(boolean isFullscreen) {
+    this.isFullscreen = isFullscreen;
   }
 
   private void notifyHiddenListeners() {

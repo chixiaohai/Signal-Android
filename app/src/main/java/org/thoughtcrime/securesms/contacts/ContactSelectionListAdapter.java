@@ -346,16 +346,19 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
     ContactSelectionListItem CSLitem;
     if (viewHolder.itemView instanceof ContactSelectionListItem) {
       CSLitem = (ContactSelectionListItem) (viewHolder.itemView);
-      if (isCreatingGroup && (CSLitem.getRecipient().getId()).equals(Recipient.self().getId())) {
-        CSLitem.setVisibility(View.GONE);
-      }
-      CSLitem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-//          if (onFocusChangeListener!=null)
-          startFocusAnimation(v, hasFocus);
+
+      if (CSLitem.getRecipient()!=null){
+        if (isCreatingGroup && (CSLitem.getRecipient().getId()).equals(Recipient.self().getId())) {
+          CSLitem.setVisibility(View.GONE);
         }
-      });
+        CSLitem.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+          @Override
+          public void onFocusChange(View v, boolean hasFocus) {
+//          if (onFocusChangeListener!=null)
+            startFocusAnimation(v, hasFocus);
+          }
+        });
+      }
     }else if (viewHolder.getAdapterPosition() == 0){
       View shareConfirmItem = viewHolder.itemView;
       shareConfirmItem.setOnFocusChangeListener(new View.OnFocusChangeListener() {

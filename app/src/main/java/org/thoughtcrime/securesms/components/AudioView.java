@@ -5,9 +5,10 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -18,7 +19,6 @@ import android.widget.TextView;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.lifecycle.Observer;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -43,6 +43,8 @@ import org.thoughtcrime.securesms.mms.SlideClickListener;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static android.media.AudioManager.ADJUST_RAISE;
+
 public final class AudioView extends FrameLayout {
 
   private static final String TAG = Log.tag(AudioView.class);
@@ -56,12 +58,12 @@ public final class AudioView extends FrameLayout {
 
   @NonNull  private final AnimatingToggle     controlToggle;
   @NonNull  private final View                progressAndPlay;
-  @NonNull  private final LottieAnimationView playPauseButton;
-  @NonNull  private final ImageView           downloadButton;
+  @NonNull  public final LottieAnimationView playPauseButton;
+  @NonNull  public final ImageView           downloadButton;
   @Nullable private final ProgressWheel       circleProgress;
   @NonNull  private final SeekBar             seekBar;
-            private final boolean             smallView;
-            private final boolean             autoRewind;
+  private final boolean             smallView;
+  private final boolean             autoRewind;
 
   @Nullable private final TextView duration;
 
@@ -70,12 +72,13 @@ public final class AudioView extends FrameLayout {
   @ColorInt private final int waveFormThumbTint;
 
   @Nullable private SlideClickListener downloadListener;
-            private int                backwardsCounter;
-            private int                lottieDirection;
-            private boolean            isPlaying;
-            private long               durationMillis;
-            private AudioSlide         audioSlide;
-            private Callbacks          callbacks;
+  private int                backwardsCounter;
+  private int                lottieDirection;
+  private boolean            isPlaying;
+  private long               durationMillis;
+  private AudioSlide         audioSlide;
+  private Callbacks          callbacks;
+  private DownloadClickedListener downloadClickedListener01;
 
   private final Observer<VoiceNotePlaybackState> playbackStateObserver = this::onPlaybackState;
 
@@ -89,8 +92,6 @@ public final class AudioView extends FrameLayout {
 
   public AudioView(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
-    setLayoutDirection(LAYOUT_DIRECTION_LTR);
-
     TypedArray typedArray = null;
     try {
       typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.AudioView, 0, 0);
@@ -128,16 +129,11 @@ public final class AudioView extends FrameLayout {
 
       setTint(typedArray.getColor(R.styleable.AudioView_foregroundTintColor, Color.WHITE));
 
-      int backgroundTintColor = typedArray.getColor(R.styleable.AudioView_backgroundTintColor, Color.TRANSPARENT);
-      if (getBackground() != null && backgroundTintColor != Color.TRANSPARENT) {
-        DrawableCompat.setTint(getBackground(), backgroundTintColor);
-      }
-
       this.waveFormPlayedBarsColor   = typedArray.getColor(R.styleable.AudioView_waveformPlayedBarsColor, Color.WHITE);
       this.waveFormUnplayedBarsColor = typedArray.getColor(R.styleable.AudioView_waveformUnplayedBarsColor, Color.WHITE);
       this.waveFormThumbTint         = typedArray.getColor(R.styleable.AudioView_waveformThumbTint, Color.WHITE);
 
-      setProgressAndPlayBackgroundTint(typedArray.getColor(R.styleable.AudioView_progressAndPlayTint, Color.BLACK));
+      progressAndPlay.getBackground().setColorFilter(typedArray.getColor(R.styleable.AudioView_progressAndPlayTint, Color.BLACK), PorterDuff.Mode.SRC_IN);
     } finally {
       if (typedArray != null) {
         typedArray.recycle();
@@ -157,8 +153,13 @@ public final class AudioView extends FrameLayout {
     EventBus.getDefault().unregister(this);
   }
 
-  public void setProgressAndPlayBackgroundTint(@ColorInt int color) {
-    progressAndPlay.getBackground().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+  public PlayPauseClickedListener getListener(){
+    return new PlayPauseClickedListener();
+  }
+
+  public DownloadClickedListener getDownloadListener(){
+    // return new PlayPauseClickedListener();
+    return  downloadClickedListener01;
   }
 
   public Observer<VoiceNotePlaybackState> getPlaybackStateObserver() {
@@ -178,17 +179,19 @@ public final class AudioView extends FrameLayout {
 
     if (seekBar instanceof WaveFormSeekBarView) {
       if (audioSlide != null && !Objects.equals(audioSlide.getUri(), audio.getUri())) {
-       WaveFormSeekBarView waveFormView = (WaveFormSeekBarView) seekBar;
-       waveFormView.setWaveMode(false);
-       seekBar.setProgress(0);
-       durationMillis = 0;
+        WaveFormSeekBarView waveFormView = (WaveFormSeekBarView) seekBar;
+        waveFormView.setWaveMode(false);
+        seekBar.setProgress(0);
+        durationMillis = 0;
       }
     }
 
     if (showControls && audio.isPendingDownload()) {
       controlToggle.displayQuick(downloadButton);
       seekBar.setEnabled(false);
-      downloadButton.setOnClickListener(new DownloadClickedListener(audio));
+      downloadClickedListener01 = new DownloadClickedListener(audio);
+      downloadButton.setOnClickListener(downloadClickedListener01);
+      //downloadButton.performClick();
       if (circleProgress != null) {
         if (circleProgress.isSpinning()) circleProgress.stopSpinning();
         circleProgress.setVisibility(View.GONE);
@@ -213,15 +216,15 @@ public final class AudioView extends FrameLayout {
       waveFormView.setColors(waveFormPlayedBarsColor, waveFormUnplayedBarsColor, waveFormThumbTint);
       if (android.os.Build.VERSION.SDK_INT >= 23) {
         new AudioWaveForm(getContext(), audio).getWaveForm(
-          data -> {
-            durationMillis = data.getDuration(TimeUnit.MILLISECONDS);
-            updateProgress(0, 0);
-            if (!forceHideDuration && duration != null) {
-              duration.setVisibility(VISIBLE);
-            }
-            waveFormView.setWaveData(data.getWaveForm());
-          },
-          () -> waveFormView.setWaveMode(false));
+            data -> {
+              durationMillis = data.getDuration(TimeUnit.MILLISECONDS);
+              updateProgress(0, 0);
+              if (!forceHideDuration && duration != null) {
+                duration.setVisibility(VISIBLE);
+              }
+              waveFormView.setWaveData(data.getWaveForm());
+            },
+            () -> waveFormView.setWaveMode(false));
       } else {
         waveFormView.setWaveMode(false);
         if (duration != null) {
@@ -246,11 +249,10 @@ public final class AudioView extends FrameLayout {
 
   private void onPlaybackState(@NonNull VoiceNotePlaybackState voiceNotePlaybackState) {
     onDuration(voiceNotePlaybackState.getUri(), voiceNotePlaybackState.getTrackDuration());
+    onStart(voiceNotePlaybackState.getUri(), voiceNotePlaybackState.isAutoReset());
     onProgress(voiceNotePlaybackState.getUri(),
                (double) voiceNotePlaybackState.getPlayheadPositionMillis() / voiceNotePlaybackState.getTrackDuration(),
                voiceNotePlaybackState.getPlayheadPositionMillis());
-    onSpeedChanged(voiceNotePlaybackState.getUri(), voiceNotePlaybackState.getSpeed());
-    onStart(voiceNotePlaybackState.getUri(), voiceNotePlaybackState.isPlaying(), voiceNotePlaybackState.isAutoReset());
   }
 
   private void onDuration(@NonNull Uri uri, long durationMillis) {
@@ -259,8 +261,8 @@ public final class AudioView extends FrameLayout {
     }
   }
 
-  private void onStart(@NonNull Uri uri, boolean statePlaying, boolean autoReset) {
-    if (!isTarget(uri) || !statePlaying) {
+  private void onStart(@NonNull Uri uri, boolean autoReset) {
+    if (!isTarget(uri)) {
       if (hasAudioUri()) {
         onStop(audioSlide.getUri(), autoReset);
       }
@@ -310,12 +312,6 @@ public final class AudioView extends FrameLayout {
     }
   }
 
-  private void onSpeedChanged(@NonNull Uri uri, float speed) {
-    if (callbacks != null) {
-      callbacks.onSpeedChanged(speed, isTarget(uri));
-    }
-  }
-
   private boolean isTarget(@NonNull Uri uri) {
     return hasAudioUri() && Objects.equals(uri, audioSlide.getUri());
   }
@@ -338,7 +334,7 @@ public final class AudioView extends FrameLayout {
     super.setClickable(clickable);
     this.playPauseButton.setClickable(clickable);
     this.seekBar.setClickable(clickable);
-    this.seekBar.setOnTouchListener(clickable ? new LongTapAwareTouchListener() : new TouchIgnoringListener());
+    this.seekBar.setOnTouchListener(clickable ? null : new TouchIgnoringListener());
     this.downloadButton.setClickable(clickable);
   }
 
@@ -444,6 +440,20 @@ public final class AudioView extends FrameLayout {
     public void onClick(View v) {
       if (audioSlide == null || audioSlide.getUri() == null) return;
 
+      AudioManager mAudioManager;
+      mAudioManager = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
+
+      include_volume("80");
+      mAudioManager.setSpeakerphoneOn(false);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB){
+        mAudioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+//        mAudioManager.setStreamVolume(AudioManager.MODE_IN_COMMUNICATION,10,0);
+      } else {
+        mAudioManager.setMode(AudioManager.MODE_IN_CALL);
+//        mAudioManager.setStreamVolume(AudioManager.MODE_IN_CALL,10,0);
+      }
+
+
       if (callbacks != null) {
         if (lottieDirection == REVERSE) {
           callbacks.onPlay(audioSlide.getUri(), getProgress());
@@ -451,6 +461,37 @@ public final class AudioView extends FrameLayout {
           callbacks.onPause(audioSlide.getUri());
         }
       }
+    }
+  }
+
+  private void include_volume(String volumes) {
+    try {
+      AudioManager am = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+      int max = am.getStreamMaxVolume(AudioManager.MODE_IN_COMMUNICATION);
+      int current = am.getStreamVolume(AudioManager.MODE_IN_COMMUNICATION);
+      float zhanbi = max / 100f;
+
+      if (!volumes.equals(0)) {
+        int apiVolume = Integer.parseInt(volumes);
+        int setapi = (int) (apiVolume * zhanbi);
+        if (current > setapi) {
+          int ad = current - setapi;
+          for (int p = 0; p < ad; p++) {
+            am.adjustSuggestedStreamVolume(AudioManager.ADJUST_LOWER, AudioManager.MODE_IN_COMMUNICATION, setapi);
+          }
+          int currents = am.getStreamVolume(AudioManager.MODE_IN_COMMUNICATION);
+        } else {
+          int af = setapi - current;
+          for (int p = 0; p < af; p++) {
+            am.adjustSuggestedStreamVolume(ADJUST_RAISE, AudioManager.MODE_IN_COMMUNICATION, setapi);
+          }
+          int currents = am.getStreamVolume(AudioManager.MODE_IN_COMMUNICATION);
+        }
+      } else {
+        am.setRingerMode(AudioManager.RINGER_MODE_SILENT);
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "include_volume: error" + e.getMessage());
     }
   }
 
@@ -499,24 +540,8 @@ public final class AudioView extends FrameLayout {
       if (callbacks != null) {
         if (wasPlaying) {
           callbacks.onSeekTo(audioSlide.getUri(), getProgress());
-        } else {
-          callbacks.onProgressUpdated(durationMillis, Math.round(durationMillis * getProgress()));
         }
       }
-    }
-  }
-
-  private class LongTapAwareTouchListener implements OnTouchListener {
-    private final GestureDetector gestureDetector = new GestureDetector(AudioView.this.getContext(), new GestureDetector.SimpleOnGestureListener() {
-      @Override
-      public void onLongPress(MotionEvent e) {
-        performLongClick();
-      }
-    });
-
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-      return gestureDetector.onTouchEvent(event);
     }
   }
 
@@ -539,7 +564,6 @@ public final class AudioView extends FrameLayout {
     void onPause(@NonNull Uri audioUri);
     void onSeekTo(@NonNull Uri audioUri, double progress);
     void onStopAndReset(@NonNull Uri audioUri);
-    void onSpeedChanged(float speed, boolean isPlaying);
     void onProgressUpdated(long durationMillis, long playheadMillis);
   }
 }
