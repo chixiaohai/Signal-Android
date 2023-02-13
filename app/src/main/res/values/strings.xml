@@ -5576,5 +5576,13 @@ Updated May 25, 2018\n
 
     <string name="UsernameEditFragment_usernames_on_signal_are_optional">Usernames on Pigeon are optional. If you choose to create a username, other Pigeon users will be able to find you by this username and contact you without knowing your phone number.</string>
 
+    <!-- UsernameEditFragment -->
+    <string name="UsernameEditFragment_successfully_set_username">Successfully set username.</string>
+    <string name="UsernameEditFragment_this_username_is_available">This username is available.</string>
 
+    <!-- AvatarSelectionBottomSheetDialogFragment -->
+    <string name="AvatarSelectionBottomSheetDialogFragment__choose_photo">Choose photo</string>
+    <string name="AvatarSelectionBottomSheetDialogFragment__take_photo">Take photo</string>
+    <string name="AvatarSelectionBottomSheetDialogFragment__choose_from_gallery">Choose from gallery</string>
+    <string name="AvatarSelectionBottomSheetDialogFragment__remove_photo">Remove photo</string>
 </resources>

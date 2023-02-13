@@ -2220,6 +2220,9 @@ public class PushServiceSocket {
       return readBodyJson(response.body(), clazz);
   }
 
+  public void setUsername(String username) {
+  }
+
   private static class GcmRegistrationId {
 
     @JsonProperty

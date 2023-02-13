@@ -1,7 +1,14 @@
 package org.thoughtcrime.securesms.profiles.manage;
 
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,34 +19,40 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Transformations;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
-import com.bumptech.glide.Glide;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.LoggingFragment;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.emoji.EmojiUtil;
-import org.thoughtcrime.securesms.databinding.ManageProfileFragmentBinding;
+import org.thoughtcrime.securesms.mediasend.AvatarSelectionActivity;
+import org.thoughtcrime.securesms.mediasend.AvatarSelectionBottomSheetDialogFragment;
+import org.thoughtcrime.securesms.mediasend.Media;
 import org.thoughtcrime.securesms.profiles.ProfileName;
-import org.thoughtcrime.securesms.util.livedata.LiveDataUtil;
-import org.thoughtcrime.securesms.util.navigation.SafeNavigation;
+import org.thoughtcrime.securesms.profiles.edit.EditProfileActivity;
+import org.thoughtcrime.securesms.util.views.SimpleProgressDialog;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Optional;
+import static android.app.Activity.RESULT_OK;
 
 public class ManageProfileFragment extends LoggingFragment {
 
-  private static final String TAG = Log.tag(ManageProfileFragment.class);
+  private static final String TAG                        = Log.tag(ManageProfileFragment.class);
   private static final short  REQUEST_CODE_SELECT_AVATAR = 31726;
+
+  private TextView    profileNameView;
+  private TextView    yourNameView;
+  private View        profileNameContainer;
+  private TextView    usernameView;
+  private TextView    yourUsernameView;
+  private View        usernameContainer;
+  private TextView    aboutView;
+  private TextView    aboutSelfView;
+  private View        aboutContainer;
+  private TextView    learnMoreView;
+  private AlertDialog avatarProgress;
+  private ScrollView  scrollView;
 
   private ManageProfileViewModel viewModel;
 
@@ -50,210 +63,282 @@ public class ManageProfileFragment extends LoggingFragment {
   public static int mNormalPaddingX;
   public static int mFocusPaddingX;
 
-//  private AlertDialog                  avatarProgress;
-//  private ManageProfileViewModel       viewModel;
-  private ManageProfileFragmentBinding binding;
-
   @Override
   public @Nullable View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-    binding = ManageProfileFragmentBinding.inflate(inflater, container, false);
+    return inflater.inflate(R.layout.manage_profile_fragment, container, false);
 
-    return binding.getRoot();
   }
 
+  @SuppressLint("NewApi")
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    new UsernameEditFragment.ResultContract().registerForResult(getParentFragmentManager(), getViewLifecycleOwner(), isUsernameCreated -> {
-      Snackbar.make(view, R.string.ManageProfileFragment__username_created, Snackbar.LENGTH_SHORT).show();
-    });
-
-//    UsernameShareBottomSheet.ResultContract.INSTANCE.registerForResult(getParentFragmentManager(), getViewLifecycleOwner(), isCopiedToClipboard -> {
-//      Snackbar.make(view, R.string.ManageProfileFragment__username_copied, Snackbar.LENGTH_SHORT).show();
-//    });
+    this.profileNameView      = view.findViewById(R.id.manage_profile_name);
+    this.yourNameView         = view.findViewById(R.id.manage_profile_name_subtitle);
+    this.profileNameContainer = view.findViewById(R.id.manage_profile_name_container);
+    this.usernameView         = view.findViewById(R.id.manage_profile_username);
+    this.yourUsernameView     = view.findViewById(R.id.manage_profile_username_subtitle);
+    this.usernameContainer    = view.findViewById(R.id.manage_profile_username_container);
+    this.aboutView            = view.findViewById(R.id.manage_profile_about);
+    this.aboutSelfView        = view.findViewById(R.id.manage_profile_about_subtitle);
+    this.aboutContainer       = view.findViewById(R.id.manage_profile_about_container);
+    this.learnMoreView        = view.findViewById(R.id.description_text);
+    this.scrollView           = view.findViewById(R.id.scrollview_profile);
 
     initializeViewModel();
 
-//    binding.toolbar.setNavigationOnClickListener(v -> requireActivity().finish());
+    initView();
 
-//    binding.manageProfileEditPhoto.setOnClickListener(v -> onEditAvatarClicked());
-
-    binding.manageProfileNameContainer.setOnClickListener(v -> {
-      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileName());
+    this.profileNameView.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        requireActivity().startActivity(EditProfileActivity.getIntentForUserProfileEdit(v.getContext()));
+      }
     });
 
-    binding.manageProfileUsernameContainer.setOnClickListener(v -> {
-      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageUsername());
+    this.usernameView.setOnClickListener(v -> {
+      Navigation.findNavController(v).navigate(ManageProfileFragmentDirections.actionManageUsername());
     });
 
-    binding.manageProfileAboutContainer.setOnClickListener(v -> {
-      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageAbout());
+    this.aboutView.setOnClickListener(v -> {
+      Navigation.findNavController(v).navigate(ManageProfileFragmentDirections.actionManageAbout());
     });
 
-//    getParentFragmentManager().setFragmentResultListener(AvatarPickerFragment.REQUEST_KEY_SELECT_AVATAR, getViewLifecycleOwner(), (key, bundle) -> {
-//      if (bundle.getBoolean(AvatarPickerFragment.SELECT_AVATAR_CLEAR)) {
-//        viewModel.onAvatarSelected(requireContext(), null);
-//      } else {
-//        Media result = bundle.getParcelable(AvatarPickerFragment.SELECT_AVATAR_MEDIA);
-//        viewModel.onAvatarSelected(requireContext(), result);
-//      }
-//    });
 
-//    EmojiTextView avatarInitials = binding.manageProfileAvatarInitials;
-//    avatarInitials.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-//      if (avatarInitials.length() > 0) {
-////        updateInitials(avatarInitials.getText().toString());
-//      }
-//    });
+    profileNameView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+    profileNameView.setMarqueeRepeatLimit(6);
+    profileNameView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+          smoothToMiddleOfScreen(profileNameView);
+        }
+        updateFocusView(profileNameContainer, profileNameView, yourNameView, hasFocus);
+      }
+    });
 
-//    binding.manageProfileBadgesContainer.setOnClickListener(v -> {
-//      if (Recipient.self().getBadges().isEmpty()) {
-//        BecomeASustainerFragment.show(getParentFragmentManager());
-//      } else {
-//        SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToBadgeManageFragment());
-//      }
-//    });
+    aboutView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+    aboutView.setMarqueeRepeatLimit(6);
+    aboutView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        if (hasFocus) {
+          smoothToMiddleOfScreen(aboutView);
+        }
+        updateFocusView(aboutContainer, aboutView, aboutSelfView, hasFocus);
+      }
+    });
 
-//    binding.manageProfileAvatar.setOnClickListener(v -> {
-//      startActivity(AvatarPreviewActivity.intentFromRecipientId(requireContext(), Recipient.self().getId()),
-//                    AvatarPreviewActivity.createTransitionBundle(requireActivity(), binding.manageProfileAvatar));
-//    });
+    learnMoreView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+    learnMoreView.setMarqueeRepeatLimit(6);
+    learnMoreView.setFocusable(true);
+    this.learnMoreView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+      @Override
+      public void onFocusChange(View v, boolean hasFocus) {
+        updateFocusView(learnMoreView, learnMoreView, null, hasFocus);
+        if (hasFocus) {
+          smoothToMiddleOfScreen(learnMoreView);
+        }
+      }
+    });
+    profileNameView.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_UP && profileNameView.hasFocus()) {
+          return true;
+        }
+        return false;
+      }
+    });
+    learnMoreView.setOnKeyListener(new View.OnKeyListener() {
+      @Override
+      public boolean onKey(View v, int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && learnMoreView.hasFocus()) {
+          return true;
+        }
+        return false;
+      }
+    });
+  }
 
-//    binding.manageProfileUsernameShare.setOnClickListener(v -> {
-//      SafeNavigation.safeNavigate(Navigation.findNavController(v), ManageProfileFragmentDirections.actionManageProfileFragmentToShareUsernameDialog());
-//    });
+  private void initView() {
+    Resources res = getActivity().getResources();
+    mFocusHeight  = res.getDimensionPixelSize(R.dimen.focus_item_height);
+    mNormalHeight = res.getDimensionPixelSize(R.dimen.item_height);
+
+    mFocusTextSize  = res.getDimensionPixelSize(R.dimen.focus_item_textsize);
+    mNormalTextSize = res.getDimensionPixelSize(R.dimen.item_textsize);
+
+    mFocusPaddingX  = res.getDimensionPixelSize(R.dimen.focus_item_padding_x);
+    mNormalPaddingX = res.getDimensionPixelSize(R.dimen.item_padding_x);
+
+    scrollView.setClipToPadding(false);
+    scrollView.setClipChildren(false);
+    scrollView.setPadding(0, 76, 0, 200);
+
+    profileNameView.setTextSize(mNormalTextSize);
+    yourNameView.setTextSize(mNormalTextSize);
+    usernameView.setTextSize(mNormalTextSize);
+    yourUsernameView.setTextSize(mNormalTextSize);
+    aboutView.setTextSize(mNormalTextSize);
+    aboutSelfView.setTextSize(mNormalTextSize);
+    learnMoreView.setTextSize(mNormalTextSize);
+  }
+
+  private void smoothToMiddleOfScreen(View view) {
+    DisplayMetrics outMetrics = new DisplayMetrics();
+    getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(outMetrics);
+    int   heightPixel = outMetrics.heightPixels;
+    int[] ints        = new int[2];
+    scrollView.postDelayed(new Runnable() {
+      @Override
+      public void run() {
+        view.getLocationOnScreen(ints);
+        int viewBottom          = Math.round(view.getHeight() + ints[1]);
+        int screenCenter        = Math.round(heightPixel >> 1);
+        int correct             = 10;
+        int distanceToTheCenter = viewBottom - screenCenter - correct;
+        scrollView.smoothScrollBy(0, distanceToTheCenter);
+      }
+    }, 300);
+  }
+
+  private void updateFocusView(View parent, TextView tv, TextView et, boolean itemFocus) {
+    ValueAnimator va;
+    if (itemFocus) {
+      va = ValueAnimator.ofFloat(0, 1);
+    } else {
+      va = ValueAnimator.ofFloat(1, 0);
+    }
+
+    va.addUpdateListener(valueAnimator -> {
+      float scale      = (float) valueAnimator.getAnimatedValue();
+      float height     = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
+      float editHeight = (float) (mFocusHeight) * (scale);
+      float textsize   = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+      float padding    = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
+      int   alpha      = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
+      int   color      = alpha * 0x1000000 + 0xffffff;
+
+      tv.setTextColor(color);
+      parent.setPadding((int) padding, parent.getPaddingTop(), parent.getPaddingRight(), parent.getPaddingBottom());
+      if (et == null) {
+        tv.setTextSize((int) textsize);
+        tv.getLayoutParams().height     = (int) height;
+        parent.getLayoutParams().height = (int) (height);
+      } else {
+        tv.setTextSize((int) textsize);
+        et.getLayoutParams().height = (int) editHeight;
+        et.setTextSize(mNormalTextSize);
+        et.setTextColor(color);
+        parent.getLayoutParams().height = (int) (editHeight + mNormalHeight);
+      }
+    });
+
+    FastOutLinearInInterpolator FastOutLinearInInterpolator = new FastOutLinearInInterpolator();
+    va.setInterpolator(FastOutLinearInInterpolator);
+    if (itemFocus) {
+      va.setDuration(270);
+      va.start();
+    } else {
+      va.setDuration(270);
+      va.start();
+    }
+  }
+
+  public void backEvent() {
+    if (UsernameEditFragment.isIsBackFromUsernamEditFragment()) {
+      usernameContainer.requestFocus();
+      UsernameEditFragment.setIsBackFromUsernamEditFragment(false);
+    } else if (EditAboutFragment.isBackFromEditAboutFragment()) {
+      aboutContainer.requestFocus();
+      EditAboutFragment.setIsBackFromEditAboutFragment(false);
+    }
   }
 
   @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    binding = null;
+  public void onResume() {
+    super.onResume();
+    backEvent();
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if (requestCode == REQUEST_CODE_SELECT_AVATAR && resultCode == RESULT_OK) {
+      if (data != null && data.getBooleanExtra("delete", false)) {
+        viewModel.onAvatarSelected(requireContext(), null);
+        return;
+      }
+
+      Media result = data.getParcelableExtra(AvatarSelectionActivity.EXTRA_MEDIA);
+
+      viewModel.onAvatarSelected(requireContext(), result);
+    }
   }
 
   private void initializeViewModel() {
     viewModel = new ViewModelProvider(this, new ManageProfileViewModel.Factory()).get(ManageProfileViewModel.class);
 
-    LiveData<Optional<byte[]>> avatarImage = Transformations.map(LiveDataUtil.distinctUntilChanged(viewModel.getAvatar(), (b1, b2) -> Arrays.equals(b1.getAvatar(), b2.getAvatar())),
-                                                                 b -> Optional.ofNullable(b.getAvatar()));
-//    avatarImage.observe(getViewLifecycleOwner(), this::presentAvatarImage);
 
-//    viewModel.getAvatar().observe(getViewLifecycleOwner(), this::presentAvatarPlaceholder);
+    viewModel.getAvatar().observe(getViewLifecycleOwner(), this::presentAvatar);
     viewModel.getProfileName().observe(getViewLifecycleOwner(), this::presentProfileName);
     viewModel.getEvents().observe(getViewLifecycleOwner(), this::presentEvent);
     viewModel.getAbout().observe(getViewLifecycleOwner(), this::presentAbout);
     viewModel.getAboutEmoji().observe(getViewLifecycleOwner(), this::presentAboutEmoji);
-//    viewModel.getBadge().observe(getViewLifecycleOwner(), this::presentBadge);
 
     if (viewModel.shouldShowUsername()) {
       viewModel.getUsername().observe(getViewLifecycleOwner(), this::presentUsername);
     } else {
-      binding.manageProfileUsernameContainer.setVisibility(View.GONE);
+      usernameContainer.setVisibility(View.GONE);
+    }
+
+    if (viewModel.shouldShowUsername()) {
+      viewModel.getUsername().observe(getViewLifecycleOwner(), this::presentUsername);
+    } else {
+      usernameContainer.setVisibility(View.GONE);
     }
   }
 
-//  private void presentAvatarImage(@NonNull Optional<byte[]> avatarData) {
-//    if (avatarData.isPresent()) {
-//      Glide.with(this)
-//           .load(avatarData.get())
-//           .circleCrop()
-//           .into(binding.manageProfileAvatar);
-//    } else {
-//      Glide.with(this).load((Drawable) null).into(binding.manageProfileAvatar);
-//    }
-//  }
-
-//  private void presentAvatarPlaceholder(@NonNull AvatarState avatarState) {
-//    if (avatarState.getAvatar() == null) {
-//      CharSequence            initials        = NameUtil.getAbbreviation(avatarState.getSelf().getDisplayName(requireContext()));
-//      Avatars.ForegroundColor foregroundColor = Avatars.getForegroundColor(avatarState.getSelf().getAvatarColor());
-//
-//      binding.manageProfileAvatarBackground.setColorFilter(new SimpleColorFilter(avatarState.getSelf().getAvatarColor().colorInt()));
-//      binding.manageProfileAvatarPlaceholder.setColorFilter(new SimpleColorFilter(foregroundColor.getColorInt()));
-//      binding.manageProfileAvatarInitials.setTextColor(foregroundColor.getColorInt());
-//
-//      if (TextUtils.isEmpty(initials)) {
-//        binding.manageProfileAvatarPlaceholder.setVisibility(View.VISIBLE);
-//        binding.manageProfileAvatarInitials.setVisibility(View.GONE);
-//      } else {
-//        updateInitials(initials.toString());
-//        binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
-//        binding.manageProfileAvatarInitials.setVisibility(View.VISIBLE);
-//      }
-//    } else {
-//      binding.manageProfileAvatarPlaceholder.setVisibility(View.GONE);
-//      binding.manageProfileAvatarInitials.setVisibility(View.GONE);
-//    }
-//
-//    if (avatarProgress == null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADING) {
-//      avatarProgress = SimpleProgressDialog.show(requireContext());
-//    } else if (avatarProgress != null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADED) {
-//      avatarProgress.dismiss();
-//    }
-//  }
-
-//  private void updateInitials(String initials) {
-//    binding.manageProfileAvatarInitials.setTextSize(TypedValue.COMPLEX_UNIT_PX,
-//                                                    Avatars.getTextSizeForLength(requireContext(),
-//                                                                                 initials,
-//                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.8f,
-//                                                                                 binding.manageProfileAvatarInitials.getMeasuredWidth() * 0.45f));
-//    binding.manageProfileAvatarInitials.setText(initials);
-//  }
+  private void presentAvatar(@NonNull ManageProfileViewModel.AvatarState avatarState) {
+    if (avatarProgress == null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADING) {
+      avatarProgress = SimpleProgressDialog.show(requireContext());
+    } else if (avatarProgress != null && avatarState.getLoadingState() == ManageProfileViewModel.LoadingState.LOADED) {
+      avatarProgress.dismiss();
+    }
+  }
 
   private void presentProfileName(@Nullable ProfileName profileName) {
     if (profileName == null || profileName.isEmpty()) {
-      binding.manageProfileName.setText(R.string.ManageProfileFragment_profile_name);
+      profileNameView.setText(R.string.ManageProfileFragment_profile_name);
     } else {
-      binding.manageProfileName.setText(profileName.toString());
+      profileNameView.setText(profileName.toString());
     }
   }
 
   private void presentUsername(@Nullable String username) {
     if (username == null || username.isEmpty()) {
-      binding.manageProfileUsername.setText(R.string.ManageProfileFragment_username);
-//      binding.manageProfileUsernameShare.setVisibility(View.GONE);
+      usernameView.setText(R.string.ManageProfileFragment_username);
     } else {
-      binding.manageProfileUsername.setText(username);
-
-      try {
-        binding.manageProfileUsernameSubtitle.setText(getString(R.string.signal_me_username_url_no_scheme, URLEncoder.encode(username, StandardCharsets.UTF_8.toString())));
-      } catch (UnsupportedEncodingException e) {
-        Log.w(TAG, "Could not format username link", e);
-        binding.manageProfileUsernameSubtitle.setText(R.string.ManageProfileFragment_your_username);
-      }
-
-//      binding.manageProfileUsernameShare.setVisibility(View.VISIBLE);
+      usernameView.setText(username);
     }
   }
 
   private void presentAbout(@Nullable String about) {
     if (about == null || about.isEmpty()) {
-      binding.manageProfileAbout.setText(R.string.ManageProfileFragment_about);
+      aboutView.setText(R.string.ManageProfileFragment_about);
     } else {
-      binding.manageProfileAbout.setText(about);
+      aboutView.setText(about);
     }
   }
 
   private void presentAboutEmoji(@NonNull String aboutEmoji) {
     if (aboutEmoji == null || aboutEmoji.isEmpty()) {
-//      binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
+//      aboutEmojiView.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
     } else {
       Drawable emoji = EmojiUtil.convertToDrawable(requireContext(), aboutEmoji);
-
-      if (emoji != null) {
-//        binding.manageProfileAboutIcon.setImageDrawable(emoji);
-      } else {
-//        binding.manageProfileAboutIcon.setImageDrawable(ResourcesCompat.getDrawable(getResources(), R.drawable.ic_compose_24, null));
-      }
     }
   }
-
-//  private void presentBadge(@NonNull Optional<Badge> badge) {
-//    if (badge.isPresent() && badge.get().getVisible() && !badge.get().isExpired()) {
-//      binding.manageProfileBadge.setBadge(badge.orElse(null));
-//    } else {
-//      binding.manageProfileBadge.setBadge(null);
-//    }
-//  }
 
   private void presentEvent(@NonNull ManageProfileViewModel.Event event) {
     switch (event) {
@@ -266,7 +351,12 @@ public class ManageProfileFragment extends LoggingFragment {
     }
   }
 
-//  private void onEditAvatarClicked() {
-//    SafeNavigation.safeNavigate(Navigation.findNavController(requireView()), ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null));
-//  }
+  private void onAvatarClicked() {
+    AvatarSelectionBottomSheetDialogFragment.create(viewModel.canRemoveAvatar(),
+                                                    true,
+                                                    REQUEST_CODE_SELECT_AVATAR,
+                                                    false)
+                                            .show(getChildFragmentManager(), null);
+  }
+
 }

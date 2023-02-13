@@ -23,7 +23,7 @@ import org.thoughtcrime.securesms.util.navigation.SafeNavigation;
  */
 public class ManageProfileActivity extends PassphraseRequiredActivity implements ReactWithAnyEmojiBottomSheetDialogFragment.Callback {
 
-  public static final int RESULT_BECOME_A_SUSTAINER = 12382;
+//  public static final int RESULT_BECOME_A_SUSTAINER = 12382;
 
   private final DynamicTheme dynamicTheme = new DynamicNoActionBarTheme();
 
@@ -66,11 +66,6 @@ public class ManageProfileActivity extends PassphraseRequiredActivity implements
         NavDirections action = ManageProfileFragmentDirections.actionManageUsername();
         SafeNavigation.safeNavigate(navController, action);
       }
-
-//      if (extras != null && extras.getBoolean(START_AT_AVATAR, false)) {
-//        NavDirections action = ManageProfileFragmentDirections.actionManageProfileFragmentToAvatarPicker(null, null);
-//        SafeNavigation.safeNavigate(navController, action);
-//      }
     }
   }
 

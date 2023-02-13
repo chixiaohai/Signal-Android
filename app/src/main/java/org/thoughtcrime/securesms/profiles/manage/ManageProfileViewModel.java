@@ -38,7 +38,7 @@ class ManageProfileViewModel extends ViewModel {
 
   private static final String TAG = Log.tag(ManageProfileViewModel.class);
 
-  private final LiveData<AvatarState>                avatar;
+  private final MutableLiveData<AvatarState> avatar;
 //  private final MutableLiveData<InternalAvatarState> internalAvatarState;
   private final MutableLiveData<ProfileName>         profileName;
   private final MutableLiveData<String>              username;
@@ -103,138 +103,86 @@ class ManageProfileViewModel extends ViewModel {
     return FeatureFlags.usernames();
   }
 
-//  public void onAvatarSelected(@NonNull Context context, @Nullable Media media) {
-//    previousAvatar = avatar.getValue() != null ? avatar.getValue().getAvatar() : null;
-//
-//    if (media == null) {
-//      avatar.postValue(AvatarState.loading(null));
-//      repository.clearAvatar(context, result -> {
-//        switch (result) {
-//          case SUCCESS:
-//            avatar.postValue(InternalAvatarState.loaded(null));
-//            previousAvatar = null;
-//            break;
-//          case FAILURE_NETWORK:
-//            avatar.postValue(InternalAvatarState.loaded(previousAvatar));
-//            events.postValue(Event.AVATAR_NETWORK_FAILURE);
-//            break;
-//        }
-//      });
-//    } else {
-//      SignalExecutors.BOUNDED.execute(() -> {
-//        try {
-//          InputStream stream = BlobProvider.getInstance().getStream(context, media.getUri());
-//          byte[]      data   = StreamUtil.readFully(stream);
-//
-//          avatar.postValue(InternalAvatarState.loading(data));
-//
-//          repository.setAvatar(context, data, media.getMimeType(), result -> {
-//            switch (result) {
-//              case SUCCESS:
-//                avatar.postValue(InternalAvatarState.loaded(data));
-//                previousAvatar = data;
-//                break;
-//              case FAILURE_NETWORK:
-//                avatar.postValue(InternalAvatarState.loaded(previousAvatar));
-//                events.postValue(Event.AVATAR_NETWORK_FAILURE);
-//                break;
-//            }
-//          });
-//        } catch (IOException e) {
-//          Log.w(TAG, "Failed to save avatar!", e);
-//          events.postValue(Event.AVATAR_DISK_FAILURE);
-//        }
-//      });
-//    }
-//  }
+  public void onAvatarSelected(@NonNull Context context, @Nullable Media media) {
+    previousAvatar = avatar.getValue() != null ? avatar.getValue().getAvatar() : null;
 
-//  public boolean canRemoveAvatar() {
-//    return internalAvatarState.getValue() != null;
-//  }
+    if (media == null) {
+      avatar.postValue(AvatarState.loading(null));
+      repository.clearAvatar(context, result -> {
+        switch (result) {
+          case SUCCESS:
+            avatar.postValue(AvatarState.loaded(null));
+            previousAvatar = null;
+            break;
+          case FAILURE_NETWORK:
+            avatar.postValue(AvatarState.loaded(previousAvatar));
+            events.postValue(Event.AVATAR_NETWORK_FAILURE);
+            break;
+        }
+      });
+    } else {
+      SignalExecutors.BOUNDED.execute(() -> {
+        try {
+          InputStream stream = BlobProvider.getInstance().getStream(context, media.getUri());
+          byte[]      data   = StreamUtil.readFully(stream);
+
+          avatar.postValue(AvatarState.loading(data));
+
+          repository.setAvatar(context, data, media.getMimeType(), result -> {
+            switch (result) {
+              case SUCCESS:
+                avatar.postValue(AvatarState.loaded(data));
+                previousAvatar = data;
+                break;
+              case FAILURE_NETWORK:
+                avatar.postValue(AvatarState.loaded(previousAvatar));
+                events.postValue(Event.AVATAR_NETWORK_FAILURE);
+                break;
+            }
+          });
+        } catch (IOException e) {
+          Log.w(TAG, "Failed to save avatar!", e);
+          events.postValue(Event.AVATAR_DISK_FAILURE);
+        }
+      });
+    }
+  }
+
+  public boolean canRemoveAvatar() {
+    return avatar.getValue() != null;
+  }
 
   private void onRecipientChanged(@NonNull Recipient recipient) {
     profileName.postValue(recipient.getProfileName());
     username.postValue(recipient.getUsername().orElse(null));
     about.postValue(recipient.getAbout());
     aboutEmoji.postValue(recipient.getAboutEmoji());
-//    badge.postValue(Optional.ofNullable(recipient.getFeaturedBadge()));
-//    renderAvatar(AvatarHelper.getSelfProfileAvatarStream(ApplicationDependencies.getApplication()));
   }
-
-//  private void renderAvatar(@Nullable StreamDetails details) {
-//    if (details != null) {
-//      try {
-//        internalAvatarState.postValue(InternalAvatarState.loaded(StreamUtil.readFully(details.getStream())));
-//      } catch (IOException e) {
-//        Log.w(TAG, "Failed to read avatar!");
-//        internalAvatarState.postValue(InternalAvatarState.none());
-//      }
-//    } else {
-//      internalAvatarState.postValue(InternalAvatarState.none());
-//    }
-//  }
 
   @Override
   protected void onCleared() {
     Recipient.self().live().removeForeverObserver(observer);
   }
 
-  public final static class AvatarState {
-    private final InternalAvatarState internalAvatarState;
-    private final Recipient           self;
-
-    public AvatarState(@NonNull InternalAvatarState internalAvatarState,
-                       @NonNull Recipient self)
-    {
-      this.internalAvatarState = internalAvatarState;
-      this.self                = self;
-    }
-
-    public @Nullable byte[] getAvatar() {
-      return internalAvatarState.avatar;
-    }
-
-    public @NonNull LoadingState getLoadingState() {
-      return internalAvatarState.loadingState;
-    }
-
-    public @NonNull Recipient getSelf() {
-      return self;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      final AvatarState that = (AvatarState) o;
-      return Objects.equals(internalAvatarState, that.internalAvatarState) && Objects.equals(self, that.self);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(internalAvatarState, self);
-    }
-  }
-
-  private final static class InternalAvatarState {
+  public static class AvatarState {
     private final byte[]       avatar;
     private final LoadingState loadingState;
 
-    public InternalAvatarState(@Nullable byte[] avatar, @NonNull LoadingState loadingState) {
+    public AvatarState(@Nullable byte[] avatar, @NonNull LoadingState loadingState) {
       this.avatar       = avatar;
       this.loadingState = loadingState;
     }
 
-    private static @NonNull InternalAvatarState none() {
-      return new InternalAvatarState(null, LoadingState.LOADED);
+    private static @NonNull AvatarState none() {
+      return new AvatarState(null, LoadingState.LOADED);
     }
 
-    private static @NonNull InternalAvatarState loaded(@Nullable byte[] avatar) {
-      return new InternalAvatarState(avatar, LoadingState.LOADED);
+    private static @NonNull AvatarState loaded(@Nullable byte[] avatar) {
+      return new AvatarState(avatar, LoadingState.LOADED);
     }
 
-    private static @NonNull InternalAvatarState loading(@Nullable byte[] avatar) {
-      return new InternalAvatarState(avatar, LoadingState.LOADING);
+    private static @NonNull AvatarState loading(@Nullable byte[] avatar) {
+      return new AvatarState(avatar, LoadingState.LOADING);
     }
 
     public @Nullable byte[] getAvatar() {
@@ -243,21 +191,6 @@ class ManageProfileViewModel extends ViewModel {
 
     public LoadingState getLoadingState() {
       return loadingState;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      final InternalAvatarState that = (InternalAvatarState) o;
-      return Arrays.equals(avatar, that.avatar) && loadingState == that.loadingState;
-    }
-
-    @Override
-    public int hashCode() {
-      int result = Objects.hash(loadingState);
-      result = 31 * result + Arrays.hashCode(avatar);
-      return result;
     }
   }
 

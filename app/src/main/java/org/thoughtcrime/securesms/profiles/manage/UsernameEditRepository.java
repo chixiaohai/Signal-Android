@@ -1,5 +1,7 @@
 package org.thoughtcrime.securesms.profiles.manage;
 
+import android.app.Application;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.WorkerThread;
 
@@ -26,39 +28,53 @@ class UsernameEditRepository {
 
   private static final String TAG = Log.tag(UsernameEditRepository.class);
 
+  private final Application                 application;
   private final SignalServiceAccountManager accountManager;
+  private final Executor                    executor;
 
   UsernameEditRepository() {
+    this.application    = ApplicationDependencies.getApplication();
     this.accountManager = ApplicationDependencies.getSignalServiceAccountManager();
+    this.executor       = SignalExecutors.UNBOUNDED;
   }
 
-  @NonNull Single<Result<ReserveUsernameResponse, UsernameSetResult>> reserveUsername(@NonNull String nickname) {
-    return Single.fromCallable(() -> reserveUsernameInternal(nickname)).subscribeOn(Schedulers.io());
+  void setUsername(@NonNull String username, @NonNull Callback<UsernameSetResult> callback) {
+    executor.execute(() -> callback.onComplete(setUsernameInternal(username)));
   }
 
-  @NonNull Single<UsernameSetResult> confirmUsername(@NonNull ReserveUsernameResponse reserveUsernameResponse) {
-    return Single.fromCallable(() -> confirmUsernameInternal(reserveUsernameResponse)).subscribeOn(Schedulers.io());
-  }
-
-  @NonNull Single<UsernameDeleteResult> deleteUsername() {
-    return Single.fromCallable(this::deleteUsernameInternal).subscribeOn(Schedulers.io());
+  void deleteUsername(@NonNull Callback<UsernameDeleteResult> callback) {
+    executor.execute(() -> callback.onComplete(deleteUsernameInternal()));
   }
 
   @WorkerThread
-  private @NonNull Result<ReserveUsernameResponse, UsernameSetResult> reserveUsernameInternal(@NonNull String nickname) {
+  private @NonNull UsernameSetResult setUsernameInternal(@NonNull String username) {
     try {
-      ReserveUsernameResponse username = accountManager.reserveUsername(nickname);
-      Log.i(TAG, "[reserveUsername] Successfully reserved username.");
-      return Result.success(username);
+      accountManager.setUsername(username);
+      SignalDatabase.recipients().setUsername(Recipient.self().getId(), username);
+      Log.i(TAG, "[setUsername] Successfully set username.");
+      return UsernameSetResult.SUCCESS;
     } catch (UsernameTakenException e) {
-      Log.w(TAG, "[reserveUsername] Username taken.");
-      return Result.failure(UsernameSetResult.USERNAME_UNAVAILABLE);
+      Log.w(TAG, "[setUsername] Username taken.");
+      return UsernameSetResult.USERNAME_UNAVAILABLE;
     } catch (UsernameMalformedException e) {
-      Log.w(TAG, "[reserveUsername] Username malformed.");
-      return Result.failure(UsernameSetResult.USERNAME_INVALID);
+      Log.w(TAG, "[setUsername] Username malformed.");
+      return UsernameSetResult.USERNAME_INVALID;
     } catch (IOException e) {
-      Log.w(TAG, "[reserveUsername] Generic network exception.", e);
-      return Result.failure(UsernameSetResult.NETWORK_ERROR);
+      Log.w(TAG, "[setUsername] Generic network exception.", e);
+      return UsernameSetResult.NETWORK_ERROR;
+    }
+  }
+
+  @WorkerThread
+  private @NonNull UsernameDeleteResult deleteUsernameInternal() {
+    try {
+      accountManager.deleteUsername();
+      SignalDatabase.recipients().setUsername(Recipient.self().getId(), null);
+      Log.i(TAG, "[deleteUsername] Successfully deleted the username.");
+      return UsernameDeleteResult.SUCCESS;
+    } catch (IOException e) {
+      Log.w(TAG, "[deleteUsername] Generic network exception.", e);
+      return UsernameDeleteResult.NETWORK_ERROR;
     }
   }
 
@@ -79,19 +95,6 @@ class UsernameEditRepository {
     } catch (IOException e) {
       Log.w(TAG, "[confirmUsername] Generic network exception.", e);
       return UsernameSetResult.NETWORK_ERROR;
-    }
-  }
-
-  @WorkerThread
-  private @NonNull UsernameDeleteResult deleteUsernameInternal() {
-    try {
-      accountManager.deleteUsername();
-      SignalDatabase.recipients().setUsername(Recipient.self().getId(), null);
-      Log.i(TAG, "[deleteUsername] Successfully deleted the username.");
-      return UsernameDeleteResult.SUCCESS;
-    } catch (IOException e) {
-      Log.w(TAG, "[deleteUsername] Generic network exception.", e);
-      return UsernameDeleteResult.NETWORK_ERROR;
     }
   }
 
