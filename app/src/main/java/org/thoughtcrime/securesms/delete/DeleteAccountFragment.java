@@ -27,8 +27,8 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.common.base.Optional;
 import com.google.i18n.phonenumbers.AsYouTypeFormatter;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 
@@ -37,19 +37,18 @@ import org.thoughtcrime.securesms.components.LabeledEditText;
 import org.thoughtcrime.securesms.util.SpanUtil;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.text.AfterTextChanged;
-
-import java.util.Optional;
+import org.thoughtcrime.securesms.util.views.SimpleProgressDialog;
 
 
 public class DeleteAccountFragment extends Fragment {
 
-  private ArrayAdapter<String>         countrySpinnerAdapter;
-  private TextView                     bullets;
-  private LabeledEditText              countryCode;
-  private LabeledEditText              number;
-  private AsYouTypeFormatter           countryFormatter;
-  private DeleteAccountViewModel       viewModel;
-  private DeleteAccountProgressDialog  deletionProgressDialog;
+  private ArrayAdapter<String>   countrySpinnerAdapter;
+  private TextView               bullets;
+  private LabeledEditText        countryCode;
+  private LabeledEditText        number;
+  private AsYouTypeFormatter     countryFormatter;
+  private DeleteAccountViewModel viewModel;
+  private DialogInterface        deletionProgressDialog;
 
   @Override
   public @Nullable View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,20 +79,24 @@ public class DeleteAccountFragment extends Fragment {
     initializeSpinner(countrySpinner);
   }
 
-  private void updateBullets(@NonNull Optional<String> formattedBalance) {
+  private void updateBullets(com.google.common.base.Optional<String> formattedBalance) {
     bullets.setText(buildBulletsText(formattedBalance));
   }
 
+  @Override
+  public void onResume() {
+    super.onResume();
+  }
+
   private @NonNull CharSequence buildBulletsText(@NonNull Optional<String> formattedBalance) {
-    SpannableStringBuilder builder =  new SpannableStringBuilder().append(SpanUtil.bullet(getString(R.string.DeleteAccountFragment__delete_your_account_info_and_profile_photo)))
-                                                                  .append("\n")
-                                                                  .append(SpanUtil.bullet(getString(R.string.DeleteAccountFragment__delete_all_your_messages)));
+    SpannableStringBuilder builder = new SpannableStringBuilder().append(SpanUtil.bullet(getString(R.string.DeleteAccountFragment__delete_your_account_info_and_profile_photo)))
+                                                                 .append("\n")
+                                                                 .append(SpanUtil.bullet(getString(R.string.DeleteAccountFragment__delete_all_your_messages)));
 
     if (formattedBalance.isPresent()) {
       builder.append("\n");
       builder.append(SpanUtil.bullet(getString(R.string.DeleteAccountFragment__delete_s_in_your_payments_account, formattedBalance.get())));
     }
-
     return builder;
   }
 
@@ -221,34 +224,36 @@ public class DeleteAccountFragment extends Fragment {
     viewModel.setNationalNumber(number);
   }
 
-  private void handleEvent(@NonNull DeleteAccountEvent deleteAccountEvent) {
-    switch (deleteAccountEvent.getType()) {
+  private void handleEvent(@NonNull DeleteAccountViewModel.EventType eventType) {
+    switch (eventType) {
       case NO_COUNTRY_CODE:
-        Snackbar.make(requireView(), R.string.DeleteAccountFragment__no_country_code, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(requireView(), R.string.DeleteAccountFragment__no_country_code, Snackbar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
         break;
       case NO_NATIONAL_NUMBER:
-        Snackbar.make(requireView(), R.string.DeleteAccountFragment__no_number, Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(requireView(), R.string.DeleteAccountFragment__no_number, Snackbar.LENGTH_SHORT).setTextColor(Color.WHITE).show();
         break;
       case NOT_A_MATCH:
         new AlertDialog.Builder(requireContext())
-                       .setMessage(R.string.DeleteAccountFragment__the_phone_number)
-                       .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
-                       .setCancelable(true)
-                       .show();
+            .setMessage(R.string.DeleteAccountFragment__the_phone_number)
+            .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+            .setCancelable(true)
+            .show();
         break;
       case CONFIRM_DELETION:
         new AlertDialog.Builder(requireContext())
-                       .setTitle(R.string.DeleteAccountFragment__are_you_sure)
-                       .setMessage(R.string.DeleteAccountFragment__this_will_delete_your_signal_account)
-                       .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
-                       .setPositiveButton(R.string.DeleteAccountFragment__delete_account, this::handleDeleteAccountConfirmation)
-                       .setCancelable(true)
-                       .show();
+            .setTitle(R.string.DeleteAccountFragment__are_you_sure)
+            .setMessage(R.string.DeleteAccountFragment__this_will_delete_your_signal_account)
+            .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
+            .setPositiveButton(R.string.DeleteAccountFragment__delete_account, (dialog, which) -> {
+              dialog.dismiss();
+              deletionProgressDialog = SimpleProgressDialog.show(requireContext());
+              viewModel.deleteAccount();
+            })
+            .setCancelable(true)
+            .show();
         break;
-      case LEAVE_GROUPS_FAILED:
       case PIN_DELETION_FAILED:
       case SERVER_DELETION_FAILED:
-      case CANCEL_SUBSCRIPTION_FAILED:
         dismissDeletionProgressDialog();
         showNetworkDeletionFailedDialog();
         break;
@@ -256,19 +261,8 @@ public class DeleteAccountFragment extends Fragment {
         dismissDeletionProgressDialog();
         showLocalDataDeletionFailedDialog();
         break;
-      case LEAVE_GROUPS_PROGRESS:
-        ensureDeletionProgressDialog();
-        deletionProgressDialog.presentLeavingGroups((DeleteAccountEvent.LeaveGroupsProgress) deleteAccountEvent);
-        break;
-      case LEAVE_GROUPS_FINISHED:
-        ensureDeletionProgressDialog();
-        deletionProgressDialog.presentDeletingAccount();
-      case CANCELING_SUBSCRIPTION:
-        ensureDeletionProgressDialog();
-        deletionProgressDialog.presentCancelingSubscription();
-        break;
       default:
-        throw new IllegalStateException("Unknown error type: " + deleteAccountEvent);
+        throw new IllegalStateException("Unknown error type: " + eventType);
     }
   }
 
@@ -280,35 +274,22 @@ public class DeleteAccountFragment extends Fragment {
   }
 
   private void showNetworkDeletionFailedDialog() {
-    new MaterialAlertDialogBuilder(requireContext()).setTitle(R.string.DeleteAccountFragment__account_not_deleted)
-                                                    .setMessage(R.string.DeleteAccountFragment__there_was_a_problem)
-                                                    .setPositiveButton(android.R.string.ok, this::handleDeleteAccountConfirmation)
-                                                    .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.dismiss())
-                                                    .setCancelable(true)
-                                                    .show();
+    new AlertDialog.Builder(requireContext())
+        .setMessage(R.string.DeleteAccountFragment__failed_to_delete_account)
+        .setPositiveButton(android.R.string.ok, (dialog, which) -> dialog.dismiss())
+        .setCancelable(true)
+        .show();
   }
 
   private void showLocalDataDeletionFailedDialog() {
     new AlertDialog.Builder(requireContext())
-                   .setMessage(R.string.DeleteAccountFragment__failed_to_delete_local_data)
-                   .setPositiveButton(R.string.DeleteAccountFragment__launch_app_settings, (dialog, which) -> {
-                     Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                     settingsIntent.setData(Uri.fromParts("package", requireActivity().getPackageName(), null));
-                     startActivity(settingsIntent);
-                   })
-                   .setCancelable(false)
-                   .show();
-  }
-
-  private void handleDeleteAccountConfirmation(DialogInterface dialog, int which) {
-    dialog.dismiss();
-    ensureDeletionProgressDialog();
-    viewModel.deleteAccount();
-  }
-
-  private void ensureDeletionProgressDialog() {
-    if (deletionProgressDialog == null) {
-      deletionProgressDialog = DeleteAccountProgressDialog.show(requireContext());
-    }
+        .setMessage(R.string.DeleteAccountFragment__failed_to_delete_local_data)
+        .setPositiveButton(R.string.DeleteAccountFragment__launch_app_settings, (dialog, which) -> {
+          Intent settingsIntent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+          settingsIntent.setData(Uri.fromParts("package", requireActivity().getPackageName(), null));
+          startActivity(settingsIntent);
+        })
+        .setCancelable(false)
+        .show();
   }
 }

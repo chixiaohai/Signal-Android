@@ -39,7 +39,8 @@
 
     <style name="AppCompatAlertDialogStyleDark" parent="Theme.AppCompat.Dialog.Alert">
         <item name="colorAccent">@color/core_ultramarine_light</item>
-        <item name="android:textColor">@null</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@color/core_grey_75</item>
     </style>
 
     <style name="AppCompatDialogStyleLight" parent="Theme.AppCompat.Light.Dialog">
@@ -50,8 +51,9 @@
 
     <style name="AppCompatDialogStyleDark" parent="Theme.AppCompat.Dialog">
         <item name="colorAccent">@color/core_ultramarine_light</item>
-        <item name="android:windowBackground">@drawable/dialog_background</item>
-        <item name="android:textColor">@null</item>
+        <item name="android:windowBackground">@color/core_grey_75</item>
+        <item name="android:background">@color/core_grey_75</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="TextSecure.Animation.FullScreenDialog" parent="@android:style/Animation.Activity">
@@ -125,18 +127,16 @@
         <item name="android:popupTheme" tools:ignore="NewApi">@style/Signal.DayNight.Popup</item>
         <item name="popupTheme">@style/Signal.DayNight.Popup</item>
         <item name="titleTextStyle">@style/TextSecure.TitleTextStyle.Conversation</item>
+        <item name="android:background">@color/core_grey_75</item>
         <item name="subtitleTextStyle">@style/TextSecure.SubtitleTextStyle.Conversation</item>
         <item name="actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Conversation</item>
-        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Conversation
-        </item>
+        <item name="android:actionOverflowButtonStyle">@style/Signal.Toolbar.Overflow.Conversation</item>
         <item name="colorControlHighlight">@color/core_ultramarine</item>
-        <item name="android:colorControlHighlight" tools:ignore="NewApi">@color/core_ultramarine
-        </item>
+        <item name="android:colorControlHighlight" tools:ignore="NewApi">@color/core_ultramarine</item>
         <item name="colorControlNormal">@color/signal_text_toolbar_subtitle</item>
         <item name="android:colorControlNormal" tools:ignore="NewApi">@color/signal_text_toolbar_subtitle</item>
         <item name="colorControlActivated">@color/core_ultramarine</item>
-        <item name="android:colorControlActivated" tools:ignore="NewApi">@color/core_ultramarine
-        </item>
+        <item name="android:colorControlActivated" tools:ignore="NewApi">@color/core_ultramarine</item>
     </style>
 
     <style name="TextSecure.DarkActionBar.ReactionOverlay">

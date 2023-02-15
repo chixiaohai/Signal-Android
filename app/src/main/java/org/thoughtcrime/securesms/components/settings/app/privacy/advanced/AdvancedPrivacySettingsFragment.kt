@@ -97,7 +97,7 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences__signal_messages_and_calls),
-        summary = DSLSettingsText.from(getPushToggleSummary(state.isPushEnabled)),
+//        summary = DSLSettingsText.from(getPushToggleSummary(state.isPushEnabled)),
         isChecked = state.isPushEnabled,
         isVisible= true
       ) {
@@ -128,7 +128,7 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences_advanced__always_relay_calls),
-        summary = DSLSettingsText.from(R.string.preferences_advanced__relay_all_calls_through_the_signal_server_to_avoid_revealing_your_ip_address),
+//        summary = DSLSettingsText.from(R.string.preferences_advanced__relay_all_calls_through_the_signal_server_to_avoid_revealing_your_ip_address),
         isChecked = state.alwaysRelayCalls
       ) {
         viewModel.setAlwaysRelayCalls(!state.alwaysRelayCalls)
@@ -142,7 +142,7 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
             .append(" ")
             .append(statusIcon)
         ),
-        summary = DSLSettingsText.from(R.string.AdvancedPrivacySettingsFragment__show_an_icon),
+//        summary = DSLSettingsText.from(R.string.AdvancedPrivacySettingsFragment__show_an_icon),
         isChecked = state.showSealedSenderStatusIcon
       ) {
         viewModel.setShowStatusIconForSealedSender(!state.showSealedSenderStatusIcon)
@@ -150,7 +150,7 @@ class AdvancedPrivacySettingsFragment : DSLSettingsFragment(R.string.preferences
 
       switchPref(
         title = DSLSettingsText.from(R.string.preferences_communication__sealed_sender_allow_from_anyone),
-        summary = DSLSettingsText.from(R.string.preferences_communication__sealed_sender_allow_from_anyone_description),
+//        summary = DSLSettingsText.from(R.string.preferences_communication__sealed_sender_allow_from_anyone_description),
         isChecked = state.allowSealedSenderFromAnyone
       ) {
         viewModel.setAllowSealedSenderFromAnyone(!state.allowSealedSenderFromAnyone)

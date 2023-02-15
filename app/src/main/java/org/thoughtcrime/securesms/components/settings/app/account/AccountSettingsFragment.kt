@@ -109,14 +109,14 @@ class AccountSettingsFragment : DSLSettingsFragment(R.string.AccountSettingsFrag
 
       sectionHeaderPref(R.string.AccountSettingsFragment__account)
 
-      if (SignalStore.account().isRegistered) {
-        clickPref(
-          title = DSLSettingsText.from(R.string.AccountSettingsFragment__change_phone_number),
-          onClick = {
-            Navigation.findNavController(requireView()).safeNavigate(R.id.action_accountSettingsFragment_to_changePhoneNumberFragment)
-          }
-        )
-      }
+//      if (SignalStore.account().isRegistered) {
+//        clickPref(
+//          title = DSLSettingsText.from(R.string.AccountSettingsFragment__change_phone_number),
+//          onClick = {
+//            Navigation.findNavController(requireView()).safeNavigate(R.id.action_accountSettingsFragment_to_changePhoneNumberFragment)
+//          }
+//        )
+//      }
 
       /*clickPref(
         title = DSLSettingsText.from(R.string.preferences_chats__transfer_account),

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:viewBindingIgnore="true"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/black">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/delete_account_country_picker_toolbar"
@@ -13,14 +13,15 @@
         android:layout_height="?attr/actionBarSize"
         app:contentInsetEnd="16dp"
         app:contentInsetStartWithNavigation="0dp"
-        app:navigationIcon="@drawable/ic_arrow_left_24">
+        app:navigationIcon="@drawable/ic_arrow_left_white_24">
 
         <EditText
             android:id="@+id/delete_account_country_picker_filter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/DeleteAccountCountryPickerFragment__search_countries"
-            android:inputType="textCapWords" />
+            android:inputType="textCapWords"
+            android:textColor="@color/white"/>
 
     </androidx.appcompat.widget.Toolbar>
 

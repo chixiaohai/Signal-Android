@@ -16,4 +16,5 @@
     android:maxLength="18"
     android:saveEnabled="false"
     android:hint="@string/RegistrationActivity_phone_number_description"
+    android:textColor="@color/white"
     tools:text="867-5309" />
