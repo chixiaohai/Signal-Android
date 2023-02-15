@@ -226,7 +226,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".sharing.v2.ShareActivity"
+            android:name=".sharing.ShareActivity"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:excludeFromRecents="true"
             android:exported="true"
@@ -471,6 +471,30 @@
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
             android:theme="@style/Signal.DayNight.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden|adjustNothing" />
+
+        <activity
+            android:name=".groups.ui.managegroup.ManageGroupActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".groups.ui.managegroup.EditGroupActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".DialogWithListActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:theme="@style/Mp02.Signal.PreferenceActivity" />
+
+        <activity android:name=".conversation.SimSaveOptionsActivity" />
+
+        <activity
+            android:name=".SelectedRecipientsDetailActivity"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:theme="@style/TextSecure.LightRegistrationTheme"
+            android:windowSoftInputMode="stateVisible" />
+
 
         <!--        <activity android:name=".mediasend.v2.stories.StoriesMultiselectForwardActivity"-->
         <!--            android:theme="@style/Signal.DayNight.NoActionBar"-->

@@ -31,16 +31,4 @@ class SoundsAndNotificationsSettingsRepository(private val context: Context) {
     }
   }
 
-  fun hasCustomNotificationSettings(recipientId: RecipientId, consumer: (Boolean) -> Unit) {
-    SignalExecutors.BOUNDED.execute {
-      val recipient = Recipient.resolved(recipientId)
-      consumer(
-        if (recipient.notificationChannel != null || !NotificationChannels.supported()) {
-          true
-        } else {
-          NotificationChannels.getInstance().updateWithShortcutBasedChannel(recipient)
-        }
-      )
-    }
-  }
 }

@@ -72,5 +72,15 @@ class DraftRepository(
     }.subscribeOn(Schedulers.io())
   }
 
+  fun deleteVoiceNoteDraft(draft: DraftTable.Draft) {
+    deleteBlob(Uri.parse(draft.value).buildUpon().clearQuery().build())
+  }
+
+  fun deleteBlob(uri: Uri) {
+    SignalExecutors.BOUNDED.execute {
+      BlobProvider.getInstance().delete(context, uri)
+    }
+  }
+
   data class DatabaseDraft(val drafts: Drafts, val updatedText: CharSequence?)
 }

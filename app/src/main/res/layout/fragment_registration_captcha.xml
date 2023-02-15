@@ -16,6 +16,6 @@
         android:layout_height="10px"
         android:id="@+id/ll_mouse"
         android:orientation="horizontal"
-        android:background="@color/black"
+        android:background="@drawable/ic_baseline_north_west_24"
         android:focusable="false"/>
 </FrameLayout>

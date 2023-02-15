@@ -281,47 +281,12 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
                             boolean originalMissing,
                             @Nullable String storyReaction)
   {
-    if (originalMissing && isStoryReply()) {
-      bodyView.setVisibility(GONE);
-      storyReactionEmoji.setVisibility(View.GONE);
-      mediaDescriptionText.setVisibility(VISIBLE);
-
-      mediaDescriptionText.setText(R.string.QuoteView_no_longer_available);
-      if (storyReaction != null) {
-        missingStoryReaction.setVisibility(View.VISIBLE);
-        missingStoryReaction.setImageEmoji(storyReaction);
-      } else {
-        missingStoryReaction.setVisibility(View.GONE);
-      }
+    if (!TextUtils.isEmpty(body) || !attachments.containsMediaSlide()) {
+      bodyView.setVisibility(VISIBLE);
+      bodyView.setText(body == null ? "" : body);
+      mediaDescriptionText.setVisibility(GONE);
       return;
     }
-
-    if (storyReaction != null) {
-      storyReactionEmoji.setImageEmoji(storyReaction);
-      storyReactionEmoji.setVisibility(View.VISIBLE);
-      missingStoryReaction.setVisibility(View.INVISIBLE);
-    } else {
-      storyReactionEmoji.setVisibility(View.GONE);
-      missingStoryReaction.setVisibility(View.GONE);
-    }
-
-//    StoryTextPostModel textPostModel = isStoryReply() ? getStoryTextPost(body) : null;
-//    if (!TextUtils.isEmpty(body) || !attachments.containsMediaSlide()) {
-//      if (textPostModel != null) {
-//        try {
-//          bodyView.setText(textPostModel.getText());
-//        } catch (Exception e) {
-//          Log.w(TAG, "Could not parse body of text post.", e);
-//          bodyView.setText("");
-//        }
-//      } else {
-//        bodyView.setText(body == null ? "" : body);
-//      }
-//
-//      bodyView.setVisibility(VISIBLE);
-//      mediaDescriptionText.setVisibility(GONE);
-//      return;
-//    }
 
     bodyView.setVisibility(GONE);
     mediaDescriptionText.setVisibility(VISIBLE);

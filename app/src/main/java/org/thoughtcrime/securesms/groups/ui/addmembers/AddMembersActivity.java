@@ -3,13 +3,13 @@ package org.thoughtcrime.securesms.groups.ui.addmembers;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import org.thoughtcrime.securesms.ContactSelectionActivity;
 import org.thoughtcrime.securesms.ContactSelectionListFragment;
@@ -28,7 +28,7 @@ import java.util.function.Consumer;
 
 public class AddMembersActivity extends PushContactSelectionActivity {
 
-  public static final String GROUP_ID           = "group_id";
+  public static final String GROUP_ID = "group_id";
   public static final String ANNOUNCEMENT_GROUP = "announcement_group";
 
   private View                done;
@@ -63,23 +63,14 @@ public class AddMembersActivity extends PushContactSelectionActivity {
     viewModel = new ViewModelProvider(this, factory).get(AddMembersViewModel.class);
 
     done.setOnClickListener(v ->
-      viewModel.getDialogStateForSelectedContacts(contactsFragment.getSelectedContacts(), this::displayAlertMessage)
+                                viewModel.getDialogStateForSelectedContacts(contactsFragment.getSelectedContacts(), this::displayAlertMessage)
     );
 
     disableDone();
   }
 
   @Override
-  protected void initializeToolbar() {
-    getToolbar().setNavigationIcon(R.drawable.ic_arrow_left_24);
-    getToolbar().setNavigationOnClickListener(v -> {
-      setResult(RESULT_CANCELED);
-      finish();
-    });
-  }
-
-  @Override
-  public void onBeforeContactSelected(@NonNull Optional<RecipientId> recipientId, String number, @NonNull Consumer<Boolean> callback) {
+  public void onBeforeContactSelected(Optional<RecipientId> recipientId, String number, Consumer<Boolean> callback) {
     if (getGroupId().isV1() && recipientId.isPresent() && !Recipient.resolved(recipientId.get()).hasE164()) {
       Toast.makeText(this, R.string.AddMembersActivity__this_person_cant_be_added_to_legacy_groups, Toast.LENGTH_SHORT).show();
       callback.accept(false);
@@ -96,7 +87,7 @@ public class AddMembersActivity extends PushContactSelectionActivity {
   }
 
   @Override
-  public void onContactDeselected(@NonNull Optional<RecipientId> recipientId, String number) {
+  public void onContactDeselected(Optional<RecipientId> recipientId, String number) {
     if (contactsFragment.hasQueryFilter()) {
       getContactFilterView().clear();
     }
@@ -140,14 +131,22 @@ public class AddMembersActivity extends PushContactSelectionActivity {
     String message = getResources().getQuantityString(R.plurals.AddMembersActivity__add_d_members_to_s, state.getSelectionCount(),
                                                       recipient.getDisplayName(this), state.getGroupTitle(), state.getSelectionCount());
 
-    new MaterialAlertDialogBuilder(this)
-                   .setMessage(message)
-                   .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
-                   .setPositiveButton(R.string.AddMembersActivity__add, (dialog, which) -> {
-                     dialog.dismiss();
-                     onFinishedSelection();
-                   })
-                   .setCancelable(true)
-                   .show();
+    new AlertDialog.Builder(this)
+        .setMessage(message)
+        .setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel())
+        .setPositiveButton(R.string.AddMembersActivity__add, (dialog, which) -> {
+          dialog.dismiss();
+          onFinishedSelection();
+        })
+        .setCancelable(true)
+        .show();
+  }
+
+  @Override
+  public boolean onKeyDown(int keyCode, KeyEvent event) {
+    if (keyCode == KeyEvent.KEYCODE_CALL){
+      viewModel.getDialogStateForSelectedContacts(contactsFragment.getSelectedContacts(), this::displayAlertMessage);
+    }
+    return super.onKeyDown(keyCode, event);
   }
 }

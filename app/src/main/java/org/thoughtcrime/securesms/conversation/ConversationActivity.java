@@ -195,6 +195,7 @@ import org.thoughtcrime.securesms.groups.GroupId;
 import org.thoughtcrime.securesms.groups.ui.GroupChangeFailureReason;
 import org.thoughtcrime.securesms.groups.ui.GroupErrors;
 import org.thoughtcrime.securesms.groups.ui.LeaveGroupDialog;
+import org.thoughtcrime.securesms.groups.ui.managegroup.EditGroupActivity;
 import org.thoughtcrime.securesms.insights.InsightsLauncher;
 import org.thoughtcrime.securesms.invites.InviteReminderModel;
 import org.thoughtcrime.securesms.invites.InviteReminderRepository;
@@ -236,6 +237,7 @@ import org.thoughtcrime.securesms.mms.QuoteId;
 import org.thoughtcrime.securesms.mms.QuoteModel;
 import org.thoughtcrime.securesms.mms.Slide;
 import org.thoughtcrime.securesms.mms.SlideDeck;
+import org.thoughtcrime.securesms.mms.SlideFactory;
 import org.thoughtcrime.securesms.mms.SlideFactory.MediaType;
 import org.thoughtcrime.securesms.mms.StickerSlide;
 import org.thoughtcrime.securesms.mms.VideoSlide;
@@ -1069,8 +1071,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
     }
 
     if ((data == null && reqCode != TAKE_PHOTO && reqCode != SMS_DEFAULT) ||
-        (resultCode != RESULT_OK && reqCode != SMS_DEFAULT))
-    {
+        (resultCode != RESULT_OK && reqCode != SMS_DEFAULT)) {
       updateLinkPreviewState();
       SignalStore.settings().setDefaultSms(Util.isDefaultSmsProvider(this));
       return;
@@ -1078,10 +1079,10 @@ public class ConversationActivity extends PassphraseRequiredActivity
 
     switch (reqCode) {
       case PICK_DOCUMENT:
-        setMedia(data.getData(), MediaType.DOCUMENT);
+        setMedia(data.getData(), SlideFactory.MediaType.DOCUMENT);
         break;
       case PICK_AUDIO:
-        setMedia(data.getData(), MediaType.AUDIO);
+        setMedia(data.getData(), SlideFactory.MediaType.AUDIO);
         break;
       case PICK_CONTACT:
         if (isSecureText && !isSmsForced()) {
@@ -1376,7 +1377,9 @@ public class ConversationActivity extends PassphraseRequiredActivity
 //                  setOnClickListener(new SendButtonListener());
           TextView tx       = v.findViewById(R.id.menu_item);
           String   textname = tx.getText().toString();
-          if (getString(R.string.conversation__menu_conversation_settings).equals(textname)) {
+          if (getString(R.string.conversation__menu_edit_group).equals(textname)) {
+            handleEditPushGroup();
+          } else if (getString(R.string.conversation__menu_conversation_settings).equals(textname)) {
             handleConversationSettings();
           } else if (getString(R.string.conversation__menu_leave_group).equals(textname)) {
             handleLeavePushGroup();
@@ -1977,10 +1980,10 @@ public class ConversationActivity extends PassphraseRequiredActivity
     LeaveGroupDialog.handleLeavePushGroup(this, getRecipient().requireGroupId().requirePush(), this::finish);
   }
 
-//    private void handleEditPushGroup() {
-//        startActivityForResult(EditGroupActivity.newIntent(ConversationActivity.this, recipient.get().requireGroupId()),
-//                GROUP_EDIT);
-//    }
+  private void handleEditPushGroup() {
+    startActivityForResult(EditGroupActivity.newIntent(ConversationActivity.this, recipient.get().requireGroupId()),
+                           GROUP_EDIT);
+  }
 
   private void handleManageGroup() {
     Intent intent = ConversationSettingsActivity.forGroup(this, recipient.get().requireGroupId());
@@ -3889,11 +3892,27 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return;
     }
 
-    draftViewModel.getVoiceNoteDraft();
+    if (draftViewModel.hasVoiceNoteDraft()) {
+      buttonToggle.display(sendButton);
+      quickAttachmentToggle.hide();
+      inlineAttachmentToggle.hide();
+      return;
+    }
 
-    buttonToggle.display(sendButton);
-    quickAttachmentToggle.hide();
-    inlineAttachmentToggle.hide();
+    if (composeText.getText().length() == 0 && !attachmentManager.isAttachmentPresent()) {
+      buttonToggle.display(sendButton);
+      quickAttachmentToggle.hide();
+      inlineAttachmentToggle.hide();
+    } else {
+      buttonToggle.display(sendButton);
+      quickAttachmentToggle.hide();
+
+      if (!attachmentManager.isAttachmentPresent() && !linkPreviewViewModel.hasLinkPreviewUi()) {
+        inlineAttachmentToggle.hide();
+      } else {
+        inlineAttachmentToggle.hide();
+      }
+    }
   }
 
   private void onViewModelEvent(@NonNull ConversationViewModel.Event event) {
@@ -4073,19 +4092,25 @@ public class ConversationActivity extends PassphraseRequiredActivity
 
     slideDeck.addSlide(audioSlide);
 
-    sendMediaMessage(recipient.getId(),
-                     sendButton.getSelectedSendType(),
-                     "",
-                     slideDeck,
-                     inputPanel.getQuote().orElse(null),
-                     Collections.emptyList(),
-                     Collections.emptyList(),
-                     composeText.getMentions(),
-                     expiresIn,
-                     false,
-                     initiating,
-                     true,
-                     null);
+    ListenableFuture<Void> sendResult = sendMediaMessage(recipient.getId(),
+                                                         sendButton.getSelectedSendType(),
+                                                         "",
+                                                         slideDeck,
+                                                         inputPanel.getQuote().orElse(null),
+                                                         Collections.emptyList(),
+                                                         Collections.emptyList(),
+                                                         composeText.getMentions(),
+                                                         expiresIn,
+                                                         false,
+                                                         initiating,
+                                                         true,
+                                                         null);
+    sendResult.addListener(new AssertedSuccessListener<Void>() {
+      @Override
+      public void onSuccess(Void nothing) {
+        draftViewModel.deleteBlob(uri);
+      }
+    });
   }
 
 

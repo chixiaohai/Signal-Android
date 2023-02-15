@@ -24,42 +24,21 @@ public class MediaRecorderWrapper implements Recorder {
   public void start(ParcelFileDescriptor fileDescriptor) throws IOException {
     Log.i(TAG, "Recording voice note using MediaRecorderWrapper.");
     recorder = new MediaRecorder();
-
-    try {
-      recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-      recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
-      recorder.setOutputFile(fileDescriptor.getFileDescriptor());
-      recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-      recorder.setAudioSamplingRate(SAMPLE_RATE);
-      recorder.setAudioEncodingBitRate(BIT_RATE);
-      recorder.setAudioChannels(CHANNELS);
-      recorder.prepare();
-      recorder.start();
-    } catch (IllegalStateException e) {
-      Log.w(TAG, "Unable to start recording", e);
-      recorder.release();
-      recorder = null;
-      throw new IOException(e);
-    }
+    recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+    recorder.setOutputFormat(MediaRecorder.OutputFormat.AAC_ADTS);
+    recorder.setOutputFile(fileDescriptor.getFileDescriptor());
+    recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+    recorder.setAudioSamplingRate(SAMPLE_RATE);
+    recorder.setAudioEncodingBitRate(BIT_RATE);
+    recorder.setAudioChannels(CHANNELS);
+    recorder.prepare();
+    recorder.start();
   }
 
   @Override
   public void stop() {
-    if (recorder == null) {
-      return;
-    }
-
-    try {
-      recorder.stop();
-    } catch (RuntimeException e) {
-      if (e.getClass() != RuntimeException.class) {
-        throw e;
-      } else {
-        Log.d(TAG, "Recording stopped with no data captured.");
-      }
-    } finally {
-      recorder.release();
-      recorder = null;
-    }
+    recorder.stop();
+    recorder.release();
+    recorder = null;
   }
 }

@@ -412,14 +412,14 @@ public class InputPanel extends LinearLayout
     recordTime.display();
     slideToCancel.display();
 
-    if (emojiVisible) {
-      fadeOut(mediaKeyboard);
-    }
-
-    fadeOut(composeText);
-    fadeOut(quickCameraToggle);
-    fadeOut(quickAudioToggle);
-    fadeOut(buttonToggle);
+//    if (emojiVisible) {
+//      fadeOut(mediaKeyboard);
+//    }
+//
+//    fadeOut(composeText);
+//    fadeOut(quickCameraToggle);
+//    fadeOut(quickAudioToggle);
+//    fadeOut(buttonToggle);
   }
 
   @Override

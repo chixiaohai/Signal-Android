@@ -86,6 +86,7 @@ import org.thoughtcrime.securesms.R;
 //import org.thoughtcrime.securesms.badges.gifts.flow.GiftFlowActivity;
 //import org.thoughtcrime.securesms.badges.gifts.viewgift.received.ViewReceivedGiftBottomSheet;
 //import org.thoughtcrime.securesms.badges.gifts.viewgift.sent.ViewSentGiftBottomSheet;
+import org.thoughtcrime.securesms.attachments.Attachment;
 import org.thoughtcrime.securesms.components.ConversationScrollToView;
 import org.thoughtcrime.securesms.components.ConversationTypingView;
 import org.thoughtcrime.securesms.components.TypingStatusRepository;
@@ -142,6 +143,7 @@ import org.thoughtcrime.securesms.keyvalue.SignalStore;
 import org.thoughtcrime.securesms.linkpreview.LinkPreview;
 import org.thoughtcrime.securesms.longmessage.LongMessageFragment;
 //import org.thoughtcrime.securesms.main.Material3OnScrollHelperBinder;
+import org.thoughtcrime.securesms.mediasend.Media;
 import org.thoughtcrime.securesms.messagedetails.MessageDetailsFragment;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestState;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestViewModel;
@@ -167,6 +169,7 @@ import org.thoughtcrime.securesms.recipients.ui.bottomsheet.RecipientBottomSheet
 import org.thoughtcrime.securesms.revealable.ViewOnceMessageActivity;
 import org.thoughtcrime.securesms.revealable.ViewOnceUtil;
 import org.thoughtcrime.securesms.safety.SafetyNumberBottomSheet;
+import org.thoughtcrime.securesms.sharing.ShareIntents;
 import org.thoughtcrime.securesms.sms.MessageSender;
 import org.thoughtcrime.securesms.sms.OutgoingTextMessage;
 import org.thoughtcrime.securesms.stickers.StickerLocator;
@@ -899,6 +902,74 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     });
   }
 
+  private void handleForwardMessage(ConversationMessage conversationMessage) {
+
+    if (conversationMessage.getMessageRecord().isViewOnce()) {
+      throw new AssertionError("Cannot forward a view-once message.");
+    }
+
+    listener.onForwardClicked();
+
+    SimpleTask.run(getLifecycle(), () -> {
+      ShareIntents.Builder shareIntentBuilder = new ShareIntents.Builder(requireActivity());
+      shareIntentBuilder.setText(conversationMessage.getDisplayBody(requireContext()));
+
+      if (conversationMessage.getMessageRecord().isMms()) {
+        MmsMessageRecord mediaMessage = (MmsMessageRecord) conversationMessage.getMessageRecord();
+        boolean isAlbum = mediaMessage.containsMediaSlide() &&
+                          mediaMessage.getSlideDeck().getSlides().size() > 1 &&
+                          mediaMessage.getSlideDeck().getAudioSlide() == null &&
+                          mediaMessage.getSlideDeck().getDocumentSlide() == null &&
+                          mediaMessage.getSlideDeck().getStickerSlide() == null;
+
+        if (isAlbum) {
+          ArrayList<Media> mediaList = new ArrayList<>(mediaMessage.getSlideDeck().getSlides().size());
+          List<Attachment> attachments = Stream.of(mediaMessage.getSlideDeck().getSlides())
+                                               .filter(s -> s.hasImage() || s.hasVideo())
+                                               .map(Slide::asAttachment)
+                                               .toList();
+
+          for (Attachment attachment : attachments) {
+            Uri uri = attachment.getUri();
+
+            if (uri != null) {
+              mediaList.add(new Media(uri,
+                                      attachment.getContentType(),
+                                      System.currentTimeMillis(),
+                                      attachment.getWidth(),
+                                      attachment.getHeight(),
+                                      attachment.getSize(),
+                                      0,
+                                      false,
+                                      attachment.isBorderless(),
+                                      Optional.empty(),
+                                      Optional.ofNullable(attachment.getCaption()),
+                                      Optional.empty()));
+            }
+          }
+
+          if (!mediaList.isEmpty()) {
+            shareIntentBuilder.setMedia(mediaList);
+          }
+        } else if (mediaMessage.containsMediaSlide()) {
+          Slide slide = mediaMessage.getSlideDeck().getSlides().get(0);
+          shareIntentBuilder.setSlide(slide);
+        }
+
+        if (mediaMessage.getSlideDeck().getTextSlide() != null && mediaMessage.getSlideDeck().getTextSlide().getUri() != null) {
+          try (InputStream stream = PartAuthority.getAttachmentStream(requireContext(), mediaMessage.getSlideDeck().getTextSlide().getUri())) {
+            String fullBody = StreamUtil.readFullyAsString(stream);
+            shareIntentBuilder.setText(fullBody);
+          } catch (IOException e) {
+            Log.w(TAG, "Failed to read long message text when forwarding.");
+          }
+        }
+      }
+
+      return shareIntentBuilder.build();
+    }, this::startActivity);
+  }
+
   private void setCorrectActionModeMenuVisibility() {
     Set<MultiselectPart> selectedParts = getListAdapter().getSelectedItems();
 
@@ -1031,6 +1102,12 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
 
     if (messageRecords.size() == 1) return messageRecords.stream().findFirst().get();
     else                            throw new AssertionError();
+  }
+
+  private ConversationMessage getSelectedMessageRecord() {
+    Set<MultiselectPart> conversationMessages = getListAdapter().getSelectedItems();
+    if (conversationMessages.size() == 1) return conversationMessages.stream().findFirst().get().getConversationMessage();
+    else throw new AssertionError();
   }
 
   public void reload(Recipient recipient, long threadId) {
@@ -2241,6 +2318,14 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
     if (requestCode == CODE_ADD_EDIT_CONTACT && getContext() != null) {
       ApplicationDependencies.getJobManager().add(new DirectoryRefreshJob(false));
     }
+    if (resultCode == HANDLE_REPLY_MESSAGE) {
+      isReply = true;
+      handleReplyMessage(getSelectedMessageRecord());
+    } else if (resultCode == HANDLE_FORWARD) {
+      handleForwardMessage(getSelectedMessageRecord());
+    }
+    if (requestCode == HANDLE_SUBMENU)
+      ((ConversationAdapter) list.getAdapter()).clearSelection();
   }
 
   private void handleEnterMultiSelect(@NonNull ConversationMessage conversationMessage) {

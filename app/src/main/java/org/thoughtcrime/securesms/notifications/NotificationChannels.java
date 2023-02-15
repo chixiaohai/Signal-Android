@@ -7,6 +7,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationChannelGroup;
 import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioAttributes;
@@ -507,7 +508,7 @@ public class NotificationChannels {
    * @return true if a shortcut based notification channel was found and then associated with the recipient, false otherwise
    */
   @WorkerThread
-  public boolean updateWithShortcutBasedChannel(@NonNull Recipient recipient) {
+  public static boolean updateWithShortcutBasedChannel(Context context, @NonNull Recipient recipient) {
     if (Build.VERSION.SDK_INT >= CONVERSATION_SUPPORT_VERSION && TextUtils.isEmpty(recipient.getNotificationChannel())) {
       String shortcutId = ConversationUtil.getShortcutId(recipient);
 

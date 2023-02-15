@@ -108,6 +108,7 @@ public final class FeatureFlags {
   private static final String PAYPAL_ONE_TIME_DONATIONS         = "android.oneTimePayPalDonations.2";
   private static final String PAYPAL_RECURRING_DONATIONS        = "android.recurringPayPalDonations";
   private static final String CHANGE_NUMBER_ENABLED             = "android.changeNumber";
+  private static final String VOICE_NOTE_RECORDING_V2           = "android.voiceNoteRecordingV2";
 
   /**
    * We will only store remote values for flags in this set. If you want a flag to be controllable
@@ -402,6 +403,13 @@ public final class FeatureFlags {
   /** The minimum memory class required for rendering animated stickers in the keyboard and such */
   public static int animatedStickerMinimumMemoryClass() {
     return getInteger(ANIMATED_STICKER_MIN_MEMORY, 193);
+  }
+
+  /**
+   * Whether or not to use the new voice note recorder backed by MediaRecorder.
+   */
+  public static boolean voiceNoteRecordingV2() {
+    return getBoolean(VOICE_NOTE_RECORDING_V2, true);
   }
 
   /** The minimum total memory for rendering animated stickers in the keyboard and such */

@@ -162,6 +162,25 @@
     <item>@string/preferences__none</item>
   </string-array>
 
+    <integer-array name="expiration_times">
+        <item>0</item>
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+        <item>300</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>604800</item>
+    </integer-array>
+
+    <string-array name="sim_save_options">
+        <item>@string/save_options_new_contact</item>
+        <item>@string/save_options_add_to_existing</item>
+    </string-array>
 
   <string-array name="pref_led_color_values" translatable="false">
     <item>green</item>

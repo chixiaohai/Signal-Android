@@ -85,7 +85,7 @@ import org.thoughtcrime.securesms.recipients.LiveRecipient;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.sharing.ShareContact;
-import org.thoughtcrime.securesms.sharing.v2.ShareActivity;
+import org.thoughtcrime.securesms.sharing.ShareActivity;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.UsernameUtil;
 import org.thoughtcrime.securesms.util.ViewUtil;

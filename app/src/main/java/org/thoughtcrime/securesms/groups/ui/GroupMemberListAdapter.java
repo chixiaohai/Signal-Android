@@ -195,13 +195,11 @@ final class GroupMemberListAdapter extends LifecycleRecyclerAdapter<GroupMemberL
     tv.setEllipsize(TextUtils.TruncateAt.MARQUEE);
     if (focused) {
       tv.setSelected(true);
-      va.setDuration(300);
-      va.start();
     } else {
       tv.setSelected(false);
-      va.setDuration(300);
-      va.start();
     }
+    va.setDuration(300);
+    va.start();
   }
 
   @Override

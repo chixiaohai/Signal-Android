@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.conversation.drafts
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -56,6 +57,10 @@ class DraftViewModel @JvmOverloads constructor(
     repository.deleteVoiceNoteDraftData(draft)
   }
 
+  @get:JvmName("hasVoiceNoteDraft")
+  val hasVoiceNoteDraft: Boolean
+    get() = store.state.voiceNoteDraft != null
+
   fun deleteVoiceNoteDraft() {
     store.update {
       repository.deleteVoiceNoteDraftData(it.voiceNoteDraft)
@@ -95,6 +100,10 @@ class DraftViewModel @JvmOverloads constructor(
     store.update {
       saveDrafts(it.copy(quoteDraft = null))
     }
+  }
+
+  fun deleteBlob(uri: Uri) {
+    repository.deleteBlob(uri)
   }
 
   fun onSendComplete(threadId: Long) {

@@ -130,6 +130,7 @@ Updated May 25, 2018\n
     <string name="note_to_self">Note to Self</string>
     <string name="sub_menu_reply_message">Reply message</string>
     <string name="conversation_context__menu_forward_message">Forward message</string>
+    <string name="ManageGroupActivity_add_members">Add members</string>
 
     <!-- AlbumThumbnailView -->
     <string name="AlbumThumbnailView_plus" translatable="false">\+%d</string>
@@ -987,6 +988,26 @@ Updated May 25, 2018\n
     <string name="ManageGroupActivity_invite_now">Invite now</string>
     <string name="ManageGroupActivity_more">more</string>
     <string name="ManageGroupActivity_add_group_description">Add group description…</string>
+    <string name="ManageRecipientActivity_custom_notifications">Custom notifications</string>
+    <string name="ManageGroupActivity_mentions">Mentions</string>
+    <string name="ManageGroupActivity_edit_group_info">Edit group info</string>
+    <string name="ManageGroupActivity_mute_notifications">Mute notifications</string>
+    <string name="ManageGroupActivity_custom_notifications">Custom notifications</string>
+    <string name="ManageGroupActivity_chat_color_and_wallpaper">Chat color &amp; wallpaper</string>
+    <string name="ManageGroupActivity_until_s">Until %1$s</string>
+    <string name="ManageGroupActivity_always">Always</string>
+    <string name="ManageRecipientActivity_disappearing_messages">Disappearing messages</string>
+    <string name="ManageRecipientActivity_off">Off</string>
+    <string name="ManageRecipientActivity_on">On</string>
+    <string name="ManageGroupActivity_off">Off</string>
+    <string name="ManageGroupActivity_on">On</string>
+    <string name="ManageGroupActivity_block_group">Block group</string>
+    <string name="ManageGroupActivity_unblock_group">Unblock group</string>
+    <string name="ManageGroupActivity_leave_group">Leave group</string>
+    <string name="selected_user_name">User Name</string>
+    <string name="selected_phone_number">Phone Number</string>
+    <string name="save_options_new_contact">New contact</string>
+    <string name="save_options_add_to_existing">Add to existing</string>
 
     <!-- GroupMentionSettingDialog -->
     <string name="GroupMentionSettingDialog_notify_me_for_mentions">Notify me for Mentions</string>

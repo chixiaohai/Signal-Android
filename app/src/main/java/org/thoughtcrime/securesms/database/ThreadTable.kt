@@ -62,6 +62,7 @@ import org.whispersystems.signalservice.api.storage.SignalGroupV1Record
 import org.whispersystems.signalservice.api.storage.SignalGroupV2Record
 import java.io.Closeable
 import java.io.IOException
+import java.util.Arrays
 import java.util.Collections
 import java.util.LinkedList
 import java.util.Optional
@@ -1079,6 +1080,18 @@ class ThreadTable(context: Context, databaseHelper: SignalDatabase) : DatabaseTa
           -1
         }
       }
+  }
+
+  fun getThreadIdsIfExistsFor(vararg recipientIds: RecipientId): Map<RecipientId, Long>? {
+    val db: SQLiteDatabase = databaseHelper.signalReadableDatabase
+    val query: SqlUtil.Query = SqlUtil.buildCollectionQuery(RECIPIENT_ID, listOf(*recipientIds))[0]
+    val results: MutableMap<RecipientId, Long> = HashMap()
+    db.query(TABLE_NAME, arrayOf(ID, RECIPIENT_ID), query.where, query.whereArgs, null, null, null, "1").use { cursor ->
+      while (cursor != null && cursor.moveToNext()) {
+        results[RecipientId.from(CursorUtil.requireString(cursor, RECIPIENT_ID))] = CursorUtil.requireLong(cursor, ID)
+      }
+    }
+    return results
   }
 
   fun getOrCreateValidThreadId(recipient: Recipient, candidateId: Long): Long {
