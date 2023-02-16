@@ -5608,4 +5608,7 @@ Updated May 25, 2018\n
     <string name="AvatarSelectionBottomSheetDialogFragment__take_photo">Take photo</string>
     <string name="AvatarSelectionBottomSheetDialogFragment__choose_from_gallery">Choose from gallery</string>
     <string name="AvatarSelectionBottomSheetDialogFragment__remove_photo">Remove photo</string>
+
+    <!-- DeleteAccountFragment -->
+    <string name="DeleteAccountFragment__failed_to_delete_account">Failed to delete account. Do you have a network connection?</string>
 </resources>
