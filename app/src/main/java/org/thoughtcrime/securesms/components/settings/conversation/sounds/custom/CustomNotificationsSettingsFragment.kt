@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.components.settings.conversation.sounds.custom
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -20,6 +21,7 @@ import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
 import org.thoughtcrime.securesms.database.RecipientTable
 import org.thoughtcrime.securesms.notifications.NotificationChannels
+import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.util.ConversationUtil
 import org.thoughtcrime.securesms.util.RingtoneUtil
 import org.thoughtcrime.securesms.util.adapter.mapping.MappingAdapter
@@ -37,16 +39,13 @@ class CustomNotificationsSettingsFragment : DSLSettingsFragment(R.string.CustomN
   private lateinit var callSoundResultLauncher: ActivityResultLauncher<Intent>
   private lateinit var messageSoundResultLauncher: ActivityResultLauncher<Intent>
 
+  @SuppressLint("LogNotSignal")
   private fun createFactory(): CustomNotificationsSettingsViewModel.Factory {
-    val recipientId = CustomNotificationsSettingsFragmentArgs.fromBundle(requireArguments()).recipientId
+
+    var recipientId = arguments?.getParcelable<RecipientId>("recipientId")
     val repository = CustomNotificationsSettingsRepository(requireContext())
 
-    return CustomNotificationsSettingsViewModel.Factory(recipientId, repository)
-  }
-
-  override fun onResume() {
-    super.onResume()
-    viewModel.channelConsistencyCheck()
+    return CustomNotificationsSettingsViewModel.Factory(recipientId!!, repository)
   }
 
   override fun bindAdapter(adapter: DSLSettingsAdapter) {

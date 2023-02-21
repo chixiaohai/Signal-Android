@@ -196,6 +196,7 @@ import org.thoughtcrime.securesms.groups.ui.GroupChangeFailureReason;
 import org.thoughtcrime.securesms.groups.ui.GroupErrors;
 import org.thoughtcrime.securesms.groups.ui.LeaveGroupDialog;
 import org.thoughtcrime.securesms.groups.ui.managegroup.EditGroupActivity;
+import org.thoughtcrime.securesms.groups.ui.managegroup.ManageGroupActivity;
 import org.thoughtcrime.securesms.insights.InsightsLauncher;
 import org.thoughtcrime.securesms.invites.InviteReminderModel;
 import org.thoughtcrime.securesms.invites.InviteReminderRepository;
@@ -258,6 +259,7 @@ import org.thoughtcrime.securesms.recipients.RecipientFormattingException;
 import org.thoughtcrime.securesms.recipients.RecipientId;
 import org.thoughtcrime.securesms.recipients.RecipientUtil;
 import org.thoughtcrime.securesms.recipients.ui.disappearingmessages.RecipientDisappearingMessagesActivity;
+import org.thoughtcrime.securesms.recipients.ui.managerecipient.ManageRecipientActivity;
 import org.thoughtcrime.securesms.registration.RegistrationNavigationActivity;
 import org.thoughtcrime.securesms.safety.SafetyNumberBottomSheet;
 import org.thoughtcrime.securesms.search.MessageResult;
@@ -537,8 +539,6 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******1");
-      android.util.Log.d(TAG, "onKeyDown: fragment.getCurrentPosition() = " + fragment.getCurrentPosition() + " !isForward = " + !isForward);
       isKeyUpOrDown = false;
 //            if (isComposeTextFocus && panelParent.getVisibility() == View.GONE){
 //                panelParent.setVisibility(View.VISIBLE);
@@ -546,7 +546,6 @@ public class ConversationActivity extends PassphraseRequiredActivity
 //            }
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******UP******1");
       isKeyUpOrDown = true;
     }
     if (keyCode == KeyEvent.KEYCODE_CALL && composeText.hasFocus()) {
@@ -578,19 +577,14 @@ public class ConversationActivity extends PassphraseRequiredActivity
       }
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_UP && mRecyclerview.getChildAt(0) != null && mRecyclerview.getChildAt(0).hasFocus()) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******UP******2");
       mRecyclerview.setVisibility(View.GONE);
       if (isBlocked()) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******UP******3");
         unblockButton.requestFocus();
       } else if (registerButton.getVisibility() == View.VISIBLE) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******UP******4");
         registerButton.requestFocus();
       } else if (makeDefaultSmsButton.getVisibility() == View.VISIBLE) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******UP******5");
         makeDefaultSmsButton.requestFocus();
       } else {
-        android.util.Log.d(TAG, "onKeyDown: lyh******UP******6");
         fragment.getList().scrollToPosition(-1);
         panelParent.setVisibility(View.VISIBLE);
         composeText.requestFocus();
@@ -615,36 +609,27 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && sendButton.hasFocus()) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******3");
       mRecyclerview.setVisibility(View.VISIBLE);
       return true;
     }
     if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && fragment.isLongerMsgItem(keyCode)) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******4");
       fragment.getList().smoothScrollBy(0, 40);
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP && !composeText.isFocused() && fragment.isLongerMsgItem(keyCode)) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******UP******7");
       fragment.getList().smoothScrollBy(0, -40);
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && mRecyclerview.getVisibility() != View.VISIBLE && fragment.getCurrentPosition() == 0 && !isForward) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******5");
       if (isBlocked()) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******6");
         unblockButton.requestFocus();
       } else if (registerButton.getVisibility() == View.VISIBLE) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******7");
         registerButton.requestFocus();
       } else if (makeDefaultSmsButton.getVisibility() == View.VISIBLE) {
-        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******8");
         makeDefaultSmsButton.requestFocus();
       } else {
-        android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******9");
         isHideInputPanelView(false);
       }
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN && mRecyclerview.getVisibility() != View.VISIBLE && fragment.isAtBottom() && isForward) {
-      android.util.Log.d(TAG, "onKeyDown: lyh******DOWN******10");
       isHideInputPanelView(false);
       return true;
     }
@@ -1772,12 +1757,15 @@ public class ConversationActivity extends PassphraseRequiredActivity
       return;
     }
 
-    if (!recipient.get().isBlocked()) return;
+    if (isBlocked()) return;
 
-    Intent intent = ConversationSettingsActivity.forRecipient(this, recipient.getId());
-    Bundle bundle = ConversationSettingsActivity.createTransitionBundle(this, titleView.findViewById(R.id.contact_photo_image), toolbar);
+    Intent intent = ManageRecipientActivity.newIntentFromConversation(this, recipient.getId());
+    startActivitySceneTransition(intent, titleView.findViewById(R.id.subtitle), "avatar");
 
-    ActivityCompat.startActivity(this, intent, bundle);
+//    Intent intent = ConversationSettingsActivity.forRecipient(this, recipient.getId());
+//    Bundle bundle = ConversationSettingsActivity.createTransitionBundle(this, titleView.findViewById(R.id.contact_photo_image), toolbar);
+
+//    ActivityCompat.startActivity(this, intent, bundle);
   }
 
   private void handleUnmuteNotifications() {
@@ -1986,10 +1974,8 @@ public class ConversationActivity extends PassphraseRequiredActivity
   }
 
   private void handleManageGroup() {
-    Intent intent = ConversationSettingsActivity.forGroup(this, recipient.get().requireGroupId());
-    Bundle bundle = ConversationSettingsActivity.createTransitionBundle(this, titleView.findViewById(R.id.contact_photo_image), toolbar);
-
-    ActivityCompat.startActivity(this, intent, bundle);
+    startActivityForResult(ManageGroupActivity.newIntent(ConversationActivity.this, recipient.get().requireGroupId()),
+                           GROUP_EDIT);
   }
 
   private void handleDistributionBroadcastEnabled(MenuItem item) {

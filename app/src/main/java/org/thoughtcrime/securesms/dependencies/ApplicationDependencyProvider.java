@@ -293,6 +293,22 @@ public class ApplicationDependencyProvider implements ApplicationDependencies.Pr
     return signalWebSocket;
   }
 
+  @NonNull @Override public TextSecureSessionStore provideSessionStore() {
+    return null;
+  }
+
+  @NonNull @Override public TextSecurePreKeyStore providePreKeyStore() {
+    return null;
+  }
+
+  @NonNull @Override public SignalSenderKeyStore provideSenderKeyStore() {
+    return null;
+  }
+
+  @NonNull @Override public SignalWebSocket provideSignalWebSocket() {
+    return null;
+  }
+
   @Override
   public @NonNull SignalServiceDataStoreImpl provideProtocolStore() {
     ACI localAci = SignalStore.account().getAci();

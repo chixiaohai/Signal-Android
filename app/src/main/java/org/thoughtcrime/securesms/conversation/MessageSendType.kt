@@ -116,7 +116,7 @@ sealed class MessageSendType(
     composeHintRes = R.string.conversation_activity__type_message_push,
     buttonDrawableRes = R.drawable.ic_send_lock_24,
     menuDrawableRes = R.drawable.ic_secure_24,
-    backgroundColorRes = R.color.core_ultramarine,
+    backgroundColorRes = R.color.black,
     transportType = TransportType.SIGNAL,
     characterCalculator = PushCharacterCalculator()
   )

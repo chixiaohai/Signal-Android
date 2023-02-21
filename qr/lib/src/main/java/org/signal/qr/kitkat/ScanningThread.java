@@ -1,8 +1,19 @@
 package org.signal.qr.kitkat;
 
-import androidx.annotation.NonNull;
+import android.content.res.Configuration;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.FormatException;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.PlanarYUVLuminanceSource;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeReader;
 
 import org.signal.core.util.logging.Log;
 import org.signal.qr.QrProcessor;
@@ -11,13 +22,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.signal.qr.kitkat.QrCameraView.PreviewCallback;
 import static org.signal.qr.kitkat.QrCameraView.PreviewFrame;
 
-public class ScanningThread extends Thread implements PreviewCallback {
+public class ScanningThread extends Thread implements QrCameraView.PreviewCallback {
 
   private static final String TAG = Log.tag(ScanningThread.class);
 
+  private final QRCodeReader                  reader       = new QRCodeReader();
   private final QrProcessor                   processor    = new QrProcessor();
   private final AtomicReference<ScanListener> scanListener = new AtomicReference<>();
   private final Map<DecodeHintType, String>   hints        = new HashMap<>();
@@ -84,5 +95,40 @@ public class ScanningThread extends Thread implements PreviewCallback {
     } catch (InterruptedException ie) {
       throw new AssertionError(ie);
     }
+  }
+
+  private @Nullable String getScannedData(byte[] data, int width, int height, int orientation) {
+    try {
+      if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+        byte[] rotatedData = new byte[data.length];
+
+        for (int y = 0; y < height; y++) {
+          for (int x = 0; x < width; x++) {
+            rotatedData[x * height + height - y - 1] = data[x + y * width];
+          }
+        }
+
+        int tmp = width;
+        width  = height;
+        height = tmp;
+        data   = rotatedData;
+      }
+
+      PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(data, width, height,
+                                                                     0, 0, width, height,
+                                                                     false);
+
+      BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+      Result       result = reader.decode(bitmap, hints);
+
+      if (result != null) return result.getText();
+
+    } catch (NullPointerException | ChecksumException | FormatException e) {
+      Log.w(TAG, e);
+    } catch (NotFoundException e) {
+      // Thanks ZXing...
+    }
+
+    return null;
   }
 }

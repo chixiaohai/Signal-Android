@@ -42,7 +42,6 @@ import org.thoughtcrime.securesms.util.Base64
 import org.thoughtcrime.securesms.util.IdentityUtil
 import org.whispersystems.signalservice.api.push.ServiceId
 import org.whispersystems.signalservice.api.util.UuidUtil
-import java.lang.AssertionError
 import java.util.Optional
 
 class IdentityTable internal constructor(context: Context?, databaseHelper: SignalDatabase?) : DatabaseTable(context, databaseHelper) {
@@ -179,6 +178,16 @@ class IdentityTable internal constructor(context: Context?, databaseHelper: Sign
       .delete(TABLE_NAME)
       .where("$ADDRESS = ?", addressName)
       .run()
+  }
+
+  fun getIdentity(recipientId: RecipientId): Optional<IdentityRecord> {
+    val recipient = Recipient.resolved(recipientId)
+    return if (recipient.hasServiceIdentifier()) {
+      return getIdentity(recipient.id)
+    } else {
+      Log.w(org.thoughtcrime.securesms.database.IdentityTable.TAG, "Recipient has no service identifier!")
+      Optional.empty()
+    }
   }
 
   private fun getIdentityRecord(addressName: String): Optional<IdentityRecord> {

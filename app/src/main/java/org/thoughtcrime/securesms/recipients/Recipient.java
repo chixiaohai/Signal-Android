@@ -791,6 +791,10 @@ public class Recipient {
     return resolved;
   }
 
+  public boolean hasServiceIdentifier() {
+    return serviceId != null || e164 != null;
+  }
+
   /**
    * @return A single string to represent the recipient, in order of precedence:
    *

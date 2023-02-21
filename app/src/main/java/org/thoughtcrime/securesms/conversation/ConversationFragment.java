@@ -473,8 +473,8 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
 //    getChildFragmentManager().setFragmentResultListener(ViewReceivedGiftBottomSheet.REQUEST_KEY, getViewLifecycleOwner(), (key, bundle) -> {
 //      if (bundle.getBoolean(ViewReceivedGiftBottomSheet.RESULT_NOT_NOW, false)) {
-        Snackbar.make(view.getRootView(), R.string.ConversationFragment__you_can_redeem_your_badge_later, Snackbar.LENGTH_SHORT)
-                .show();
+//        Snackbar.make(view.getRootView(), R.string.ConversationFragment__you_can_redeem_your_badge_later, Snackbar.LENGTH_SHORT)
+//                .show();
 //      }
     }
 

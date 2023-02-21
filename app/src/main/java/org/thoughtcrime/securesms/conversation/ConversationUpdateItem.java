@@ -335,7 +335,7 @@ public final class ConversationUpdateItem extends FrameLayout
     if (conversationMessage.getMessageRecord().isGroupV1MigrationEvent() &&
         (!nextMessageRecord.isPresent() || !nextMessageRecord.get().isGroupV1MigrationEvent()))
     {
-      android.util.Log.d(TAG, "present: lyh   1");
+//      android.util.Log.d(TAG, "present: lyh   1");
       actionButton.setText(R.string.ConversationUpdateItem_learn_more);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -346,7 +346,7 @@ public final class ConversationUpdateItem extends FrameLayout
     } else if (conversationMessage.getMessageRecord().isChatSessionRefresh() &&
                (!nextMessageRecord.isPresent() || !nextMessageRecord.get().isChatSessionRefresh()))
     {
-      android.util.Log.d(TAG, "present: lyh   2");
+//      android.util.Log.d(TAG, "present: lyh   2");
       actionButton.setText(R.string.ConversationUpdateItem_learn_more);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -355,7 +355,7 @@ public final class ConversationUpdateItem extends FrameLayout
         }
       });
     } else if (conversationMessage.getMessageRecord().isIdentityUpdate()) {
-      android.util.Log.d(TAG, "present: lyh   3");
+//      android.util.Log.d(TAG, "present: lyh   3");
       actionButton.setText(R.string.ConversationUpdateItem_learn_more);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -379,7 +379,7 @@ public final class ConversationUpdateItem extends FrameLayout
       }
 
       if (text != 0 && conversationRecipient.isGroup() && conversationRecipient.isActiveGroup()) {
-        android.util.Log.d(TAG, "present: lyh   4");
+//        android.util.Log.d(TAG, "present: lyh   4");
         actionButton.setText(text);
         actionButton.setVisibility(VISIBLE);
         actionButton.setOnClickListener(v -> {
@@ -388,12 +388,12 @@ public final class ConversationUpdateItem extends FrameLayout
           }
         });
       } else {
-        android.util.Log.d(TAG, "present: lyh   5");
+//        android.util.Log.d(TAG, "present: lyh   5");
         actionButton.setVisibility(GONE);
         actionButton.setOnClickListener(null);
       }
     } else if (conversationMessage.getMessageRecord().isSelfCreatedGroup()) {
-      android.util.Log.d(TAG, "present: lyh   6");
+//      android.util.Log.d(TAG, "present: lyh   6");
       actionButton.setText(R.string.ConversationUpdateItem_invite_friends);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -402,7 +402,7 @@ public final class ConversationUpdateItem extends FrameLayout
         }
       });
     } else if ((conversationMessage.getMessageRecord().isMissedAudioCall() || conversationMessage.getMessageRecord().isMissedVideoCall()) && EnableCallNotificationSettingsDialog.shouldShow(getContext())) {
-      android.util.Log.d(TAG, "present: lyh   7");
+//      android.util.Log.d(TAG, "present: lyh   7");
       actionButton.setVisibility(VISIBLE);
       actionButton.setText(R.string.ConversationUpdateItem_enable_call_notifications);
       actionButton.setOnClickListener(v -> {
@@ -412,7 +412,7 @@ public final class ConversationUpdateItem extends FrameLayout
       });
     } else if (conversationMessage.getMessageRecord().isInMemoryMessageRecord() && ((InMemoryMessageRecord) conversationMessage.getMessageRecord()).showActionButton()) {
       InMemoryMessageRecord inMemoryMessageRecord = (InMemoryMessageRecord) conversationMessage.getMessageRecord();
-      android.util.Log.d(TAG, "present: lyh   8");
+//      android.util.Log.d(TAG, "present: lyh   8");
       actionButton.setVisibility(VISIBLE);
       actionButton.setText(inMemoryMessageRecord.getActionButtonText());
       actionButton.setOnClickListener(v -> {
@@ -421,7 +421,7 @@ public final class ConversationUpdateItem extends FrameLayout
         }
       });
     } else if (conversationMessage.getMessageRecord().isGroupV2DescriptionUpdate()) {
-      android.util.Log.d(TAG, "present: lyh   9");
+//      android.util.Log.d(TAG, "present: lyh   9");
       actionButton.setVisibility(VISIBLE);
       actionButton.setText(R.string.ConversationUpdateItem_view);
       actionButton.setOnClickListener(v -> {
@@ -432,7 +432,7 @@ public final class ConversationUpdateItem extends FrameLayout
     } else if (conversationMessage.getMessageRecord().isBadDecryptType() &&
                (!nextMessageRecord.isPresent() || !nextMessageRecord.get().isBadDecryptType()))
     {
-      android.util.Log.d(TAG, "present: lyh   10");
+//      android.util.Log.d(TAG, "present: lyh   10");
       actionButton.setText(R.string.ConversationUpdateItem_learn_more);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -441,7 +441,7 @@ public final class ConversationUpdateItem extends FrameLayout
         }
       });
     } else if (conversationMessage.getMessageRecord().isChangeNumber() && conversationMessage.getMessageRecord().getIndividualRecipient().isSystemContact()) {
-      android.util.Log.d(TAG, "present: lyh   11");
+//      android.util.Log.d(TAG, "present: lyh   11");
       actionButton.setText(R.string.ConversationUpdateItem_update_contact);
       actionButton.setVisibility(VISIBLE);
       actionButton.setOnClickListener(v -> {
@@ -450,7 +450,7 @@ public final class ConversationUpdateItem extends FrameLayout
         }
       });
     } else {
-      android.util.Log.d(TAG, "present: lyh   12");
+//      android.util.Log.d(TAG, "present: lyh   12");
       actionButton.setVisibility(GONE);
       actionButton.setOnClickListener(null);
     }
