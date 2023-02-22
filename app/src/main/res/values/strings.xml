@@ -5611,4 +5611,23 @@ Updated May 25, 2018\n
 
     <!-- DeleteAccountFragment -->
     <string name="DeleteAccountFragment__failed_to_delete_account">Failed to delete account. Do you have a network connection?</string>
+
+    <!-- ManageRecipientActivity -->
+    <string name="ManageRecipientActivity_add_to_system_contacts">Add to system contacts</string>
+    <string name="ManageRecipientActivity_this_person_is_in_your_contacts">This person is in your contacts</string>
+    <string name="ManageRecipientActivity_chat_color">Chat color</string>
+    <string name="ManageRecipientActivity_chat_wallpaper">Chat wallpaper</string>
+    <string name="ManageRecipientActivity_block">Block</string>
+    <string name="ManageRecipientActivity_unblock">Unblock</string>
+    <string name="ManageRecipientActivity_view_safety_number">View safety number</string>
+    <string name="ManageRecipientActivity_mute_notifications">Mute notifications</string>
+    <string name="ManageRecipientActivity_until_s">Until %1$s</string>
+    <string name="ManageRecipientActivity_always">Always</string>
+    <string name="ManageRecipientActivity_add_to_a_group">Add to a group</string>
+    <string name="ManageRecipientActivity_view_all_groups">View all groups</string>
+    <string name="ManageRecipientActivity_see_all">See all</string>
+    <string name="ManageRecipientActivity_message_description">Message</string>
+    <string name="ManageRecipientActivity_voice_call_description">Voice call</string>
+    <string name="ManageRecipientActivity_insecure_voice_call_description">Insecure voice call</string>
+    <string name="ManageRecipientActivity_video_call_description">Video call</string>
 </resources>
