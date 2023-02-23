@@ -36,13 +36,13 @@
         app:layout_constraintBottom_toBottomOf="@id/call_participant_item_avatar"
         app:layout_constraintEnd_toEndOf="@id/call_participant_item_avatar" />
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/call_participant_item_badge"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        app:badge_size="large"
-        app:layout_constraintEnd_toEndOf="@id/call_participant_badge_offseter"
-        app:layout_constraintTop_toTopOf="@id/call_participant_badge_offseter" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/call_participant_item_badge"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="36dp"-->
+<!--        app:badge_size="large"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/call_participant_badge_offseter"-->
+<!--        app:layout_constraintTop_toTopOf="@id/call_participant_badge_offseter" />-->
 
     <ImageView
         android:id="@+id/call_participant_item_pip_avatar"
@@ -55,14 +55,14 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/call_participant_item_pip_badge"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:visibility="gone"
-        app:badge_size="large"
-        app:layout_constraintBottom_toBottomOf="@id/call_participant_item_pip_avatar"
-        app:layout_constraintEnd_toEndOf="@id/call_participant_item_pip_avatar" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/call_participant_item_pip_badge"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="36dp"-->
+<!--        android:visibility="gone"-->
+<!--        app:badge_size="large"-->
+<!--        app:layout_constraintBottom_toBottomOf="@id/call_participant_item_pip_avatar"-->
+<!--        app:layout_constraintEnd_toEndOf="@id/call_participant_item_pip_avatar" />-->
 
     <FrameLayout
         android:id="@+id/call_participant_renderer_frame"

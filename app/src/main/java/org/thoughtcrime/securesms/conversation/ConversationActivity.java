@@ -36,7 +36,6 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -592,7 +591,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
       mVG.setVisibility(View.VISIBLE);
       return true;
     }
-    if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && record_flag == 1001) {
+    if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER && record_flag == 1) {
       inputPanel.onRecordReleased();
       inputPanel.mydisMiss();
       my_record_time.setVisibility(View.GONE);
@@ -700,12 +699,6 @@ public class ConversationActivity extends PassphraseRequiredActivity
     mRecyclerview.setClipToPadding(false);
     mRecyclerview.setClipChildren(false);
     mRecyclerview.setPadding(0, 76, 0, 200);
-//         mRecyclerview.getLayoutManager().setFocusedItemPosition(52, 24);
-//    initMenuList();
-//    initMenuListGp();
-//    mTLAdapter = new TwoLineMenuAdapter(rlContainer, 72, mList);
-//    mTLAdapterGp = new TwoLineMenuAdapter(rlContainer, 72, mListGp);
-//        mRecyclerview.setAdapter(mTLAdapter);
 
     initializeReceivers();
     initializeActionBar();
@@ -806,12 +799,8 @@ public class ConversationActivity extends PassphraseRequiredActivity
               break;
             case KeyEvent.KEYCODE_DPAD_CENTER:
               mRecyclerview.setVisibility(View.VISIBLE);
-              new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                  mRecyclerview.getLayoutManager().findViewByPosition(0).requestFocus();
-                }
-              }, 100);
+
+              new Handler().postDelayed(() -> mRecyclerview.getLayoutManager().findViewByPosition(0).requestFocus(), 100);
               break;
             default:
               return false;
@@ -1389,6 +1378,8 @@ public class ConversationActivity extends PassphraseRequiredActivity
             sendText.performClick();
             mRecyclerview.setVisibility(View.GONE);
             mVG.setVisibility(View.VISIBLE);
+            fragment.getListLayoutManager().smoothScrollToPosition(ConversationActivity.this, 0, 100);
+            panelParent.setVisibility(View.VISIBLE);
             composeText.requestFocus();
           } else if (getString(R.string.conversation_list_search_description).equals(textname)) {
             mRecyclerview.setVisibility(View.GONE);
@@ -2822,7 +2813,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
     //wallpaper                = findViewById(R.id.conversation_wallpaper);
     //wallpaperDim             = findViewById(R.id.conversation_wallpaper_dim);
 
-    ImageButton                       quickCameraToggle      = findViewById(R.id.quick_camera_toggle);
+//    ImageButton                       quickCameraToggle      = findViewById(R.id.quick_camera_toggle);
     ImageButton                       inlineAttachmentButton = findViewById(R.id.inline_attachment_button);
     Stub<ConversationReactionOverlay> reactionOverlayStub    = ViewUtil.findStubById(this, R.id.conversation_reaction_scrubber_stub);
     reactionDelegate = new ConversationReactionDelegate(reactionOverlayStub);
@@ -2846,9 +2837,6 @@ public class ConversationActivity extends PassphraseRequiredActivity
           inputPanel.mydisMiss();
           my_record_time.setVisibility(View.GONE);
           mRecyclerview.setVisibility(View.GONE);
-          //composeText.requestFocus();
-          // mTLAdapterGp.setScorllUp(false);
-          //mTLAdapter.setScorllUp(false);
           mVG.setVisibility(View.VISIBLE);
           composeText.requestFocus();
         }
@@ -2860,7 +2848,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
       }
     });
 
-    attachmentManager = new AttachmentManager(this, this.getPanelLayout(), this);
+    attachmentManager = new AttachmentManager(ConversationActivity.this, this.getPanelLayout(), this);
     audioRecorder     = new AudioRecorder(this);
     typingTextWatcher = new TypingStatusTextWatcher();
 
@@ -2913,12 +2901,12 @@ public class ConversationActivity extends PassphraseRequiredActivity
     composeText.setOnClickListener(composeKeyPressedListener);
     composeText.setOnFocusChangeListener(composeKeyPressedListener);
 
-    if (Camera.getNumberOfCameras() > 0) {
-      quickCameraToggle.setVisibility(View.VISIBLE);
-      quickCameraToggle.setOnClickListener(new QuickCameraToggleListener());
-    } else {
-      quickCameraToggle.setVisibility(View.GONE);
-    }
+//    if (Camera.getNumberOfCameras() > 0) {
+//      quickCameraToggle.setVisibility(View.VISIBLE);
+//      quickCameraToggle.setOnClickListener(new QuickCameraToggleListener());
+//    } else {
+//      quickCameraToggle.setVisibility(View.GONE);
+//    }
 
     searchNav.setEventListener(this);
 
@@ -3873,12 +3861,13 @@ public class ConversationActivity extends PassphraseRequiredActivity
   private void updateToggleButtonState() {
     if (inputPanel.isRecordingInLockedMode()) {
       buttonToggle.display(sendButton);
-      quickAttachmentToggle.hide();
+      quickAttachmentToggle.show();
+
       inlineAttachmentToggle.hide();
       return;
     }
 
-    if (draftViewModel.hasVoiceNoteDraft()) {
+    if (draftViewModel.getVoiceNoteDraft() != null) {
       buttonToggle.display(sendButton);
       quickAttachmentToggle.hide();
       inlineAttachmentToggle.hide();
@@ -3886,15 +3875,15 @@ public class ConversationActivity extends PassphraseRequiredActivity
     }
 
     if (composeText.getText().length() == 0 && !attachmentManager.isAttachmentPresent()) {
-      buttonToggle.display(sendButton);
-      quickAttachmentToggle.hide();
+      buttonToggle.display(attachButton);
+      quickAttachmentToggle.show();
       inlineAttachmentToggle.hide();
     } else {
       buttonToggle.display(sendButton);
       quickAttachmentToggle.hide();
 
       if (!attachmentManager.isAttachmentPresent() && !linkPreviewViewModel.hasLinkPreviewUi()) {
-        inlineAttachmentToggle.hide();
+        inlineAttachmentToggle.show();
       } else {
         inlineAttachmentToggle.hide();
       }
@@ -3982,7 +3971,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
 
       @Override
       public void onFailure(ExecutionException e) {
-//        Toast.makeText(ConversationActivity.this, R.string.ConversationActivity_unable_to_record_audio, Toast.LENGTH_LONG).show();
+        Toast.makeText(ConversationActivity.this, R.string.ConversationActivity_unable_to_record_audio, Toast.LENGTH_LONG).show();
       }
     });
   }

@@ -393,6 +393,8 @@
                 android:value="org.thoughtcrime.securesms.MainActivity" />
         </activity>
 
+        <activity android:name=".WebRtcCallVolumeActivity" />
+
         <activity
             android:name=".conversation.BubbleConversationActivity"
             android:allowEmbedded="true"

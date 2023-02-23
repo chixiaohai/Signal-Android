@@ -18,6 +18,7 @@ package org.thoughtcrime.securesms.mms;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -114,7 +115,7 @@ public class AttachmentManager {
   public AttachmentManager(@NonNull Context context, @NonNull View rootView, @NonNull AttachmentListener listener) {
     this.context            = context;
     this.attachmentListener = listener;
-    this.attachmentViewStub = ViewUtil.findStubById(rootView, R.id.attachment_editor_stub);
+    this.attachmentViewStub = ViewUtil.findStubById((Activity) context, R.id.attachment_editor_stub);
   }
 
   private void inflateStub() {

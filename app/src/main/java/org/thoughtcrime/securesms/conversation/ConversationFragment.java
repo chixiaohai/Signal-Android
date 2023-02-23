@@ -1304,6 +1304,10 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
   }
 
   private void handleReplyMessage(final ConversationMessage message) {
+    if (getActivity() != null) {
+      ((AppCompatActivity) getActivity()).getSupportActionBar().collapseActionView();
+    }
+
     listener.handleReplyMessage(message);
   }
 

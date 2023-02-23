@@ -555,6 +555,10 @@ public class Recipient {
            !TextUtils.isEmpty(getProfileName().toString());
   }
 
+  public @NonNull String getNumber() {
+    return PhoneNumberFormatter.prettyPrint(e164);
+  }
+
   public @NonNull String getDisplayName(@NonNull Context context) {
     String name = getNameFromLocalData(context);
 

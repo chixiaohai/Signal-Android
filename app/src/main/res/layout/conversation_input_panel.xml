@@ -41,7 +41,7 @@
                 android:id="@+id/compose_bubble"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/compose_background"
+                android:background="@color/transparent_black"
                 android:clipChildren="false"
                 android:clipToPadding="false"
                 android:orientation="vertical">
@@ -79,6 +79,7 @@
                         android:id="@+id/llt"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/textview_border"
                         android:clickable="true"
                         android:clipChildren="false"
                         android:clipToPadding="false"
@@ -103,7 +104,7 @@
                         <org.thoughtcrime.securesms.components.ComposeText
                             android:id="@+id/embedded_text_editor"
                             style="@style/ComposeEditText"
-                            android:layout_width="0dp"
+                            android:layout_width="369dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
                             android:layout_weight="1"
@@ -111,6 +112,8 @@
                             android:nextFocusRight="@+id/send_text"
                             android:nextFocusForward="@+id/send_button"
                             android:singleLine="false"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white_not_focus"
                             tools:hint="Send TextSecure message"
                             tools:visibility="invisible">
 
@@ -121,7 +124,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:clipChildren="false"
-                            android:clipToPadding="false">
+                            android:clipToPadding="false"
+                            android:visibility="gone">
 
                             <org.thoughtcrime.securesms.components.HidingLinearLayout
                                 android:id="@+id/quick_attachment_toggle"

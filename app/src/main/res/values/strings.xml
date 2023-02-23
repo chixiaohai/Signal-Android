@@ -2321,6 +2321,23 @@ Updated May 25, 2018\n
     <string name="conversation_activity__quick_attachment_drawer_lock_record_description">Lock recording of audio attachment</string>
     <string name="conversation_activity__enable_signal_for_sms">Enable Signal for SMS</string>
     <string name="conversation_activity__message_could_not_be_sent">Message could not be sent. Check your connection and try again.</string>
+    <string name="webrtccallactivity_status">On a call</string>
+    <string name="webrtccallactivity_back">Back</string>
+    <string name="RedPhone_connected">Connected</string>
+    <string name="redphone_call_card__signal_call">Pigeon Call</string>
+    <string name="WebRtcCallView__view_participants_list">View participants</string>
+    <string name="WebRtcCallControls_contact_photo_description">Contact photo</string>
+    <string name="WebRtcCallControls_volume_button_description">Volume</string>
+    <string name="WebRtcCallControls_speaker_button_description">Speaker</string>
+    <string name="WebRtcCallControls_speaker_button_description_on">Turn speaker on</string>
+    <string name="WebRtcCallControls_speaker_button_description_off">Turn speaker off</string>
+    <string name="WebRtcCallControls_bluetooth_button_description">Bluetooth</string>
+    <string name="WebRtcCallControls_mute_button_description">Mute</string>
+    <string name="WebRtcCallControls_mute_button_description_on">Mute</string>
+    <string name="WebRtcCallControls_mute_button_description_off">Unmute</string>
+    <string name="WebRtcCallControls_your_camera_button_description">Your camera</string>
+    <string name="WebRtcCallControls_switch_to_rear_camera_button_description">Switch to rear camera</string>
+    <string name="WebRtcCallScreen_end_call">End call</string>
 
     <!-- conversation_input_panel -->
     <string name="conversation_input_panel__slide_to_cancel">Slide to cancel</string>

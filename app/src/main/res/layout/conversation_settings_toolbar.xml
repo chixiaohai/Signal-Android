@@ -48,13 +48,13 @@
                     android:layout_height="36dp"
                     app:fallbackImageSize="small" />
 
-                <org.thoughtcrime.securesms.badges.BadgeImageView
-                    android:id="@+id/toolbar_badge"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="23dp"
-                    app:badge_size="small" />
+<!--                <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--                    android:id="@+id/toolbar_badge"-->
+<!--                    android:layout_width="16dp"-->
+<!--                    android:layout_height="16dp"-->
+<!--                    android:layout_marginStart="20dp"-->
+<!--                    android:layout_marginTop="23dp"-->
+<!--                    app:badge_size="small" />-->
 
             </FrameLayout>
 

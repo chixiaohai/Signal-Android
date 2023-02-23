@@ -19,14 +19,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <org.thoughtcrime.securesms.badges.BadgeImageView
-            android:id="@+id/badge"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:contentDescription="@string/BadgesOverviewFragment__featured_badge"
-            app:badge_size="large"
-            app:layout_constraintBottom_toBottomOf="@id/avatar"
-            app:layout_constraintEnd_toEndOf="@id/avatar" />
+<!--        <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--            android:id="@+id/badge"-->
+<!--            android:layout_width="32dp"-->
+<!--            android:layout_height="32dp"-->
+<!--            android:contentDescription="@string/BadgesOverviewFragment__featured_badge"-->
+<!--            app:badge_size="large"-->
+<!--            app:layout_constraintBottom_toBottomOf="@id/avatar"-->
+<!--            app:layout_constraintEnd_toEndOf="@id/avatar" />-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

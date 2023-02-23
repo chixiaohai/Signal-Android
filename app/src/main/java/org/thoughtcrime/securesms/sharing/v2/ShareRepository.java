@@ -40,7 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-class ShareRepository {
+public class ShareRepository {
 
   private static final String TAG = Log.tag(ShareRepository.class);
 

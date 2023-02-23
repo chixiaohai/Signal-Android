@@ -382,7 +382,6 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
       int position = cursor.getPosition();
       if (position == 0) {
         String h1 = getHeaderLetterForDisplayName(cursor);
-        System.out.println("lyh    1  "+h1);
         viewHolder.setLetterHeaderCharacter(h1);
       } else {
         cursor.moveToPrevious();
@@ -413,7 +412,6 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
 
   private @Nullable String getHeaderLetterForDisplayName(@NonNull Cursor cursor) {
     String           name              = CursorUtil.requireString(cursor, ContactRepository.NAME_COLUMN);
-    System.out.println("lyh name = "+name);
     Iterator<String> characterIterator = new CharacterIterable(name).iterator();
 
     if (!TextUtils.isEmpty(name) && characterIterator.hasNext()) {

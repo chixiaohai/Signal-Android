@@ -97,7 +97,6 @@ public class CreateGroupActivity extends ContactSelectionActivity implements Con
   @Override
   protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
     if (requestCode == REQUEST_CODE_ADD_DETAILS && resultCode == RESULT_OK) {
-      System.out.println("lyh   onActivityResult    requestCode = " + requestCode + "resultCode = " + resultCode);
       finish();
     } else {
       super.onActivityResult(requestCode, resultCode, data);
@@ -209,7 +208,6 @@ public class CreateGroupActivity extends ContactSelectionActivity implements Con
   }
 
   @Override public void onApply() {
-    System.out.println("lyh   onApply()");
     handleNextPressed();
   }
 }

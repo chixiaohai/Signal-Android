@@ -141,7 +141,7 @@ public final class WebRtcControls {
   }
 
   boolean displayEndCall() {
-    return isAtLeastOutgoing() || callState == CallState.RECONNECTING;
+    return isAtLeastOutgoing();
   }
 
   boolean displayMuteAudio() {
@@ -181,7 +181,7 @@ public final class WebRtcControls {
   }
 
   boolean isFadeOutEnabled() {
-    return isAtLeastOutgoing() && isRemoteVideoEnabled && callState != CallState.RECONNECTING;
+    return isAtLeastOutgoing() && isRemoteVideoEnabled;
   }
 
   boolean displaySmallOngoingCallButtons() {

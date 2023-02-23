@@ -345,37 +345,6 @@ public class InputPanel extends LinearLayout
     return mediaKeyboard;
   }
 
-  public void setWallpaperEnabled(boolean enabled) {
-    final int iconTint;
-    final int textColor;
-    final int textHintColor;
-
-    if (enabled) {
-      iconTint = getContext().getResources().getColor(R.color.signal_colorOnSurface);
-      textColor = getContext().getResources().getColor(R.color.signal_colorOnSurface);
-      textHintColor = getContext().getResources().getColor(R.color.signal_colorOnSurfaceVariant);
-
-      setBackground(null);
-      composeContainer.setBackground(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.compose_background_wallpaper)));
-      quickAudioToggle.setColorFilter(iconTint);
-      quickCameraToggle.setColorFilter(iconTint);
-    } else {
-      iconTint = getContext().getResources().getColor(R.color.signal_colorOnSurface);
-      textColor = getContext().getResources().getColor(R.color.signal_colorOnSurface);
-      textHintColor = getContext().getResources().getColor(R.color.signal_colorOnSurfaceVariant);
-
-      setBackground(new ColorDrawable(getContext().getResources().getColor(R.color.signal_colorSurface)));
-      composeContainer.setBackground(Objects.requireNonNull(ContextCompat.getDrawable(getContext(), R.drawable.compose_background)));
-    }
-
-    mediaKeyboard.setColorFilter(iconTint);
-    quickAudioToggle.setColorFilter(iconTint);
-    quickCameraToggle.setColorFilter(iconTint);
-    composeText.setTextColor(textColor);
-    composeText.setHintTextColor(textHintColor);
-    quoteView.setWallpaperEnabled(enabled);
-  }
-
   public void setHideForMessageRequestState(boolean hideForMessageRequestState) {
     this.hideForMessageRequestState = hideForMessageRequestState;
     updateVisibility();
@@ -668,17 +637,12 @@ public class InputPanel extends LinearLayout
       this.recordTimeView.setText(DateUtils.formatElapsedTime(0));
       ViewUtil.fadeIn(this.recordTimeView, FADE_TIME);
       ThreadUtil.runOnMainDelayed(this, TimeUnit.SECONDS.toMillis(1));
-      microphone.setVisibility(View.VISIBLE);
-      microphone.startAnimation(pulseAnimation());
     }
 
     @MainThread
     public long hide() {
       long elapsedTime = System.currentTimeMillis() - startTime;
       this.startTime = 0;
-      ViewUtil.fadeOut(this.recordTimeView, FADE_TIME, View.INVISIBLE);
-      microphone.clearAnimation();
-      ViewUtil.fadeOut(this.microphone, FADE_TIME, View.INVISIBLE);
       return elapsedTime;
     }
 
