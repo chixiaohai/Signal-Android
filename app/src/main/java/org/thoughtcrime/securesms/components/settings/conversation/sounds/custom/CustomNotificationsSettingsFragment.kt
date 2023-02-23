@@ -21,6 +21,7 @@ import org.thoughtcrime.securesms.components.settings.DSLSettingsText
 import org.thoughtcrime.securesms.components.settings.configure
 import org.thoughtcrime.securesms.database.RecipientTable
 import org.thoughtcrime.securesms.notifications.NotificationChannels
+import org.thoughtcrime.securesms.preferences.RingtonePickerActivity
 import org.thoughtcrime.securesms.recipients.RecipientId
 import org.thoughtcrime.securesms.util.ConversationUtil
 import org.thoughtcrime.securesms.util.RingtoneUtil
@@ -86,17 +87,17 @@ class CustomNotificationsSettingsFragment : DSLSettingsFragment(R.string.CustomN
         )
       }
 
-      if (Build.VERSION.SDK_INT >= 30) {
-        clickPref(
-          title = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__customize),
-          summary = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__change_sound_and_vibration),
-          isEnabled = state.controlsEnabled,
-          onClick = { NotificationChannels.getInstance().openChannelSettings(requireActivity(), state.recipient!!.notificationChannel!!, ConversationUtil.getShortcutId(state.recipient)) }
-        )
-      } else {
+//      if (Build.VERSION.SDK_INT >= 30) {
+//        clickPref(
+//          title = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__customize),
+//          summary = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__change_sound_and_vibration),
+//          isEnabled = state.controlsEnabled,
+//          onClick = { NotificationChannels.getInstance().openChannelSettings(requireActivity(), state.recipient!!.notificationChannel!!, ConversationUtil.getShortcutId(state.recipient)) }
+//        )
+//      } else {
         clickPref(
           title = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__notification_sound),
-          summary = DSLSettingsText.from(getRingtoneSummary(requireContext(), state.messageSound, Settings.System.DEFAULT_NOTIFICATION_URI)),
+//          summary = DSLSettingsText.from(getRingtoneSummary(requireContext(), state.messageSound, Settings.System.DEFAULT_NOTIFICATION_URI)),
           isEnabled = state.controlsEnabled,
           onClick = { requestSound(state.messageSound, false) }
         )
@@ -119,16 +120,15 @@ class CustomNotificationsSettingsFragment : DSLSettingsFragment(R.string.CustomN
             }
           )
         }
-      }
+//      }
 
       if (state.showCallingOptions) {
-        dividerPref()
 
         sectionHeaderPref(R.string.CustomNotificationsDialogFragment__call_settings)
 
         clickPref(
           title = DSLSettingsText.from(R.string.CustomNotificationsDialogFragment__ringtone),
-          summary = DSLSettingsText.from(getRingtoneSummary(requireContext(), state.callSound, Settings.System.DEFAULT_RINGTONE_URI)),
+//          summary = DSLSettingsText.from(getRingtoneSummary(requireContext(), state.callSound, Settings.System.DEFAULT_RINGTONE_URI)),
           isEnabled = state.controlsEnabled,
           onClick = { requestSound(state.callSound, true) }
         )
@@ -175,7 +175,7 @@ class CustomNotificationsSettingsFragment : DSLSettingsFragment(R.string.CustomN
       else -> current
     }
 
-    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+    val intent = Intent(context, RingtonePickerActivity::class.java).apply {
       putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, true)
       putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_DEFAULT, true)
       putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, if (forCalls) RingtoneManager.TYPE_RINGTONE else RingtoneManager.TYPE_NOTIFICATION)

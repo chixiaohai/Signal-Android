@@ -48,14 +48,14 @@ public class ManageRecipientFragment extends LoggingFragment {
   private TextView                 mMuteNotifications;
   private TextView                 mMuteNotificationsUntilLabel;
   private TextView                 mCustomNotifications;
-  private TextView                 mViewSafetyNumber;
-  private TextView                 mRecipientNumber;
+//  private TextView                 mViewSafetyNumber;
+//  private TextView                 mRecipientNumber;
   private TextView                 mBlockGroup;
   private TextView                 mUnblockGroup;
   private RecipientId              recipientId;
 
   private FixedViewsAdapter disappearingMessagesAdapter, muteNotificationsAdapter, customNotificationsAdapter;
-  private FixedViewsAdapter viewSafetyNumberAdapter, settingRecipientNumberAdapter, blockGroupAdapter, unblockGroupAdapter;
+  private FixedViewsAdapter blockGroupAdapter, unblockGroupAdapter;
 
   private int mFocusHeight;
   private int mNormalHeight;
@@ -126,21 +126,21 @@ public class ManageRecipientFragment extends LoggingFragment {
                        hasCustomNotifications, context);
       });
     }
-    viewModel.getIdentity().observe(getViewLifecycleOwner(), identityRecord -> {
-      if (identityRecord != null) {
-        viewSafetyNumberAdapter.show();
-      } else {
-        viewSafetyNumberAdapter.hide();
-      }
-      if (identityRecord != null) {
-        mViewSafetyNumber.setOnClickListener(view -> viewModel.onViewSafetyNumberClicked(requireActivity(), identityRecord));
-      }
-    });
+//    viewModel.getIdentity().observe(getViewLifecycleOwner(), identityRecord -> {
+//      if (identityRecord != null) {
+//        viewSafetyNumberAdapter.show();
+//      } else {
+//        viewSafetyNumberAdapter.hide();
+//      }
+//      if (identityRecord != null) {
+//        mViewSafetyNumber.setOnClickListener(view -> viewModel.onViewSafetyNumberClicked(requireActivity(), identityRecord));
+//      }
+//    });
 
     if (recipientId.equals(Recipient.self().getId())) {
       muteNotificationsAdapter.hide();
-      viewSafetyNumberAdapter.hide();
-      settingRecipientNumberAdapter.hide();
+//      viewSafetyNumberAdapter.hide();
+//      settingRecipientNumberAdapter.hide();
       blockGroupAdapter.hide();
       unblockGroupAdapter.hide();
     }

@@ -17,6 +17,22 @@ class CustomNotificationsSettingsRepository(context: Context) {
   private val context = context.applicationContext
   private val executor = SerialExecutor(SignalExecutors.BOUNDED)
 
+  fun initialize(recipientId: RecipientId, onInitializationComplete: () -> Unit) {
+    executor.execute {
+      val recipient = Recipient.resolved(recipientId)
+      val database = SignalDatabase.recipients
+
+      if (NotificationChannels.supported() && recipient.notificationChannel != null) {
+        database.setMessageRingtone(recipient.id, NotificationChannels.getInstance().getMessageRingtone(recipient))
+        database.setMessageVibrate(recipient.id, RecipientTable.VibrateState.fromBoolean(NotificationChannels.getInstance().getMessageVibrate(recipient)))
+
+        NotificationChannels.getInstance().ensureCustomChannelConsistency()
+      }
+
+      onInitializationComplete()
+    }
+  }
+
   fun ensureCustomChannelConsistency(recipientId: RecipientId, onComplete: () -> Unit) {
     executor.execute {
       if (NotificationChannels.supported()) {
