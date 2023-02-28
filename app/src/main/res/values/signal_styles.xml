@@ -138,7 +138,7 @@
         <item name="buttonBarPositiveButtonStyle">@style/Signal.Widget.Button.Dialog</item>
         <item name="buttonBarNeutralButtonStyle">@style/Signal.Widget.Button.Dialog</item>
         <item name="buttonBarNegativeButtonStyle">@style/Signal.Widget.Button.Dialog</item>
-        <item name="textColorAlertDialogListItem">@color/signal_text_secondary</item>
+        <item name="textColorAlertDialogListItem">@color/core_grey_05</item>
     </style>
 
     <style name="Signal.Widget.ImageView.ActionButton" parent="ThemeOverlay.Material3">

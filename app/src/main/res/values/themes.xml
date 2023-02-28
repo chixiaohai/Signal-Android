@@ -176,7 +176,7 @@
         <item name="colorAccent">@color/core_ultramarine</item>
         <item name="colorControlActivated">@color/core_ultramarine</item>
         <item name="colorControlHighlight">@color/transparent</item>
-        <item name="android:windowBackground">@color/white</item>
+        <item name="android:windowBackground">@color/core_grey_75</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="alertDialogTheme">@style/AppCompatAlertDialogStyleLight</item>
         <item name="android:alertDialogTheme">@style/AppCompatDialogStyleLight</item>

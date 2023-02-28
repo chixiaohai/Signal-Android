@@ -2,6 +2,7 @@ package org.thoughtcrime.securesms.preferences;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -183,25 +185,51 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment imp
                               .commit();
   }
 
+  public void setOnFocusChangeListener(TextView view){
+    view.setFocusable(true);
+    view.setOnFocusChangeListener((v, hasFocus) -> {
+      if(hasFocus){
+        view.setTextColor(getResources().getColor(R.color.signal_button_secondary_text));
+      }else {
+        view.setTextColor(getResources().getColor(R.color.signal_button_secondary_text_disabled));
+      }
+    });
+  }
+
   private class ClearMessageHistoryClickListener implements Preference.OnPreferenceClickListener {
     @Override
     public boolean onPreferenceClick(@NonNull Preference preference) {
-      new MaterialAlertDialogBuilder(requireActivity())
+      AlertDialog dialog = new MaterialAlertDialogBuilder(requireActivity())
           .setTitle(R.string.preferences_storage__clear_message_history)
           .setMessage(R.string.preferences_storage__this_will_delete_all_message_history_and_media_from_your_device)
           .setPositiveButton(R.string.delete, (d, w) -> showAreYouReallySure())
           .setNegativeButton(android.R.string.cancel, null)
-          .show();
+          .create();
+
+      dialog.setOnShowListener(d -> {
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
+      });
+
+      dialog.show();
+
       return true;
     }
 
     private void showAreYouReallySure() {
-      new MaterialAlertDialogBuilder(requireActivity())
+      AlertDialog dialog = new MaterialAlertDialogBuilder(requireActivity())
           .setTitle(R.string.preferences_storage__are_you_sure_you_want_to_delete_all_message_history)
           .setMessage(R.string.preferences_storage__all_message_history_will_be_permanently_removed_this_action_cannot_be_undone)
           .setPositiveButton(R.string.preferences_storage__delete_all_now, (d, w) -> SignalExecutors.BOUNDED.execute(() -> SignalDatabase.threads().deleteAllConversations()))
           .setNegativeButton(android.R.string.cancel, null)
-          .show();
+          .create();
+
+      dialog.setOnShowListener(d -> {
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
+      });
+
+      dialog.show();
     }
   }
 
@@ -226,12 +254,19 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment imp
       KeepMessagesDuration newDuration     = (KeepMessagesDuration) selection;
 
       if (newDuration.ordinal() > currentDuration.ordinal()) {
-        new MaterialAlertDialogBuilder(activity)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.preferences_storage__delete_older_messages)
             .setMessage(activity.getString(R.string.preferences_storage__this_will_permanently_delete_all_message_history_and_media, activity.getString(newDuration.getStringResource())))
             .setPositiveButton(R.string.delete, (d, w) -> updateTrimByTime(newDuration))
             .setNegativeButton(android.R.string.cancel, null)
-            .show();
+            .create();
+
+        dialog.setOnShowListener(d -> {
+          setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+          setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
+        });
+
+        dialog.show();
       } else {
         updateTrimByTime(newDuration);
       }
@@ -301,6 +336,8 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment imp
 
       dialog.setOnShowListener(d -> {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(!TextUtils.isEmpty(editText.getText()));
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+        setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
         editText.requestFocus();
         editText.addTextChangedListener(new TextWatcher() {
           @Override
@@ -341,12 +378,19 @@ public class StoragePreferenceFragment extends ListSummaryPreferenceFragment imp
       int     newTrimLength     = (Integer) selection;
 
       if (newTrimLength > 0 && (!trimLengthEnabled || newTrimLength < trimLength)) {
-        new MaterialAlertDialogBuilder(activity)
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.preferences_storage__delete_older_messages)
             .setMessage(activity.getString(R.string.preferences_storage__this_will_permanently_trim_all_conversations_to_the_d_most_recent_messages, NumberFormat.getInstance().format(newTrimLength)))
             .setPositiveButton(R.string.delete, (d, w) -> updateTrimByLength(newTrimLength))
             .setNegativeButton(android.R.string.cancel, null)
-            .show();
+            .create();
+
+        dialog.setOnShowListener(d -> {
+          setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_POSITIVE));
+          setOnFocusChangeListener(dialog.getButton(AlertDialog.BUTTON_NEGATIVE));
+        });
+
+        dialog.show();
       } else if (newTrimLength == CUSTOM_LENGTH) {
         onCustomizeClicked(null);
       } else {
