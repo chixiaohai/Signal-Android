@@ -81,7 +81,7 @@ class SignalBluetoothManager(
     }
 
     bluetoothReceiver = BluetoothHeadsetBroadcastReceiver()
-    context.registerReceiver(bluetoothReceiver, bluetoothHeadsetFilter)
+    ApplicationDependencies.getApplication().registerReceiver(bluetoothReceiver, bluetoothHeadsetFilter)
 
     Log.i(TAG, "Headset profile state: ${bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.HEADSET)?.toStateString()}")
     Log.i(TAG, "Bluetooth proxy for headset profile has started")
@@ -98,8 +98,7 @@ class SignalBluetoothManager(
     }
 
     stopScoAudio()
-
-    context.safeUnregisterReceiver(bluetoothReceiver)
+    ApplicationDependencies.getApplication().safeUnregisterReceiver(bluetoothReceiver)
     bluetoothReceiver = null
 
     cancelTimer()

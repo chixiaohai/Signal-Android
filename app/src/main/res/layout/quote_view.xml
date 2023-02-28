@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:viewBindingIgnore="true"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/quote_container"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="3dp"
     android:visibility="gone"
-    tools:parentTag="android.widget.FrameLayout"
     tools:visibility="visible">
 
     <LinearLayout
-        android:id="@+id/quote_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -46,12 +43,13 @@
 
                     <org.thoughtcrime.securesms.components.emoji.EmojiTextView
                         android:id="@+id/quote_author"
+                        style="@style/Signal.Text.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="end"
                         android:maxLines="1"
-                        android:textAppearance="@style/Signal.Text.LabelLarge"
                         android:textColor="@color/core_black"
+                        android:textStyle="bold"
                         tools:text="Peter Parker" />
 
                     <LinearLayout
@@ -59,8 +57,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="2dp"
-                        android:gravity="center_vertical"
                         android:orientation="horizontal"
+                        android:gravity="center_vertical"
                         android:visibility="gone"
                         tools:visibility="visible">
 
@@ -75,10 +73,10 @@
                             android:id="@+id/quote_attachment_name"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:textAppearance="@style/Signal.Text.BodyMedium"
+                            style="@style/Signal.Text.Body"
                             android:textColor="@color/core_grey_90"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             tools:text="The-Amazing-Spider-Man.cba" />
 
                     </LinearLayout>
@@ -88,9 +86,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="8dp"
+                        style="@style/Signal.Text.Caption"
+                        android:textColor="@color/core_grey_90"
                         android:paddingTop="4dp"
-                        android:textAppearance="@style/Signal.Text.BodyMedium"
-                        android:textColor="@color/core_black"
+                        android:textStyle="italic"
                         android:visibility="gone"
                         tools:text="Photo"
                         tools:visibility="visible" />
@@ -99,44 +98,33 @@
                         android:id="@+id/quote_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        style="@style/Signal.Text.Body"
                         android:ellipsize="end"
                         android:maxLines="2"
-                        android:textAppearance="@style/Signal.Text.BodyMedium"
                         app:emoji_renderMentions="false"
                         tools:text="With great power comes great responsibility."
                         tools:visibility="visible" />
 
                 </LinearLayout>
 
-                <org.thoughtcrime.securesms.components.emoji.EmojiImageView
-                    android:id="@+id/quote_missing_story_reaction_emoji"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
                 <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@color/white">
+                    android:layout_height="match_parent">
 
-                    <com.google.android.material.imageview.ShapeableImageView
+                    <ImageView
                         android:id="@+id/quote_thumbnail"
                         android:layout_width="@dimen/quote_thumb_size"
                         android:layout_height="match_parent"
                         android:scaleType="centerCrop"
                         android:visibility="gone"
-                        tools:visibility="visible" />
+                        tools:visibility="gone" />
 
                     <FrameLayout
                         android:id="@+id/quote_video_overlay"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
-                        android:layout_gravity="center"
                         android:background="@drawable/circle_white"
+                        android:layout_gravity="center"
                         android:longClickable="false"
                         android:visibility="gone"
                         tools:visibility="visible">
@@ -144,10 +132,11 @@
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="13dp"
                             android:layout_height="16dp"
-                            android:layout_gravity="center_horizontal"
+                            android:layout_marginStart="11dp"
                             android:layout_marginTop="8dp"
-                            android:scaleType="fitXY"
+                            android:layout_gravity="center_horizontal"
                             android:tint="@color/core_ultramarine"
+                            android:scaleType="fitXY"
                             app:srcCompat="@drawable/exo_icon_play" />
 
                     </FrameLayout>
@@ -170,38 +159,28 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:src="@drawable/ic_broken_link"
-                    android:tint="@color/quote_missing_icon_color" />
+                    android:tint="@color/quote_missing_icon_color"/>
 
                 <TextView
                     android:id="@+id/quote_missing_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    style="@style/Signal.Text.Caption"
                     android:text="@string/QuoteView_original_missing"
-                    android:textAppearance="@style/Signal.Text.MaterialCaption"
-                    android:textColor="@color/core_grey_90" />
+                    android:textColor="@color/core_grey_90"/>
 
             </LinearLayout>
-
-
         </LinearLayout>
-    </LinearLayout>
 
-    <org.thoughtcrime.securesms.components.emoji.EmojiImageView
-        android:id="@+id/quote_story_reaction_emoji"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/quote_story_emoji_margin"
-        android:visibility="gone"
-        tools:visibility="visible" />
+    </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/quote_dismiss"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="top|end"
-        android:background="@drawable/dismiss_background"
-        app:srcCompat="@drawable/ic_x_20"
-        app:tint="@color/signal_colorOnSurface" />
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="6dp"
+        android:tint="@color/quote_dismiss_button_tint" />
 
 </merge>

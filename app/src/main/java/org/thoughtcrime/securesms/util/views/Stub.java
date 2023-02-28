@@ -19,8 +19,7 @@ public class Stub<T extends View> {
 
   public T get() {
     if (view == null) {
-      //noinspection unchecked
-      view     = (T) viewStub.inflate();
+      view = (T)viewStub.inflate();
       viewStub = null;
     }
 

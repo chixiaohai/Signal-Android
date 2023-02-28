@@ -77,16 +77,17 @@ public class CommunicationActions {
       ApplicationDependencies.getSignalCallManager().isCallActive(new ResultReceiver(new Handler(Looper.getMainLooper())) {
         @Override
         protected void onReceiveResult(int resultCode, Bundle resultData) {
-          if (resultCode == 1) {
-            startCallInternal(callContext, recipient, false);
-          } else {
-            new MaterialAlertDialogBuilder(callContext.getContext())
-                .setMessage(R.string.CommunicationActions_start_voice_call)
-                .setPositiveButton(R.string.CommunicationActions_call, (d, w) -> startCallInternal(callContext, recipient, false))
-                .setNegativeButton(R.string.CommunicationActions_cancel, (d, w) -> d.dismiss())
-                .setCancelable(true)
-                .show();
-          }
+//          if (resultCode == 1) {
+//            startCallInternal(callContext, recipient, false);
+//          } else {
+//            new MaterialAlertDialogBuilder(callContext.getContext())
+//                .setMessage(R.string.CommunicationActions_start_voice_call)
+//                .setPositiveButton(R.string.CommunicationActions_call, (d, w) -> startCallInternal(callContext, recipient, false))
+//                .setNegativeButton(R.string.CommunicationActions_cancel, (d, w) -> d.dismiss())
+//                .setCancelable(true)
+//                .show();
+//          }
+          startCallInternal(callContext, recipient, false);
         }
       });
     } else {

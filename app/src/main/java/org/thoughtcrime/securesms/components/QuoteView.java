@@ -1,9 +1,11 @@
 package org.thoughtcrime.securesms.components;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -16,9 +18,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.material.imageview.ShapeableImageView;
 import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.ShapeAppearanceModel;
 
@@ -26,7 +28,6 @@ import org.signal.core.util.DimensionUnit;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.attachments.Attachment;
-import org.thoughtcrime.securesms.components.emoji.EmojiImageView;
 import org.thoughtcrime.securesms.components.mention.MentionAnnotation;
 import org.thoughtcrime.securesms.components.quotes.QuoteViewColorTheme;
 import org.thoughtcrime.securesms.database.model.Mention;
@@ -38,12 +39,10 @@ import org.thoughtcrime.securesms.mms.SlideDeck;
 import org.thoughtcrime.securesms.recipients.LiveRecipient;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientForeverObserver;
-//import org.thoughtcrime.securesms.stories.StoryTextPostModel;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.Projection;
-import org.thoughtcrime.securesms.util.Util;
+import org.thoughtcrime.securesms.util.ThemeUtil;
 
-import java.io.IOException;
 import java.util.List;
 
 public class QuoteView extends FrameLayout implements RecipientForeverObserver {
@@ -76,19 +75,16 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     }
   }
 
-  private View               background;
-  private ViewGroup          mainView;
-  private ViewGroup          footerView;
-  private TextView           authorView;
-  private TextView           bodyView;
-  private View               quoteBarView;
-  private ShapeableImageView thumbnailView;
-  private View               attachmentVideoOverlayView;
-  private ViewGroup          attachmentContainerView;
-  private TextView           attachmentNameView;
-  private ImageView          dismissView;
-  private EmojiImageView     missingStoryReaction;
-  private EmojiImageView     storyReactionEmoji;
+  private ViewGroup mainView;
+  private ViewGroup footerView;
+  private TextView  authorView;
+  private TextView  bodyView;
+  private View      quoteBarView;
+  private ImageView thumbnailView;
+  private View      attachmentVideoOverlayView;
+  private ViewGroup attachmentContainerView;
+  private TextView  attachmentNameView;
+  private ImageView dismissView;
 
   private long            id;
   private LiveRecipient   author;
@@ -127,10 +123,9 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     initialize(attrs);
   }
 
-  private void initialize(@Nullable AttributeSet attrs) {
+  @SuppressLint("WrongViewCast") private void initialize(@Nullable AttributeSet attrs) {
     inflate(getContext(), R.layout.quote_view, this);
 
-    this.background                   = findViewById(R.id.quote_background);
     this.mainView                     = findViewById(R.id.quote_main);
     this.footerView                   = findViewById(R.id.quote_missing_footer);
     this.authorView                   = findViewById(R.id.quote_author);
@@ -143,20 +138,31 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     this.dismissView                  = findViewById(R.id.quote_dismiss);
     this.mediaDescriptionText         = findViewById(R.id.media_type);
     this.missingLinkText              = findViewById(R.id.quote_missing_text);
-    this.missingStoryReaction         = findViewById(R.id.quote_missing_story_reaction_emoji);
-    this.storyReactionEmoji           = findViewById(R.id.quote_story_reaction_emoji);
     this.largeCornerRadius            = getResources().getDimensionPixelSize(R.dimen.quote_corner_radius_large);
     this.smallCornerRadius            = getResources().getDimensionPixelSize(R.dimen.quote_corner_radius_bottom);
 
     cornerMask = new CornerMask(this);
 
     if (attrs != null) {
-      TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.QuoteView, 0, 0);
-
+      TypedArray typedArray     = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.QuoteView, 0, 0);
+      int        primaryColor   = typedArray.getColor(R.styleable.QuoteView_quote_colorPrimary, Color.BLACK);
+      int        secondaryColor = typedArray.getColor(R.styleable.QuoteView_quote_colorSecondary, Color.BLACK);
       messageType = MessageType.fromCode(typedArray.getInt(R.styleable.QuoteView_message_type, 0));
       typedArray.recycle();
 
       dismissView.setVisibility(messageType == MessageType.PREVIEW ? VISIBLE : GONE);
+
+      authorView.setTextColor(primaryColor);
+      bodyView.setTextColor(primaryColor);
+      attachmentNameView.setTextColor(primaryColor);
+      mediaDescriptionText.setTextColor(secondaryColor);
+      missingLinkText.setTextColor(primaryColor);
+
+      if (messageType == MessageType.PREVIEW) {
+        int radius = getResources().getDimensionPixelOffset(R.dimen.quote_corner_radius_preview);
+        cornerMask.setTopLeftRadius(radius);
+        cornerMask.setTopRightRadius(radius);
+      }
     }
 
     setMessageType(messageType);
@@ -261,13 +267,14 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
   }
 
   private void setQuoteAuthor(@NonNull Recipient author) {
-    if (isStoryReply()) {
-      authorView.setText(author.isSelf() ? getContext().getString(R.string.QuoteView_your_story)
-                                         : getContext().getString(R.string.QuoteView_s_story, author.getDisplayName(getContext())));
-    } else {
-      authorView.setText(author.isSelf() ? getContext().getString(R.string.QuoteView_you)
-                                         : author.getDisplayName(getContext()));
-    }
+    boolean outgoing = messageType != MessageType.INCOMING;
+    boolean preview  = messageType == MessageType.PREVIEW;
+
+    authorView.setText(author.isSelf() ? getContext().getString(R.string.QuoteView_you)
+                                       : author.getDisplayName(getContext()));
+
+    quoteBarView.setBackgroundColor(ContextCompat.getColor(getContext(), outgoing ? R.color.core_white : android.R.color.transparent));
+    mainView.setBackgroundColor(ContextCompat.getColor(getContext(), preview ? R.color.quote_preview_background : R.color.quote_view_background));
   }
 
   private boolean isStoryReply() {
@@ -323,43 +330,6 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
   }
 
   private void setQuoteAttachment(@NonNull GlideRequests glideRequests, @NonNull CharSequence body, @NonNull SlideDeck slideDeck, boolean originalMissing) {
-    boolean outgoing = messageType != MessageType.INCOMING && messageType != MessageType.STORY_REPLY_INCOMING;
-    boolean preview  = messageType == MessageType.PREVIEW || messageType == MessageType.STORY_REPLY_PREVIEW;
-
-    mainView.setMinimumHeight(isStoryReply() && originalMissing ? 0 : thumbHeight);
-    thumbnailView.setPadding(0, 0, 0, 0);
-
-//    StoryTextPostModel model = isStoryReply() ? getStoryTextPost(body) : null;
-//    if (model != null) {
-//      attachmentVideoOverlayView.setVisibility(GONE);
-//      attachmentContainerView.setVisibility(GONE);
-//      thumbnailView.setVisibility(VISIBLE);
-//      glideRequests.load(model)
-//                   .centerCrop()
-//                   .override(thumbWidth, thumbHeight)
-//                   .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-//                   .into(thumbnailView);
-//      return;
-//    }
-
-    if (quoteType == QuoteModel.Type.GIFT_BADGE) {
-      if (outgoing && !preview) {
-        int oneDp = (int) DimensionUnit.DP.toPixels(1);
-        thumbnailView.setPadding(oneDp, oneDp, oneDp, oneDp);
-        thumbnailView.setShapeAppearanceModel(buildShapeAppearanceForLayoutDirection());
-      }
-
-      attachmentVideoOverlayView.setVisibility(GONE);
-      attachmentContainerView.setVisibility(GONE);
-      thumbnailView.setVisibility(VISIBLE);
-      glideRequests.load(R.drawable.ic_gift_thumbnail)
-                   .centerCrop()
-                   .override(thumbWidth, thumbHeight)
-                   .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                   .into(thumbnailView);
-      return;
-    }
-
     Slide imageVideoSlide = slideDeck.getSlides().stream().filter(s -> s.hasImage() || s.hasVideo() || s.hasSticker()).findFirst().orElse(null);
     Slide documentSlide   = slideDeck.getSlides().stream().filter(Slide::hasDocument).findFirst().orElse(null);
     Slide viewOnceSlide   = slideDeck.getSlides().stream().filter(Slide::hasViewOnce).findFirst().orElse(null);
@@ -378,7 +348,7 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
       }
       glideRequests.load(new DecryptableUri(imageVideoSlide.getUri()))
                    .centerCrop()
-                   .override(thumbWidth, thumbHeight)
+                   .override(getContext().getResources().getDimensionPixelSize(R.dimen.quote_thumb_size))
                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
                    .into(thumbnailView);
     } else if (documentSlide != null){
@@ -389,6 +359,10 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
       thumbnailView.setVisibility(GONE);
       attachmentContainerView.setVisibility(GONE);
       dismissView.setBackgroundDrawable(null);
+    }
+
+    if (ThemeUtil.isDarkTheme(getContext())) {
+      dismissView.setBackgroundResource(R.drawable.circle_alpha);
     }
   }
 
@@ -458,7 +432,6 @@ public class QuoteView extends FrameLayout implements RecipientForeverObserver {
     QuoteViewColorTheme quoteViewColorTheme = QuoteViewColorTheme.resolveTheme(isOutgoing, isPreview, isWallpaperEnabled);
 
     quoteBarView.setBackgroundColor(quoteViewColorTheme.getBarColor(getContext()));
-    background.setBackgroundColor(quoteViewColorTheme.getBackgroundColor(getContext()));
     authorView.setTextColor(quoteViewColorTheme.getForegroundColor(getContext()));
     bodyView.setTextColor(quoteViewColorTheme.getForegroundColor(getContext()));
     attachmentNameView.setTextColor(quoteViewColorTheme.getForegroundColor(getContext()));

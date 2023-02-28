@@ -9,23 +9,23 @@
     android:paddingStart="@dimen/dsl_settings_gutter"
     android:paddingEnd="@dimen/dsl_settings_gutter">
 
-    <org.thoughtcrime.securesms.avatar.view.AvatarView
-        android:id="@+id/avatar"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--    <org.thoughtcrime.securesms.avatar.view.AvatarView-->
+<!--        android:id="@+id/avatar"-->
+<!--        android:layout_width="48dp"-->
+<!--        android:layout_height="48dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/badge"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="28dp"
-        app:badge_size="medium"
-        app:layout_constraintStart_toStartOf="@id/avatar"
-        app:layout_constraintTop_toTopOf="@id/avatar" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/badge"-->
+<!--        android:layout_width="24dp"-->
+<!--        android:layout_height="24dp"-->
+<!--        android:layout_marginStart="24dp"-->
+<!--        android:layout_marginTop="28dp"-->
+<!--        app:badge_size="medium"-->
+<!--        app:layout_constraintStart_toStartOf="@id/avatar"-->
+<!--        app:layout_constraintTop_toTopOf="@id/avatar" />-->
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/add_to_story"

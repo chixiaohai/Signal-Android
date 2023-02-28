@@ -40,15 +40,15 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_contact_picture" />
 
-            <org.thoughtcrime.securesms.badges.BadgeImageView
-                android:id="@+id/toolbar_badge"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:layout_marginStart="14dp"
-                android:layout_marginTop="16dp"
-                app:badge_size="small"
-                app:layout_constraintStart_toStartOf="@id/toolbar_icon"
-                app:layout_constraintTop_toTopOf="@id/toolbar_icon" />
+<!--            <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--                android:id="@+id/toolbar_badge"-->
+<!--                android:layout_width="16dp"-->
+<!--                android:layout_height="16dp"-->
+<!--                android:layout_marginStart="14dp"-->
+<!--                android:layout_marginTop="16dp"-->
+<!--                app:badge_size="small"-->
+<!--                app:layout_constraintStart_toStartOf="@id/toolbar_icon"-->
+<!--                app:layout_constraintTop_toTopOf="@id/toolbar_icon" />-->
 
             <View
                 android:id="@+id/toolbar_settings_touch_area"

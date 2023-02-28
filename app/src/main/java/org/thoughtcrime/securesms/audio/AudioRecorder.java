@@ -1,7 +1,6 @@
 package org.thoughtcrime.securesms.audio;
 
 import android.content.Context;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.ParcelFileDescriptor;
@@ -13,6 +12,7 @@ import org.signal.core.util.concurrent.SignalExecutors;
 import org.signal.core.util.logging.Log;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteDraft;
 import org.thoughtcrime.securesms.providers.BlobProvider;
+import org.thoughtcrime.securesms.util.FeatureFlags;
 import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.concurrent.ListenableFuture;
 import org.thoughtcrime.securesms.util.concurrent.SettableFuture;
@@ -26,15 +26,13 @@ public class AudioRecorder {
 
   private static final ExecutorService executor = SignalExecutors.newCachedSingleThreadExecutor("signal-AudioRecorder");
 
-  private final Context                   context;
-  private final AudioRecorderFocusManager audioFocusManager;
+  private final Context context;
 
   private Recorder recorder;
   private Uri      captureUri;
 
   public AudioRecorder(@NonNull Context context) {
     this.context = context;
-    audioFocusManager = AudioRecorderFocusManager.create(context, focusChange -> stopRecording());
   }
 
   public void startRecording() {
@@ -54,11 +52,7 @@ public class AudioRecorder {
                                  .withMimeType(MediaUtil.AUDIO_AAC)
                                  .createForDraftAttachmentAsync(context, () -> Log.i(TAG, "Write successful."), e -> Log.w(TAG, "Error during recording", e));
 
-        recorder = Build.VERSION.SDK_INT >= 26 ? new MediaRecorderWrapper() : new AudioCodec();
-        int focusResult = audioFocusManager.requestAudioFocus();
-        if (focusResult != AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-          Log.w(TAG, "Could not gain audio focus. Received result code " + focusResult);
-        }
+        recorder = Build.VERSION.SDK_INT >= 26 && FeatureFlags.voiceNoteRecordingV2() ? new MediaRecorderWrapper() : new AudioCodec();
         recorder.start(fds[1]);
       } catch (IOException e) {
         Log.w(TAG, e);
@@ -77,7 +71,6 @@ public class AudioRecorder {
         return;
       }
 
-      audioFocusManager.abandonAudioFocus();
       recorder.stop();
 
       try {

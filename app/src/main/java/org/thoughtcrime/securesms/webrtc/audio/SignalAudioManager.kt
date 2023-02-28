@@ -158,7 +158,7 @@ class FullSignalAudioManager(context: Context, eventListener: EventListener?) : 
       updateAudioDeviceState()
 
       wiredHeadsetReceiver = WiredHeadsetReceiver()
-      context.registerReceiver(wiredHeadsetReceiver, IntentFilter(if (Build.VERSION.SDK_INT >= 21) AudioManager.ACTION_HEADSET_PLUG else Intent.ACTION_HEADSET_PLUG))
+      ApplicationDependencies.getApplication().registerReceiver(wiredHeadsetReceiver, IntentFilter(if (Build.VERSION.SDK_INT >= 21) AudioManager.ACTION_HEADSET_PLUG else Intent.ACTION_HEADSET_PLUG))
 
       state = State.PREINITIALIZED
 
@@ -204,7 +204,7 @@ class FullSignalAudioManager(context: Context, eventListener: EventListener?) : 
 
     state = State.UNINITIALIZED
 
-    context.safeUnregisterReceiver(wiredHeadsetReceiver)
+    ApplicationDependencies.getApplication().safeUnregisterReceiver(wiredHeadsetReceiver)
     wiredHeadsetReceiver = null
 
     signalBluetoothManager.stop()

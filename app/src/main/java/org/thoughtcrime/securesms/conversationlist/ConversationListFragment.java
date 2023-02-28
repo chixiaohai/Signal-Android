@@ -553,7 +553,6 @@ public class ConversationListFragment extends MainFragment implements Conversati
       String menuName = item.getFromText();
       List<String> data = getDatas();
       if (menuName.equals(data.get(0))) { //New Conversaton
-        System.out.println("lyh   click  New Conversaton");
         startActivity(new Intent(getActivity(), NewConversationActivity.class));
       } else if (menuName.equals(data.get(1))) { //New Group
         getNavigator().goToGroupCreation();

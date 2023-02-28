@@ -7,15 +7,15 @@
     android:orientation="vertical"
     tools:viewBindingIgnore="true">
 
-    <org.thoughtcrime.securesms.badges.BadgeImageView
-        android:id="@+id/badge"
-        android:layout_width="112dp"
-        android:layout_height="112dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="36dp"
-        android:contentDescription="@string/BadgesOverviewFragment__featured_badge"
-        app:badge_size="xlarge"
-        tools:src="@drawable/test_gradient" />
+<!--    <org.thoughtcrime.securesms.badges.BadgeImageView-->
+<!--        android:id="@+id/badge"-->
+<!--        android:layout_width="112dp"-->
+<!--        android:layout_height="112dp"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:layout_marginTop="36dp"-->
+<!--        android:contentDescription="@string/BadgesOverviewFragment__featured_badge"-->
+<!--        app:badge_size="xlarge"-->
+<!--        tools:src="@drawable/test_gradient" />-->
 
     <TextView
         android:id="@+id/name"
