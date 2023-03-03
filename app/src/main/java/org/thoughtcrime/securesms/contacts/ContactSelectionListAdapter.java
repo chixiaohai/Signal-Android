@@ -489,7 +489,7 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
       public void onAnimationUpdate(ValueAnimator valueAnimator) {
         float scale = (float)valueAnimator.getAnimatedValue();
         float height = (((float)(mFocusHeight - mNormalHeight))*(scale)+(float)mNormalHeight)*2;
-        float textsize = ((float)(mFocusTextSize - mNormalTextSize))*(scale) + mNormalTextSize;
+        float textSize = ((float)(mFocusTextSize - mNormalTextSize))*(scale) + mNormalTextSize;
         float padding = (float)mNormalPaddingX -((float)(mNormalPaddingX - mFocusPaddingX))*(scale);
         int alpha = (int)((float)0x81 + (float)((0xff - 0x81))*(scale));
         int color =  alpha*0x1000000 + 0xffffff;
@@ -500,12 +500,12 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
 //          CSLitem.getLayoutParams().height = (int)height;
 //        }
         text1.setTextColor(color);
-        text1.setTextSize((int)textsize);
+        text1.setTextSize((int)textSize);
         text1.setTextColor(color);
         text1.getLayoutParams().height = (int)height/2;
 
         text2.setTextColor(color);
-        text2.setTextSize((int)textsize);
+        text2.setTextSize((int)textSize);
         text2.setTextColor(color);
         text2.getLayoutParams().height = (int)height/2;
 
@@ -544,7 +544,7 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
       public void onAnimationUpdate(ValueAnimator valueAnimator) {
         float scale = (float)valueAnimator.getAnimatedValue();
         float height = (((float)(mFocusHeight - mNormalHeight))*(scale)+(float)mNormalHeight)*2;
-        float textsize = ((float)(mFocusTextSize - mNormalTextSize))*(scale) + mNormalTextSize;
+        float textSize = ((float)(mFocusTextSize - mNormalTextSize))*(scale) + mNormalTextSize;
         float padding = (float)mNormalPaddingX -((float)(mNormalPaddingX - mFocusPaddingX))*(scale);
         int alpha = (int)((float)0x81 + (float)((0xff - 0x81))*(scale));
         int color =  alpha*0x1000000 + 0xffffff;
@@ -555,7 +555,7 @@ public class ContactSelectionListAdapter extends CursorRecyclerViewAdapter<ViewH
 //          CSLitem.getLayoutParams().height = (int)height;
 //        }
         tv.setTextColor(color);
-        tv.setTextSize((int)textsize);
+        tv.setTextSize((int)textSize);
         tv.setTextColor(color);
         tv.getLayoutParams().height = (int)height/2;
 

@@ -275,11 +275,11 @@ public class ManageRecipientFragment extends LoggingFragment {
       public void onAnimationUpdate(ValueAnimator valueAnimator) {
         float scale    = (float) valueAnimator.getAnimatedValue();
         float height   = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-        float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+        float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
         float padding  = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
         int   alpha    = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
         int   color    = alpha * 0x1000000 + 0xffffff;
-        ((TextView) v).setTextSize((int) textsize);
+        ((TextView) v).setTextSize((int) textSize);
         ((TextView) v).setTextColor(color);
         v.setPadding(
             (int) padding, v.getPaddingTop(),
@@ -306,11 +306,11 @@ public class ManageRecipientFragment extends LoggingFragment {
       public void onAnimationUpdate(ValueAnimator valueAnimator) {
         float scale    = (float) valueAnimator.getAnimatedValue();
         float height   = ((float) (mFocusSmallHeight - mSmallHeight)) * (scale) + (float) mSmallHeight;
-        float textsize = ((float) (mFocusSmallTextSize - mSmallTextSize)) * (scale) + mSmallTextSize;
+        float textSize = ((float) (mFocusSmallTextSize - mSmallTextSize)) * (scale) + mSmallTextSize;
         float padding  = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
         int   alpha    = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
         int   color    = alpha * 0x1000000 + 0xffffff;
-        ((TextView) v).setTextSize((int) textsize);
+        ((TextView) v).setTextSize((int) textSize);
         ((TextView) v).setTextColor(color);
         v.setPadding(
             (int) padding, v.getPaddingTop(),

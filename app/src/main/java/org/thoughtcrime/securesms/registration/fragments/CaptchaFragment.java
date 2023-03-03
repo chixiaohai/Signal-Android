@@ -106,17 +106,14 @@ public final class CaptchaFragment extends LoggingFragment {
           linearLayout.setTranslationY(linearLayout.getY() - 5);
           mWebview.scrollTo((int) linearLayout.getX(),(int) linearLayout.getY());
         }
-//        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_UP));
         break;
       case KeyEvent.KEYCODE_4:
         if (linearLayout.getX() > 0)
           linearLayout.setTranslationX(linearLayout.getX() - 5);
-//        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_LEFT));
         break;
       case KeyEvent.KEYCODE_6:
         if (linearLayout.getX() < 320)
           linearLayout.setTranslationX(linearLayout.getX() + 5);
-//        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_RIGHT));
         break;
       case KeyEvent.KEYCODE_8:
         if (linearLayout.getY() == 240) {
@@ -127,7 +124,6 @@ public final class CaptchaFragment extends LoggingFragment {
           linearLayout.setTranslationY(linearLayout.getY() + 5);
           mWebview.scrollTo((int) linearLayout.getX(),(int) linearLayout.getY());
         }
-//        mWebview.dispatchKeyEvent(new KeyEvent(action, KeyEvent.KEYCODE_DPAD_DOWN));
         break;
       case KeyEvent.KEYCODE_5:
         if (action == KeyEvent.ACTION_DOWN) {

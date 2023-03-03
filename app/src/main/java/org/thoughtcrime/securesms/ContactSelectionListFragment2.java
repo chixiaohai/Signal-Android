@@ -656,12 +656,12 @@ public final class ContactSelectionListFragment2 extends Fragment
 
       TextView item = (TextView) view;
       float height = ((float) (mFocusHeight - mNormalHeight)) * (focused ? 1 : 0) + (float) mNormalHeight;
-      float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (focused ? 1 : 0) + mNormalTextSize;
+      float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (focused ? 1 : 0) + mNormalTextSize;
       float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (focused ? 1 : 0);
       int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (focused ? 1 : 0));
       int color = alpha * 0x1000000 + 0xffffff;
       item.setPadding((int) padding,item.getPaddingTop(),item.getPaddingRight(),item.getPaddingBottom());
-      item.setTextSize((int) textsize);
+      item.setTextSize((int) textSize);
       item.setTextColor(color);
       item.getLayoutParams().height = (int) height;
     }
@@ -698,7 +698,7 @@ public final class ContactSelectionListFragment2 extends Fragment
         }
       }
           float height = focused?mFocusHeight:mNormalHeight;
-          float textsize = (float) mNormalTextSize;
+          float textSize = (float) mNormalTextSize;
           float padding = focused?(float)mNormalPaddingX -1:(float)mNormalPaddingX;
           int alpha = 0x81 ;
           int color =  alpha*0x1000000 + 0xffffff;
@@ -711,7 +711,7 @@ public final class ContactSelectionListFragment2 extends Fragment
 //            CSLitem.getLayoutParams().height = (int)height;
 //          }
 
-          text1.setTextSize((int)textsize);
+          text1.setTextSize((int)textSize);
           text1.setTextColor(color);
           view.setPadding((int) padding,view.getPaddingTop(),view.getPaddingRight(),view.getPaddingBottom());
           text1.getLayoutParams().height = (int)height;

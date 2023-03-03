@@ -115,11 +115,11 @@ abstract class PreferenceViewHolder<T : PreferenceModel<T>>(itemView: View) : Ma
     va.addUpdateListener { valueAnimator ->
       val scale = valueAnimator.animatedValue as Float
       val height = (mFocusHeight - mNormalHeight).toFloat() * scale + mNormalHeight.toFloat()
-      val textsize = (mFocusTextSize - mNormalTextSize).toFloat() * scale + mNormalTextSize
+      val textSize = (mFocusTextSize - mNormalTextSize).toFloat() * scale + mNormalTextSize
       val padding = mNormalPaddingX.toFloat() - (mNormalPaddingX - mFocusPaddingX).toFloat() * scale
       val alpha = (0x81.toFloat() + (0xff - 0x81).toFloat() * scale).toInt()
       val color = alpha * 0x1000000 + 0xffffff
-      (v as TextView).textSize = textsize
+      (v as TextView).textSize = textSize
       (v as TextView).setTextColor(color)
       v.setPadding(
         padding.toInt(), v.getPaddingTop(),

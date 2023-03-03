@@ -66,7 +66,7 @@ public class SingleSelectSetting {
       va.addUpdateListener(valueAnimator -> {
         float scale = (float) valueAnimator.getAnimatedValue();
         float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-        float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
+        float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
         float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
         int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
         int color = alpha * 0x1000000 + 0xffffff;
@@ -74,7 +74,7 @@ public class SingleSelectSetting {
 
         tv.setTextColor(color);
         tv.setPadding((int) padding, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
-        tv.setTextSize((int) textsize);
+        tv.setTextSize((int) textSize);
         tv.getLayoutParams().height = (int) height;
       });
 

@@ -145,7 +145,6 @@ import org.thoughtcrime.securesms.components.reminder.ExpiredBuildReminder;
 import org.thoughtcrime.securesms.components.reminder.Reminder;
 import org.thoughtcrime.securesms.components.reminder.ServiceOutageReminder;
 import org.thoughtcrime.securesms.components.reminder.UnauthorizedReminder;
-import org.thoughtcrime.securesms.components.settings.conversation.ConversationSettingsActivity;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteDraft;
 import org.thoughtcrime.securesms.components.voice.VoiceNoteMediaController;
 import org.thoughtcrime.securesms.components.voice.VoiceNotePlaybackState;
@@ -163,8 +162,6 @@ import org.thoughtcrime.securesms.conversation.drafts.DraftRepository;
 import org.thoughtcrime.securesms.conversation.drafts.DraftViewModel;
 import org.thoughtcrime.securesms.conversation.ui.error.SafetyNumberChangeDialog;
 import org.thoughtcrime.securesms.conversation.ui.groupcall.GroupCallViewModel;
-import org.thoughtcrime.securesms.conversation.ui.inlinequery.InlineQuery;
-import org.thoughtcrime.securesms.conversation.ui.inlinequery.InlineQueryChangedListener;
 import org.thoughtcrime.securesms.conversation.ui.inlinequery.InlineQueryResultsController;
 import org.thoughtcrime.securesms.conversation.ui.inlinequery.InlineQueryViewModel;
 import org.thoughtcrime.securesms.conversation.ui.mentions.MentionsPickerViewModel;
@@ -353,7 +350,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
 
   private static final int SHORTCUT_ICON_SIZE = Build.VERSION.SDK_INT >= 26 ? ViewUtil.dpToPx(72) : ViewUtil.dpToPx(48 + 16 * 2);
 
-  private static final String                     TAG = Log.tag(ConversationActivity.class);
+  private static final String               TAG = Log.tag(ConversationActivity.class);
   public static        ConversationActivity instance;
 
   public static final  String RECIPIENT_EXTRA           = "recipient_id";
@@ -1045,7 +1042,8 @@ public class ConversationActivity extends PassphraseRequiredActivity
     }
 
     if ((data == null && reqCode != TAKE_PHOTO && reqCode != SMS_DEFAULT) ||
-        (resultCode != RESULT_OK && reqCode != SMS_DEFAULT)) {
+        (resultCode != RESULT_OK && reqCode != SMS_DEFAULT))
+    {
       updateLinkPreviewState();
       SignalStore.settings().setDefaultSms(Util.isDefaultSmsProvider(this));
       return;
@@ -1803,7 +1801,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
       composeText.appendInvite(inviteText);
     } else {
       Intent intent = new Intent(Intent.ACTION_SENDTO);
-      intent.setData(Uri.parse("smsto:" + recipient.get().requireSmsAddress()));
+      intent.setData(Uri.parse("smsTo:" + recipient.get().requireSmsAddress()));
       intent.putExtra("sms_body", inviteText);
       intent.putExtra(Intent.EXTRA_TEXT, inviteText);
       startActivity(intent);
@@ -2320,11 +2318,11 @@ public class ConversationActivity extends PassphraseRequiredActivity
       va.addUpdateListener(valueAnimator -> {
         float scale    = (float) valueAnimator.getAnimatedValue();
         float height   = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-        float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
+        float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
         float padding  = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
         int   alpha    = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
         int   color    = alpha * 0x1000000 + 0xffffff;
-        item.setTextSize((int) textsize);
+        item.setTextSize((int) textSize);
         item.setTextColor(color);
         item.setPadding(
             (int) padding, item.getPaddingTop(),
@@ -2838,6 +2836,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
           my_record_time.setVisibility(View.GONE);
           mRecyclerview.setVisibility(View.GONE);
           mVG.setVisibility(View.VISIBLE);
+          panelParent.setVisibility(View.VISIBLE);
           composeText.requestFocus();
         }
         if (keyCode == KeyEvent.KEYCODE_BACK) {

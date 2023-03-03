@@ -556,13 +556,13 @@ public abstract class BaseEnterCodeFragment<ViewModel extends BaseRegistrationVi
         public void onAnimationUpdate(ValueAnimator valueAnimator) {
           float scale = (float) valueAnimator.getAnimatedValue();
 //          float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-          float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+          float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
           float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
           int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
           int color = alpha * 0x1000000 + 0xffffff;
 
           tv.setTextColor(color);
-          tv.setTextSize(textsize);
+          tv.setTextSize(textSize);
 //          parent.getLayoutParams().height = (int) (height);
           parent.setPadding((int) padding, parent.getPaddingTop(), parent.getPaddingRight(), parent.getPaddingBottom());
         }

@@ -119,14 +119,14 @@ public final class FixedViewsAdapter extends RecyclerView.Adapter<RecyclerView.V
         public void onAnimationUpdate(ValueAnimator valueAnimator) {
           float scale = (float) valueAnimator.getAnimatedValue();
           float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-          float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+          float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
           float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
           int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
           int color = alpha * 0x1000000 + 0xffffff;
 
 
           item.setPadding((int) padding, item.getPaddingTop(), item.getPaddingRight(), item.getPaddingBottom());
-          item.setTextSize((int) textsize);
+          item.setTextSize((int) textSize);
           item.setTextColor(color);
           item.getLayoutParams().height = (int) height;
 
@@ -169,11 +169,11 @@ public final class FixedViewsAdapter extends RecyclerView.Adapter<RecyclerView.V
 //    }
 
     float height = ((float) (mFocusHeight - mNormalHeight)) * (focused ? 1 : 0) + (float) mNormalHeight;
-    float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (focused ? 1 : 0) + mNormalTextSize;
+    float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (focused ? 1 : 0) + mNormalTextSize;
     float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (focused ? 1 : 0);
     int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (focused ? 1 : 0));
     int color = alpha * 0x1000000 + 0xffffff;
-    item.setTextSize((int) textsize);
+    item.setTextSize((int) textSize);
     item.setTextColor(color);
     item.getLayoutParams().height = (int) height;
   }

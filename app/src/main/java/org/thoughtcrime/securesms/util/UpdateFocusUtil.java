@@ -39,7 +39,7 @@ public final class UpdateFocusUtil {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float scale = (float) valueAnimator.getAnimatedValue();
-                float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
+                float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + mNormalTextSize;
                 float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
                 int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
                 int color = alpha * 0x1000000 + 0xffffff;
@@ -47,7 +47,7 @@ public final class UpdateFocusUtil {
                 listener.onUpdate(scale);
 
                 tv.setTextColor(color);
-                tv.setTextSize(textsize);
+                tv.setTextSize(textSize);
                 parent.setPadding((int) padding, parent.getPaddingTop(), parent.getPaddingRight(), parent.getPaddingBottom());
             }
         });
@@ -69,7 +69,7 @@ public final class UpdateFocusUtil {
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 float scale = (float) valueAnimator.getAnimatedValue();
                 float height = ((float) (mFocusHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-                float textsize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
+                float textSize = ((float) (mFocusTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
                 float padding = (float) mNormalPaddingX - ((float) (mNormalPaddingX - mFocusPaddingX)) * (scale);
                 int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
                 int color = alpha * 0x1000000 + 0xffffff;
@@ -77,7 +77,7 @@ public final class UpdateFocusUtil {
 
                 view.setTextColor(color);
                 view.setPadding((int) padding, view.getPaddingTop(), view.getPaddingRight(), view.getPaddingBottom());
-                view.setTextSize((int) textsize);
+                view.setTextSize((int) textSize);
                 view.getLayoutParams().height = (int) height;
             }
         });

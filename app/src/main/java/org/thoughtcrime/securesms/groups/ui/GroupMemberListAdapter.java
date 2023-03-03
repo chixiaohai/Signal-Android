@@ -179,14 +179,14 @@ final class GroupMemberListAdapter extends LifecycleRecyclerAdapter<GroupMemberL
     va.addUpdateListener(valueAnimator -> {
       float scale = (float) valueAnimator.getAnimatedValue();
       float height = ((float) (mFocusedHeight - mNormalHeight)) * (scale) + (float) mNormalHeight;
-      float textsize = ((float) (mFocusedTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
+      float textSize = ((float) (mFocusedTextSize - mNormalTextSize)) * (scale) + (float) mNormalTextSize;
       float padding = (float) mNormalPadding - ((float) (mNormalPadding - mFocusedPadding)) * (scale);
       int alpha = (int) ((float) 0x81 + (float) ((0xff - 0x81)) * (scale));
       int color = alpha * 0x1000000 + 0xffffff;
 
       tv.setTextColor(color);
       tv.setPadding((int) padding, tv.getPaddingTop(), tv.getPaddingRight(), tv.getPaddingBottom());
-      tv.setTextSize((int) textsize);
+      tv.setTextSize((int) textSize);
       tv.getLayoutParams().height = (int) height;
     });
 
