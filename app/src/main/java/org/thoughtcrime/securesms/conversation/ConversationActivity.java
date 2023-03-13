@@ -992,8 +992,7 @@ public class ConversationActivity extends PassphraseRequiredActivity
     inputPanel.onPause();
 
     fragment.setLastSeen(System.currentTimeMillis());
-    markLastSeen()
-    ;
+    markLastSeen();
     EventBus.getDefault().unregister(this);
   }
 
@@ -2842,7 +2841,12 @@ public class ConversationActivity extends PassphraseRequiredActivity
         if (keyCode == KeyEvent.KEYCODE_BACK) {
           inputPanel.onRecordCanceled();
         }
-        //myRT.setVisibility(View.INVISIBLE);
+        inputPanel.mydisMiss();
+        my_record_time.setVisibility(View.GONE);
+        mRecyclerview.setVisibility(View.GONE);
+        mVG.setVisibility(View.VISIBLE);
+        panelParent.setVisibility(View.VISIBLE);
+        composeText.requestFocus();
         return true;
       }
     });
@@ -4600,6 +4604,10 @@ public class ConversationActivity extends PassphraseRequiredActivity
     } else {
       author = messageRecord.getIndividualRecipient();
     }
+
+    fragment.getListLayoutManager().smoothScrollToPosition(ConversationActivity.this, 0, 100);
+    panelParent.setVisibility(View.VISIBLE);
+    composeText.requestFocus();
 
     if (messageRecord.isMms() && !((MmsMessageRecord) messageRecord).getSharedContacts().isEmpty()) {
       Contact   contact     = ((MmsMessageRecord) messageRecord).getSharedContacts().get(0);

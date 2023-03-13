@@ -116,7 +116,6 @@ public class ConversationListItemOptionsFragment extends ConversationListFragmen
   }
 
   @SuppressLint({ "StaticFieldLeak", "WrongThread" })
-  @WorkerThread
   private void archiveThread() {
     new AsyncTask<Void, Void, Void>() {
 
@@ -126,7 +125,7 @@ public class ConversationListItemOptionsFragment extends ConversationListFragmen
 
       @Override
       protected Void doInBackground(Void... params) {
-        SignalDatabase.threads();
+        SignalDatabase.threads().archiveConversation(threadId);
         return null;
       }
 
@@ -139,7 +138,6 @@ public class ConversationListItemOptionsFragment extends ConversationListFragmen
   }
 
   @SuppressLint({ "StaticFieldLeak", "WrongThread" })
-  @WorkerThread
   private void unArchiveThread() {
     new AsyncTask<Void, Void, Void>() {
 
@@ -150,7 +148,7 @@ public class ConversationListItemOptionsFragment extends ConversationListFragmen
 
       @Override
       protected Void doInBackground(Void... params) {
-        SignalDatabase.threads();
+        SignalDatabase.threads().unarchiveConversation(threadId);
         return null;
       }
 
@@ -189,7 +187,7 @@ public class ConversationListItemOptionsFragment extends ConversationListFragmen
 
           @Override
           protected Void doInBackground(Void... params) {
-            SignalDatabase.threads();
+            SignalDatabase.threads().deleteConversations(deleteConversationSet);
             ApplicationDependencies.getMessageNotifier().updateNotification(getActivity());
             return null;
           }

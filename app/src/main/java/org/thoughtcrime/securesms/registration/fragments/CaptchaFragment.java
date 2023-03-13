@@ -25,7 +25,6 @@ import org.thoughtcrime.securesms.registration.viewmodel.BaseRegistrationViewMod
 import org.thoughtcrime.securesms.registration.viewmodel.RegistrationViewModel;
 
 import java.io.Serializable;
-import java.sql.Array;
 
 /**
  * Fragment that displays a Captcha in a WebView.
@@ -33,7 +32,7 @@ import java.sql.Array;
 public final class CaptchaFragment extends LoggingFragment {
   private static final String       TAG                       = Log.tag(CaptchaFragment.class);
   private              WebView      mWebview;
-  private              LinearLayout linearLayout;
+  private              LinearLayout mMouse;
   public static final  String       EXTRA_VIEW_MODEL_PROVIDER = "view_model_provider";
 
   private BaseRegistrationViewModel viewModel;
@@ -48,8 +47,8 @@ public final class CaptchaFragment extends LoggingFragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    mWebview     = view.findViewById(R.id.registration_captcha_web_view);
-    linearLayout = view.findViewById(R.id.ll_mouse);
+    mWebview = view.findViewById(R.id.registration_captcha_web_view);
+    mMouse   = view.findViewById(R.id.ll_mouse);
 
     mWebview.getSettings().setJavaScriptEnabled(true);
     mWebview.clearCache(true);
@@ -98,37 +97,37 @@ public final class CaptchaFragment extends LoggingFragment {
         mWebview.reload();
         break;
       case KeyEvent.KEYCODE_2:
-        if (linearLayout.getY() < 10) {
+        if (mMouse.getY() < 10) {
           if (mWebview.getY() < 10) {
             mWebview.setTranslationY(mWebview.getY() + 10);
           }
         } else {
-          linearLayout.setTranslationY(linearLayout.getY() - 5);
-          mWebview.scrollTo((int) linearLayout.getX(),(int) linearLayout.getY());
+          mMouse.setTranslationY(mMouse.getY() - 5);
+          mWebview.scrollTo((int) mMouse.getX(), (int) mMouse.getY());
         }
         break;
       case KeyEvent.KEYCODE_4:
-        if (linearLayout.getX() > 0)
-          linearLayout.setTranslationX(linearLayout.getX() - 5);
+        if (mMouse.getX() > 0)
+          mMouse.setTranslationX(mMouse.getX() - 5);
         break;
       case KeyEvent.KEYCODE_6:
-        if (linearLayout.getX() < 320)
-          linearLayout.setTranslationX(linearLayout.getX() + 5);
+        if (mMouse.getX() < 320)
+          mMouse.setTranslationX(mMouse.getX() + 5);
         break;
       case KeyEvent.KEYCODE_8:
-        if (linearLayout.getY() == 240) {
+        if (mMouse.getY() == 240) {
           if (mWebview.getY() + mWebview.getHeight() > 240) {
             mWebview.setTranslationY(mWebview.getY() - 10);
           }
         } else {
-          linearLayout.setTranslationY(linearLayout.getY() + 5);
-          mWebview.scrollTo((int) linearLayout.getX(),(int) linearLayout.getY());
+          mMouse.setTranslationY(mMouse.getY() + 5);
+          mWebview.scrollTo((int) mMouse.getX(), (int) mMouse.getY());
         }
         break;
       case KeyEvent.KEYCODE_5:
         if (action == KeyEvent.ACTION_DOWN) {
-          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, linearLayout.getX(), linearLayout.getY()));
-          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, linearLayout.getX(), linearLayout.getY()));
+          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_DOWN, mMouse.getX(), mMouse.getY()));
+          mWebview.dispatchTouchEvent(createMotionEvent(MotionEvent.ACTION_UP, mMouse.getX(), mMouse.getY()));
         }
         break;
     }

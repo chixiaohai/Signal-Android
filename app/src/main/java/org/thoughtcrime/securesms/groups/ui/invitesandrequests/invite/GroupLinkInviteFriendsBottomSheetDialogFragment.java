@@ -10,7 +10,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
-import androidx.constraintlayout.widget.Group;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.ViewModelProvider;
@@ -36,8 +35,8 @@ public final class GroupLinkInviteFriendsBottomSheetDialogFragment extends Botto
 
   private Button       groupLinkEnableAndShareButton;
   private Button       groupLinkShareButton;
-  private Group        controlGroup;
-  private View         controlOutline;
+  private View         memberApprovalRow;
+  private View         memberApprovalRow2;
   private SwitchCompat memberApprovalSwitch;
 
   private SimpleProgressDialog.DismissibleDialog busyDialog;
@@ -69,8 +68,8 @@ public final class GroupLinkInviteFriendsBottomSheetDialogFragment extends Botto
 
     groupLinkEnableAndShareButton = view.findViewById(R.id.group_link_enable_and_share_button);
     groupLinkShareButton          = view.findViewById(R.id.group_link_share_button);
-    controlGroup                  = view.findViewById(R.id.control_group);
-    controlOutline                = view.findViewById(R.id.group_link_enable_and_share_approve_outline);
+    memberApprovalRow             = view.findViewById(R.id.group_link_enable_and_share_approve_new_members_row);
+    memberApprovalRow2            = view.findViewById(R.id.group_link_enable_and_share_approve_new_members_row2);
     memberApprovalSwitch          = view.findViewById(R.id.group_link_enable_and_share_approve_new_members_switch);
 
     view.findViewById(R.id.group_link_enable_and_share_cancel_button).setOnClickListener(v -> dismiss());
@@ -92,17 +91,20 @@ public final class GroupLinkInviteFriendsBottomSheetDialogFragment extends Botto
                if (groupLinkUrlAndStatus.isEnabled()) {
                  groupLinkShareButton.setVisibility(View.VISIBLE);
                  groupLinkEnableAndShareButton.setVisibility(View.INVISIBLE);
-                 controlGroup.setVisibility(View.GONE);
+                 memberApprovalRow.setVisibility(View.GONE);
+                 memberApprovalRow2.setVisibility(View.GONE);
+
                  groupLinkShareButton.setOnClickListener(v -> shareGroupLinkAndDismiss(groupId));
                } else {
-                 controlGroup.setVisibility(View.VISIBLE);
+                 memberApprovalRow.setVisibility(View.VISIBLE);
+                 memberApprovalRow2.setVisibility(View.VISIBLE);
 
                  groupLinkEnableAndShareButton.setVisibility(View.VISIBLE);
                  groupLinkShareButton.setVisibility(View.INVISIBLE);
                }
              });
 
-    controlOutline.setOnClickListener(v -> viewModel.toggleMemberApproval());
+    memberApprovalRow.setOnClickListener(v -> viewModel.toggleMemberApproval());
 
     viewModel.getMemberApproval()
              .observe(getViewLifecycleOwner(), enabled -> memberApprovalSwitch.setChecked(enabled));

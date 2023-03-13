@@ -29,11 +29,11 @@ import org.signal.libsignal.protocol.IdentityKeyPair;
 import org.signal.libsignal.protocol.InvalidKeyException;
 import org.signal.libsignal.protocol.ecc.Curve;
 import org.signal.libsignal.protocol.ecc.ECKeyPair;
+import org.signal.libsignal.protocol.ecc.ECPrivateKey;
 import org.thoughtcrime.securesms.backup.BackupProtos;
 import org.thoughtcrime.securesms.util.Base64;
 
 import java.io.IOException;
-import java.security.interfaces.ECPrivateKey;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -51,8 +51,8 @@ public class IdentityKeyUtil {
   private static final String IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF  = "pref_identity_public_curve25519";
   private static final String IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF = "pref_identity_private_curve25519";
 
-  private static final String IDENTITY_PUBLIC_KEY_PREF  = "pref_identity_public_v3";
-  private static final String IDENTITY_PRIVATE_KEY_PREF = "pref_identity_private_v3";
+  private static final String IDENTITY_PUBLIC_KEY_PREF                    = "pref_identity_public_v3";
+  private static final String IDENTITY_PRIVATE_KEY_PREF                   = "pref_identity_private_v3";
 
   public static boolean hasIdentityKey(Context context) {
     SharedPreferences preferences = context.getSharedPreferences(MasterSecretUtil.PREFERENCES_NAME, 0);
@@ -62,20 +62,15 @@ public class IdentityKeyUtil {
         preferences.contains(IDENTITY_PRIVATE_KEY_PREF);
   }
 
-  public static @NonNull IdentityKey getIdentityKey(@NonNull Context context) throws IOException, InvalidKeyException {
+  public static @NonNull IdentityKey getIdentityKey(@NonNull Context context) {
     if (!hasIdentityKey(context)) throw new AssertionError("There isn't one!");
 
     try {
       byte[] publicKeyBytes = Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_PREF));
-      try {
-        return new IdentityKey(publicKeyBytes, 0);
-      } catch (org.signal.libsignal.protocol.InvalidKeyException e) {
-        e.printStackTrace();
-      }
-    } catch (IOException e) {
+      return new IdentityKey(publicKeyBytes, 0);
+    } catch (IOException | InvalidKeyException e) {
       throw new AssertionError(e);
     }
-    return new IdentityKey(Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_PREF)), 0);
   }
 
   public static @NonNull IdentityKeyPair getIdentityKeyPair(@NonNull Context context) {
@@ -83,10 +78,10 @@ public class IdentityKeyUtil {
 
     try {
       IdentityKey  publicKey  = getIdentityKey(context);
-      ECPrivateKey privateKey = (ECPrivateKey) Curve.decodePrivatePoint(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_PREF)));
+      ECPrivateKey privateKey = Curve.decodePrivatePoint(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_PREF)));
 
-      return new IdentityKeyPair(publicKey, (org.signal.libsignal.protocol.ecc.ECPrivateKey) privateKey);
-    } catch (IOException | InvalidKeyException e) {
+      return new IdentityKeyPair(publicKey, privateKey);
+    } catch (IOException e) {
       throw new AssertionError(e);
     }
   }
@@ -99,11 +94,11 @@ public class IdentityKeyUtil {
   }
 
   public static IdentityKeyPair generateIdentityKeyPair() {
-    ECKeyPair    djbKeyPair     = Curve.generateKeyPair();
-    IdentityKey  djbIdentityKey = new IdentityKey(((ECKeyPair) djbKeyPair).getPublicKey());
-    ECPrivateKey djbPrivateKey  = (ECPrivateKey) djbKeyPair.getPrivateKey();
+    ECKeyPair   djbKeyPair     = Curve.generateKeyPair();
+    IdentityKey djbIdentityKey = new IdentityKey(djbKeyPair.getPublicKey());
+    ECPrivateKey djbPrivateKey  = djbKeyPair.getPrivateKey();
 
-    return new IdentityKeyPair(djbIdentityKey, (org.signal.libsignal.protocol.ecc.ECPrivateKey) djbPrivateKey);
+    return new IdentityKeyPair(djbIdentityKey, djbPrivateKey);
   }
 
   public static void migrateIdentityKeys(@NonNull Context context,
@@ -154,10 +149,10 @@ public class IdentityKeyUtil {
       MasterCipher masterCipher   = new MasterCipher(masterSecret);
       byte[]       publicKeyBytes = Base64.decode(retrieve(context, IDENTITY_PUBLIC_KEY_CIPHERTEXT_LEGACY_PREF));
       IdentityKey  identityKey    = new IdentityKey(publicKeyBytes, 0);
-      ECPrivateKey privateKey     = (ECPrivateKey) masterCipher.decryptKey(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF)));
+      ECPrivateKey privateKey     = masterCipher.decryptKey(Base64.decode(retrieve(context, IDENTITY_PRIVATE_KEY_CIPHERTEXT_LEGACY_PREF)));
 
-      return new IdentityKeyPair(identityKey, (org.signal.libsignal.protocol.ecc.ECPrivateKey) privateKey);
-    } catch (IOException | org.signal.libsignal.protocol.InvalidKeyException e) {
+      return new IdentityKeyPair(identityKey, privateKey);
+    } catch (IOException | InvalidKeyException e) {
       throw new AssertionError(e);
     }
   }
@@ -168,8 +163,8 @@ public class IdentityKeyUtil {
   }
 
   private static void save(Context context, String key, String value) {
-    SharedPreferences preferences       = context.getSharedPreferences(MasterSecretUtil.PREFERENCES_NAME, 0);
-    Editor            preferencesEditor = preferences.edit();
+    SharedPreferences preferences   = context.getSharedPreferences(MasterSecretUtil.PREFERENCES_NAME, 0);
+    Editor preferencesEditor        = preferences.edit();
 
     preferencesEditor.putString(key, value);
     if (!preferencesEditor.commit()) throw new AssertionError("failed to save identity key/value to shared preferences");

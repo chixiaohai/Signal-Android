@@ -174,7 +174,7 @@ public class ManageGroupFragment extends LoggingFragment {
             mMentions.setText(getString(R.string.ManageGroupActivity_mentions) + " " + value);
         });
 
-        viewModel.getDescription().observe(getViewLifecycleOwner(), this::updateGroupDescription);
+//        viewModel.getDescription().observe(getViewLifecycleOwner(), this::updateGroupDescription);
         viewModel.getGroupRecipient().observe(getViewLifecycleOwner(), groupRecipient -> {
 
            mCustomNotifications.setOnClickListener(v->{
